@@ -226,13 +226,13 @@ function Summary({ variantId }: VariantSummaryProps) {
       <Typography variant="subtitle2">
         <strong>ABC Target Genes: </strong>
         <span className={classes.value}>
-          {Array.from(
+          {data?.abcPredictions ? Array.from(
             new Set(
               data?.abcPredictions
                 .map((pred) => pred.nearestGene?.symbol)
                 .filter((gene): gene is string => !!gene)
             )
-          ).join(', ')}
+          ).join(', '): 'N/A'}
         </span>
       </Typography>
 
