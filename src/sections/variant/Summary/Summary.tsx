@@ -1,7 +1,8 @@
 import Grid from '@mui/material/Grid';
+import Item from '@mui/material/Grid';
 import { loader } from 'graphql.macro';
 import { useQuery } from '@apollo/client';
-import { Skeleton } from '@mui/material';
+import { Skeleton, Stack } from '@mui/material';
 import { Link, Typography, SectionHeading } from '../../../ot-ui-components';
 import {
   commaSeparate,
@@ -211,6 +212,34 @@ function Summary({ variantId }: VariantSummaryProps) {
           </Grid>
         </Grid>
       </Grid>
+
+      <Typography variant="subtitle1" sx={{ mt: 2 }}>
+        Predictions
+      </Typography>
+      <Typography variant="subtitle2">
+        <strong>ABC Cell Types: </strong>
+        <span className={classes.value}>
+          {data?.abcPredictions?.length ?? 'N/A'}
+        </span>
+      </Typography>
+
+      <Typography variant="subtitle2">
+        <strong>ABC Target Genes: </strong>
+        <span className={classes.value}>
+          {Array.from(
+            new Set(
+              data?.abcPredictions
+                .map((pred) => pred.nearestGene?.symbol)
+                .filter((gene): gene is string => !!gene)
+            )
+          ).join(', ')}
+        </span>
+      </Typography>
+
+      <Typography variant="subtitle2">
+        <strong>ChromBPNet Cell Types</strong>
+        <span className={classes.value}>N/A</span>
+      </Typography>
     </>
   );
 }

@@ -1,7 +1,7 @@
 import { CodegenConfig } from '@graphql-codegen/cli';
 
 const config: CodegenConfig = {
-  schema: 'https://api.genetics.opentargets.org/graphql',
+  schema: 'http://localhost:4000/graphql',
   documents: ['src/**/*.tsx', 'src/**/*.ts', 'src/**/*.graphql', 'src/**/*.gql'],
   generates: {
     './src/__generated__/': {

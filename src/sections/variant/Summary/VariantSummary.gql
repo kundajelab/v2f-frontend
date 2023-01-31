@@ -30,5 +30,13 @@ query VariantSummary($variantId: String!) {
     gnomadNFENWE
     gnomadNFESEU
     gnomadOTH
+    abcPredictions {
+      id
+      score
+      cellType
+      nearestGene {
+        symbol
+      }
+    }
   }
 }
