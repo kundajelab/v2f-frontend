@@ -1,8 +1,7 @@
 import Grid from '@mui/material/Grid';
-import Item from '@mui/material/Grid';
 import { loader } from 'graphql.macro';
 import { useQuery } from '@apollo/client';
-import { Skeleton, Stack } from '@mui/material';
+import { Skeleton } from '@mui/material';
 import { Link, Typography, SectionHeading } from '../../../ot-ui-components';
 import {
   commaSeparate,
