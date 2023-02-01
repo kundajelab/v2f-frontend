@@ -225,19 +225,23 @@ function Summary({ variantId }: VariantSummaryProps) {
       <Typography variant="subtitle2">
         <strong>ABC Target Genes: </strong>
         <span className={classes.value}>
-          {data?.abcPredictions ? Array.from(
-            new Set(
-              data?.abcPredictions
-                .map((pred) => pred.nearestGene?.symbol)
-                .filter((gene): gene is string => !!gene)
-            )
-          ).join(', '): 'N/A'}
+          {data?.abcPredictions?.length
+            ? Array.from(
+                new Set(
+                  data?.abcPredictions
+                    .map((pred) => pred.nearestGene?.symbol)
+                    .filter((gene): gene is string => !!gene)
+                )
+              ).join(', ')
+            : 'N/A'}
         </span>
       </Typography>
 
       <Typography variant="subtitle2">
         <strong>ChromBPNet Cell Types</strong>
-        <span className={classes.value}>N/A</span>
+        <span className={classes.value}>
+          {data?.bpnetPrediction.cellTypes.length ?? 'N/A'}
+        </span>
       </Typography>
     </>
   );
