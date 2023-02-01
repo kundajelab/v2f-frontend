@@ -218,21 +218,18 @@ function Summary({ variantId }: VariantSummaryProps) {
       <Typography variant="subtitle2">
         <strong>ABC Cell Types: </strong>
         <span className={classes.value}>
-          {data?.abcPredictions?.length ?? 'N/A'}
+          {data.uniqueAbcPredictionCellTypes?.length ?? 'N/A'}
         </span>
       </Typography>
 
       <Typography variant="subtitle2">
         <strong>ABC Target Genes: </strong>
         <span className={classes.value}>
-          {data?.abcPredictions?.length
-            ? data.abcPredictions.map((abcPred) => (
+          {data?.uniqueAbcPredictionTargetGenes?.length
+            ? data.uniqueAbcPredictionTargetGenes.map((gene) => (
                 <>
-                  <Link
-                    key={abcPred.targetGene.id}
-                    to={`/gene/${abcPred.targetGene.id}`}
-                  >
-                    {abcPred.targetGene.symbol}
+                  <Link key={gene.id} to={`/gene/${gene.id}`}>
+                    {gene.symbol}
                   </Link>
                   <span>, </span>
                 </>

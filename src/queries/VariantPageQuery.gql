@@ -1,3 +1,22 @@
+fragment VariantPageAbcPrediction on AbcPrediction {
+  id
+  score
+  cellType
+  score
+  variantToGeneDistance
+  enhancerStart
+  enhancerClass
+  enhancerEnd
+  targetGeneTss
+  targetGenePromoterActivityQuantile
+  enhancerToGeneDistance
+  abcVariantPosition
+  pip
+  targetGene {
+    id
+    symbol
+  }
+}
 query VariantPage($variantId: String!) {
   genesForVariantSchema {
     qtls {
@@ -150,6 +169,11 @@ query VariantPage($variantId: String!) {
       nTotal
       overallR2
       posteriorProbability
+    }
+  }
+  variantInfo(variantId: $variantId) {
+    abcPredictions {
+      ...VariantPageAbcPrediction
     }
   }
 }

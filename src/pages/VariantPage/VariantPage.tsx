@@ -33,9 +33,11 @@ import {
 import {
   VariantHeaderQuery,
   VariantHeaderQueryVariables,
+  VariantPageAbcPredictionFragment,
   VariantPageQuery,
   VariantPageQueryVariables,
 } from '../../__generated__/graphql';
+import AbcPredictionsTable from '../../components/AbcPredictionsTable';
 
 const VARIANT_PAGE_QUERY = loader('../../queries/VariantPageQuery.gql');
 const VARIANT_HEADER_QUERY = loader('./VariantHeader.gql');
@@ -82,6 +84,8 @@ const VariantPage = () => {
   const genesForVariantSchema = isGeneVariant
     ? variantParseGenesForVariantSchema(pageData!)
     : [];
+  const abcPredictions = (pageData?.variantInfo?.abcPredictions ||
+    []) as VariantPageAbcPredictionFragment[];
 
   // Methods
   const handlePhewasTraitFilter = (
@@ -162,6 +166,28 @@ const VariantPage = () => {
       <Summary variantId={variantId} />
 
       <>
+        <SectionHeading
+          heading="Activity-By-Contact (ABC) Model Predictions"
+          subheading="Which genes are predicted to be regulated by the variant-containing enhancer?"
+          entities={[
+            {
+              type: 'variant',
+              fixed: true,
+            },
+            {
+              type: 'gene',
+              fixed: false,
+            },
+          ]}
+        />
+        <AbcPredictionsTable
+          loading={pageLoading}
+          error={error}
+          data={abcPredictions}
+          variantId={variantId}
+          filenameStem={`${variantId}-lead-variants`}
+        />
+
         <SectionHeading
           heading="Assigned genes"
           subheading="Which genes are functionally implicated by this variant?"
