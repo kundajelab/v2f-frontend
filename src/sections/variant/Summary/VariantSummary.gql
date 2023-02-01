@@ -34,7 +34,8 @@ query VariantSummary($variantId: String!) {
       id
       score
       cellType
-      nearestGene {
+      targetGene {
+        id
         symbol
       }
     }

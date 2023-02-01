@@ -226,13 +226,17 @@ function Summary({ variantId }: VariantSummaryProps) {
         <strong>ABC Target Genes: </strong>
         <span className={classes.value}>
           {data?.abcPredictions?.length
-            ? Array.from(
-                new Set(
-                  data?.abcPredictions
-                    .map((pred) => pred.nearestGene?.symbol)
-                    .filter((gene): gene is string => !!gene)
-                )
-              ).join(', ')
+            ? data.abcPredictions.map((abcPred) => (
+                <>
+                  <Link
+                    key={abcPred.targetGene.id}
+                    to={`/gene/${abcPred.targetGene.id}`}
+                  >
+                    {abcPred.targetGene.symbol}
+                  </Link>
+                  <span>, </span>
+                </>
+              ))
             : 'N/A'}
         </span>
       </Typography>
@@ -240,7 +244,7 @@ function Summary({ variantId }: VariantSummaryProps) {
       <Typography variant="subtitle2">
         <strong>ChromBPNet Cell Types</strong>
         <span className={classes.value}>
-          {data?.bpnetPrediction.cellTypes.length ?? 'N/A'}
+          {data?.bpnetPrediction?.cellTypes?.length ?? 'N/A'}
         </span>
       </Typography>
     </>
