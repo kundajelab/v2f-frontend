@@ -168,7 +168,7 @@ const VariantPage = () => {
       <>
         <SectionHeading
           heading="Activity-By-Contact (ABC) Model Predictions"
-          subheading="Which genes are predicted to be regulated by the variant-containing enhancer?"
+          subheading="Which genes are predicted to be regulated by enhancers overlapping this variant?"
           entities={[
             {
               type: 'variant',

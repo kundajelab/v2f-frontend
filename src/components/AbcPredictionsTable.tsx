@@ -19,6 +19,26 @@ const tableColumns = (
     renderCell: (rowData: VariantPageAbcPredictionFragment) => rowData.cellType,
   },
   {
+    id: 'targetGene',
+    label: 'Target Gene',
+    renderCell: (rowData: VariantPageAbcPredictionFragment) => (
+      <Link key={rowData.targetGene.id} to={`/gene/${rowData.targetGene.id}`}>
+        {rowData.targetGene.symbol}
+      </Link>
+    ),
+  },
+  {
+    id: 'abcScore',
+    label: 'ABC Score',
+    renderCell: (rowData: VariantPageAbcPredictionFragment) => rowData.score,
+  },
+  {
+    id: 'variantGeneDistance',
+    label: 'Variant-Gene Distance',
+    renderCell: (rowData: VariantPageAbcPredictionFragment) =>
+      rowData.variantToGeneDistance,
+  },
+  {
     id: 'enhancerStart',
     label: 'Enhancer Start',
     renderCell: (rowData: VariantPageAbcPredictionFragment) =>
@@ -37,41 +57,10 @@ const tableColumns = (
       rowData.enhancerClass,
   },
   {
-    id: 'targetGene',
-    label: 'Target Gene',
-    renderCell: (rowData: VariantPageAbcPredictionFragment) => (
-      <Link key={rowData.targetGene.id} to={`/gene/${rowData.targetGene.id}`}>
-        {rowData.targetGene.symbol}
-      </Link>
-    ),
-  },
-  {
     id: 'targetGenePromoterActivityQuantile',
     label: 'Target Gene Promoter Activity Quantile',
     renderCell: (rowData: VariantPageAbcPredictionFragment) =>
       rowData.targetGenePromoterActivityQuantile,
-  },
-  {
-    id: 'enhancerGeneDistance',
-    label: 'Enahncer-Gene Distance',
-    renderCell: (rowData: VariantPageAbcPredictionFragment) =>
-      rowData.enhancerToGeneDistance,
-  },
-  {
-    id: 'variantGeneDistance',
-    label: 'Variant-Gene Distance',
-    renderCell: (rowData: VariantPageAbcPredictionFragment) =>
-      rowData.variantToGeneDistance,
-  },
-  {
-    id: 'pip',
-    label: 'Posterior Inclusion Probability',
-    renderCell: (rowData: VariantPageAbcPredictionFragment) => rowData.pip,
-  },
-  {
-    id: 'abcScore',
-    label: 'ABC Score',
-    renderCell: (rowData: VariantPageAbcPredictionFragment) => rowData.score,
   },
 ];
 

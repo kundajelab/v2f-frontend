@@ -1,8 +1,6 @@
 import { Grid, Paper, Theme } from '@mui/material';
 import { makeStyles } from '@mui/styles';
 
-import OTLogo from '../../assets/OTLogo';
-
 const useStyles = makeStyles((theme: Theme) => ({
   homeboxContainer: {
     overflow: 'visible',
@@ -44,7 +42,6 @@ const HomeBox = ({ children }: HomeBoxProps) => {
     <Grid item xs={12} sm={8} md={8} lg={8}>
       <Paper className={classes.homeboxContainer}>
         <div className={classes.homeboxHeader}>
-          <OTLogo className={classes.logo} />
         </div>
         {children}
       </Paper>

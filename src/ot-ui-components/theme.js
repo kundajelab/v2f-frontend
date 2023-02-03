@@ -1,7 +1,7 @@
 import { lighten, darken } from 'polished';
 
-const PRIMARY = '#3489ca'; // '#7b196a'; // '#0091eb';
-const SECONDARY = '#ff6350';
+const PRIMARY = '#8C1515'; // '#7b196a'; // '#0091eb';
+const SECONDARY = '#175E54';
 
 const GENE = PRIMARY;
 const VARIANT = PRIMARY;
