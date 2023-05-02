@@ -42,7 +42,6 @@ const Page = ({ header, footer, children }: PageProps) => {
           {children}
         </Grid>
       </Grid>
-      {footer}
     </div>
   );
 };

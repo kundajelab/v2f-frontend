@@ -115,7 +115,7 @@ const NavBar = ({
       elevation={0}
     >
       <Toolbar variant="dense">
-        {homepage ? null : (
+        { (
           <Button component={ReactRouterLink} to="/" color="inherit">
             <OpenTargetsTitle name={name} />
           </Button>
