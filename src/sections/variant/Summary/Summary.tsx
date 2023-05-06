@@ -241,7 +241,7 @@ function Summary({ variantId }: VariantSummaryProps) {
       <Typography variant="subtitle2">
         <strong>ChromBPNet Cell Types</strong>
         <span className={classes.value}>
-          {data?.bpnetPrediction?.cellTypes?.length ?? 'N/A'}
+          {data?.bpnetPredictions?.[0]?.cellTypes?.length ?? 'N/A'}
         </span>
       </Typography>
     </>
