@@ -123,49 +123,7 @@ const NavBar = ({
         <div className={classes.flex} />
         {search ? search : null}
 
-        {docs ? (
-          <MenuExternalLink classes={classes} href={docs}>
-            Docs
-          </MenuExternalLink>
-        ) : null}
-
-        {api ? (
-          <MenuExternalLink classes={classes} href={api}>
-            API
-          </MenuExternalLink>
-        ) : null}
-
-        {downloads ? (
-          <MenuExternalLink classes={classes} href={downloads}>
-            Downloads
-          </MenuExternalLink>
-        ) : null}
-
-        {contact ? (
-          <MenuExternalLink classes={classes} href={contact}>
-            Contact
-          </MenuExternalLink>
-        ) : null}
-
-        {items && !isHomePageRegular ? (
-          <HeaderMenu items={items} placement={placement} />
-        ) : null}
-
-        {isHomePageRegular && (
-          <MenuList className={classes.menuList}>
-            {items.map((item, i) => (
-              <MenuItem key={i} dense={true} className={classes.menuItem}>
-                <Link
-                  external={item.external}
-                  to={item.url}
-                  className={classes.menuLink}
-                >
-                  {item.name}
-                </Link>
-              </MenuItem>
-            ))}
-          </MenuList>
-        )}
+        
       </Toolbar>
     </AppBar>
   );

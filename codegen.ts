@@ -1,7 +1,8 @@
 import { CodegenConfig } from '@graphql-codegen/cli';
+import { getDomain } from './env';
 
 const config: CodegenConfig = {
-  schema: 'http://localhost:4000/graphql',
+  schema: `http://${getDomain()}:4000/graphql`,
   documents: ['src/**/*.tsx', 'src/**/*.ts', 'src/**/*.graphql', 'src/**/*.gql'],
   generates: {
     './src/__generated__/': {

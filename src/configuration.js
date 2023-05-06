@@ -1,7 +1,8 @@
 import pkg from '../package.json';
+import { getDomain } from "../env";
 
 const defaults = {
-  REACT_APP_GRAPHQL_API_URL: 'http://localhost:4000/graphql',
+  REACT_APP_GRAPHQL_API_URL: `http://${getDomain()}:4000/graphql`,
   REACT_APP_PLATFORM_URL: 'https://platform.opentargets.org/',
   REACT_APP_GIT_REVISION: '2222ccc',
   REACT_APP_CONTACT_URL: 'mailto:helpdesk@opentargets.org',

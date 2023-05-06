@@ -26,7 +26,7 @@ const OpenTargetsTitle = ({ className, name }: OpenTargetsTitlesProps) => {
   const titleClasses = classNames(classes.root, className);
   return (
     <Typography className={titleClasses} variant="h6" color="inherit">
-      <span className={classes.thin}>Variant2Gene</span>
+      <span className={classes.thin}>{name}</span>
     </Typography>
   );
 };
