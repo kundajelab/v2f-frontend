@@ -1,4 +1,4 @@
-import { getDomain } from "../env";
+import { getDomain } from './env';
 
 const config = {
   apiUrl: window.configApiUrl ?? `http://${getDomain()}:4000/graphql`,

@@ -1,5 +1,5 @@
 import pkg from '../package.json';
-import { getDomain } from "../env";
+import { getDomain } from './env';
 
 const defaults = {
   REACT_APP_GRAPHQL_API_URL: `http://${getDomain()}:4000/graphql`,
