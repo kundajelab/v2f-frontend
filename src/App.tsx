@@ -12,31 +12,36 @@ import VariantPage from './pages/VariantPage';
 import LocusPage from './pages/LocusPage';
 import StudyLocusPage from './pages/StudyLocusPage';
 import ImmunobasePage from './pages/ImmunobasePage';
+import { socket, SocketContext } from './socket';
+import UploadPage from './pages/UploadPage';
 
 const App = () => (
   <ApolloProvider client={client}>
-    <OtUiThemeProvider>
-      <Router>
-        <CompatRouter>
-          <Switch>
-            <CompatRoute exact path="/" component={HomePage} />
-            <CompatRoute path="/study/:studyId" component={StudyPage} />
-            <CompatRoute
-              path="/study-comparison/:studyId"
-              component={StudiesPage}
-            />
-            <CompatRoute path="/gene/:geneId" component={GenePage} />
-            <CompatRoute path="/variant/:variantId" component={VariantPage} />
-            <CompatRoute path="/locus" component={LocusPage} />
-            <CompatRoute
-              path="/study-locus/:studyId/:indexVariantId"
-              component={StudyLocusPage}
-            />
-            <CompatRoute path="/immunobase" component={ImmunobasePage} />
-          </Switch>
-        </CompatRouter>
-      </Router>
-    </OtUiThemeProvider>
+    <SocketContext.Provider value={socket}>
+      <OtUiThemeProvider>
+        <Router>
+          <CompatRouter>
+            <Switch>
+              <CompatRoute exact path="/" component={HomePage} />
+              <CompatRoute path="/study/:studyId" component={StudyPage} />
+              <CompatRoute
+                path="/study-comparison/:studyId"
+                component={StudiesPage}
+              />
+              <CompatRoute path="/gene/:geneId" component={GenePage} />
+              <CompatRoute path="/variant/:variantId" component={VariantPage} />
+              <CompatRoute path="/locus" component={LocusPage} />
+              <CompatRoute
+                path="/study-locus/:studyId/:indexVariantId"
+                component={StudyLocusPage}
+              />
+              <CompatRoute path="/immunobase" component={ImmunobasePage} />
+              <CompatRoute path="/upload" component={UploadPage} />
+            </Switch>
+          </CompatRouter>
+        </Router>
+      </OtUiThemeProvider>
+    </SocketContext.Provider>
   </ApolloProvider>
 );
 
