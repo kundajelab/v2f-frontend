@@ -1,9 +1,4 @@
-import {
-  Box,
-  Button,
-  Input,
-  Typography,
-} from '@mui/material';
+import { Box, Button, Input, Typography } from '@mui/material';
 import {
   ChangeEvent,
   MouseEvent,
@@ -23,9 +18,8 @@ function UploadPage() {
   const [dataProgressLogs, setDataProgressLogs] = useState<string[]>([]);
 
   useEffect(() => {
-    socket.on('data-upload-progress', (v) => {
-      console.log(v.toString());
-      setDataProgressLogs([...dataProgressLogs, v.toString()])
+    socket.on('upload-data-progress', (v) => {
+      setDataProgressLogs((prevLogs: string[]) => [...prevLogs, v.toString()]);
     });
   }, [socket]);
 
@@ -33,6 +27,7 @@ function UploadPage() {
     if (!selectedFile) {
       return;
     }
+    setDataProgressLogs([]);
     const formData = new FormData();
     formData.append('data', selectedFile, 'data');
     formData.append('socketId', socket.id);
@@ -62,9 +57,17 @@ function UploadPage() {
         }
       ></Input>
       <Button onClick={onSubmit}>Submit</Button>
-      <Box>
+      <Box
+        style={{
+          marginTop: '24px',
+          backgroundColor: '#eeeeee',
+          padding: '16px',
+          height: '500px',
+          overflow: 'scroll',
+        }}
+      >
         {dataProgressLogs.map((log) => (
-          <Typography>{log}</Typography>
+          <Typography sx={{ fontFamily: 'Monospace' }}>{log}</Typography>
         ))}
       </Box>
     </BasePage>
