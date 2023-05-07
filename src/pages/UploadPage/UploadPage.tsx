@@ -4,6 +4,8 @@ import {
   MouseEvent,
   useContext,
   useEffect,
+  useLayoutEffect,
+  useRef,
   useState,
 } from 'react';
 import { SocketContext } from '../../socket';
@@ -16,6 +18,8 @@ function UploadPage() {
   const socket = useContext(SocketContext);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [dataProgressLogs, setDataProgressLogs] = useState<string[]>([]);
+  const [isScrolledToBottom, setIsScrolledToBottom] = useState(true);
+  const logBoxRef = useRef<HTMLElement>();
 
   useEffect(() => {
     socket.on('upload-data-progress', (v) => {
@@ -48,6 +52,36 @@ function UploadPage() {
     }
   };
 
+  useEffect(() => {
+    const logBox = logBoxRef.current;
+    if (!logBox) {
+      return;
+    }
+    logBox.addEventListener('scroll', handleUserScroll);
+    return () => logBox.removeEventListener('scroll', handleUserScroll);
+  }, [logBoxRef]);
+
+  useLayoutEffect(() => {
+    const logBox = logBoxRef.current;
+    if (!logBox) {
+      return;
+    }
+
+    logBox.scrollTop = isScrolledToBottom
+      ? logBox.scrollHeight
+      : logBox.scrollTop;
+  });
+
+  const handleUserScroll = () => {
+    const logBox = logBoxRef.current;
+    if (!logBox) {
+      return;
+    }
+    const atBottom =
+      logBox.scrollHeight - logBox.scrollTop - logBox.clientHeight < 2;
+    setIsScrolledToBottom(atBottom);
+  };
+
   return (
     <BasePage>
       <Input
@@ -58,16 +92,18 @@ function UploadPage() {
       ></Input>
       <Button onClick={onSubmit}>Submit</Button>
       <Box
+        ref={logBoxRef}
         style={{
           marginTop: '24px',
           backgroundColor: '#eeeeee',
-          padding: '16px',
           height: '500px',
-          overflow: 'scroll',
+          overflow: 'auto',
         }}
       >
         {dataProgressLogs.map((log) => (
-          <Typography sx={{ fontFamily: 'Monospace' }}>{log}</Typography>
+          <Typography sx={{ fontFamily: 'Monospace', margin: 2 }}>
+            {log}
+          </Typography>
         ))}
       </Box>
     </BasePage>
