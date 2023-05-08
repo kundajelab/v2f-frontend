@@ -2,6 +2,7 @@ import { OtTable, Link } from '../ot-ui-components';
 
 import { VariantPageAbcPredictionFragment } from '../__generated__/graphql';
 import { ApolloError } from '@apollo/client';
+import { HourglassTop } from '@mui/icons-material';
 
 type TableColumn<T> = {
   id: string;
@@ -13,6 +14,16 @@ type TableColumn<T> = {
 const tableColumns = (
   _variantId: string
 ): TableColumn<VariantPageAbcPredictionFragment>[] => [
+  {
+    id: 'isTemporary',
+    label: '',
+    renderCell: (rowData: VariantPageAbcPredictionFragment) =>
+      rowData.isTemporary ? (
+        <HourglassTop
+          sx={{ opacity: 0.5, fontSize: '20px', verticalAlign: 'middle' }}
+        />
+      ) : null,
+  },
   {
     id: 'cellType',
     label: 'Cell Type',
@@ -31,6 +42,16 @@ const tableColumns = (
     id: 'abcScore',
     label: 'ABC Score',
     renderCell: (rowData: VariantPageAbcPredictionFragment) => rowData.score,
+  },
+  {
+    id: 'dataset',
+    label: 'Dataset',
+    renderCell: (rowData: VariantPageAbcPredictionFragment) => rowData.dataset,
+  },
+  {
+    id: 'model',
+    label: 'Model',
+    renderCell: (rowData: VariantPageAbcPredictionFragment) => rowData.model,
   },
   {
     id: 'variantGeneDistance',

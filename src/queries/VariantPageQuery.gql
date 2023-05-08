@@ -12,6 +12,9 @@ fragment VariantPageAbcPrediction on AbcPrediction {
   enhancerToGeneDistance
   abcVariantPosition
   pip
+  model
+  dataset
+  isTemporary
   targetGene {
     id
     symbol
