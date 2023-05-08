@@ -1,4 +1,4 @@
-import { OtTable, Link } from '../ot-ui-components';
+import { OtTable, Link, Tooltip } from '../ot-ui-components';
 
 import { VariantPageAbcPredictionFragment } from '../__generated__/graphql';
 import { ApolloError } from '@apollo/client';
@@ -19,9 +19,11 @@ const tableColumns = (
     label: '',
     renderCell: (rowData: VariantPageAbcPredictionFragment) =>
       rowData.isTemporary ? (
-        <HourglassTop
-          sx={{ opacity: 0.5, fontSize: '20px', verticalAlign: 'middle' }}
-        />
+        <Tooltip title="Temporary prediction uploaded by a user">
+          <HourglassTop
+            sx={{ opacity: 0.5, fontSize: '20px', verticalAlign: 'middle' }}
+          />
+        </Tooltip>
       ) : null,
   },
   {
