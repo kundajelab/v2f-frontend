@@ -13,6 +13,7 @@ import { SocketContext } from '../../socket';
 import axios from 'axios';
 
 import BasePage from '../BasePage';
+import { AbcPredictionUploadDescription } from './AbcPredictionUploadDescription';
 
 function UploadPage() {
   const socket = useContext(SocketContext);
@@ -84,6 +85,7 @@ function UploadPage() {
 
   return (
     <BasePage>
+      <AbcPredictionUploadDescription />
       <Input
         type="file"
         onChange={(e: ChangeEvent<HTMLInputElement>) =>
