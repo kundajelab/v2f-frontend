@@ -1,4 +1,11 @@
-import { Box, Button, Input, Typography } from '@mui/material';
+import {
+  Box,
+  Button,
+  Checkbox,
+  FormControlLabel,
+  Input,
+  Typography,
+} from '@mui/material';
 import {
   ChangeEvent,
   MouseEvent,
@@ -20,6 +27,7 @@ function UploadPage() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [dataProgressLogs, setDataProgressLogs] = useState<string[]>([]);
   const [isScrolledToBottom, setIsScrolledToBottom] = useState(true);
+  const [isTemporaryData, setIsTemporaryData] = useState(true);
   const logBoxRef = useRef<HTMLElement>();
 
   useEffect(() => {
@@ -36,6 +44,7 @@ function UploadPage() {
     const formData = new FormData();
     formData.append('data', selectedFile, 'data');
     formData.append('socketId', socket.id);
+    formData.append('isTemporary', isTemporaryData.toString());
     try {
       const response = await axios.post(
         'http://localhost:4000/upload-data',
@@ -46,8 +55,6 @@ function UploadPage() {
           },
         }
       );
-
-      console.log(response.data);
     } catch (error) {
       console.error('Error uploading file:', error);
     }
@@ -86,13 +93,41 @@ function UploadPage() {
   return (
     <BasePage>
       <AbcPredictionUploadDescription />
-      <Input
-        type="file"
-        onChange={(e: ChangeEvent<HTMLInputElement>) =>
-          setSelectedFile(e.target.files && e.target.files[0])
-        }
-      ></Input>
-      <Button onClick={onSubmit}>Submit</Button>
+      <Box sx={{ border: '2px solid black', p: 2 }}>
+        <Input
+          type="file"
+          onChange={(e: ChangeEvent<HTMLInputElement>) =>
+            setSelectedFile(e.target.files && e.target.files[0])
+          }
+          inputProps={{
+            accept: '.csv,.tsv',
+            maxLength: '524288000', // 500 MB
+          }}
+          sx={{ marginBottom: '16px', display: 'block' }}
+        ></Input>
+        <FormControlLabel
+          control={
+            <Checkbox
+              value={isTemporaryData}
+              defaultChecked
+              onChange={(e) => setIsTemporaryData(e.target.checked)}
+            />
+          }
+          label="This is temporary data"
+        />
+        {!isTemporaryData ? (
+          <Box>
+            <Typography sx={{ color: 'red', fontWeight: 'bold' }}>
+              WARNING: Please be careful when uploading data as final. This is
+              permanent and cannot be undone. Please seek approval from site
+              administrators before using this option.
+            </Typography>
+          </Box>
+        ) : null}
+        <Button onClick={onSubmit} sx={{ display: 'block' }}>
+          Submit
+        </Button>
+      </Box>
       <Box
         ref={logBoxRef}
         style={{

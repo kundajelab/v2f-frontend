@@ -17,8 +17,8 @@ import { mainMenuItems } from '../../constants';
 const EXAMPLES = [
   { label: 'PCSK9', url: '/gene/ENSG00000169174', type: 'gene' },
   {
-    label: '1_154453788_C_T',
-    url: '/variant/1_154453788_C_T',
+    label: '1_1351747_G_A',
+    url: '/variant/1_1351747_G_A',
     type: 'variant-id',
   },
   { label: 'rs4129267', url: '/variant/1_154453788_C_T', type: 'variant-rsid' },
