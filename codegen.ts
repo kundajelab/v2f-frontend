@@ -1,8 +1,8 @@
 import { CodegenConfig } from '@graphql-codegen/cli';
-import { getDomain } from './src/env';
+import { getApiUrl } from './src/env';
 
 const config: CodegenConfig = {
-  schema: `http://${getDomain()}:4000/graphql`,
+  schema: `${getApiUrl()}/graphql`,
   documents: [
     'src/**/*.tsx',
     'src/**/*.ts',

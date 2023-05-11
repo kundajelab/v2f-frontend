@@ -1,7 +1,7 @@
-import { getDomain } from './env';
+import { getApiUrl } from './env';
 
 const config = {
-  apiUrl: window.configApiUrl ?? `http://${getDomain()}:4000/graphql`,
+  apiUrl: window.configApiUrl ?? `${getApiUrl()}/graphql`,
   googleTagManagerID: window.configGoogleTagManagerID ?? null,
   helpdeskEmail: window.configHelpdeskEmail ?? 'helpdesk@opentargets.org',
   profile: window.configProfile ?? {},
