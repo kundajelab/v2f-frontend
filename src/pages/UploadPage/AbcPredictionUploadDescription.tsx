@@ -1,6 +1,7 @@
 import { List, ListItem, Typography } from '@mui/material';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
+import { getApiUrl } from '../../env';
 import { DataProp } from './data-props';
 import { DataPropTable } from './DataPropTable';
 
@@ -15,7 +16,7 @@ export function AbcPredictionUploadDescription() {
     const fn = async () => {
       try {
         const response = await axios.post(
-          'http://localhost:4000/get-data-props',
+          `${getApiUrl()}/get-data-props`,
           {
             dataType: DataType.ABC_PREDICTION,
           }

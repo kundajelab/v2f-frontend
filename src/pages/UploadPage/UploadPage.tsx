@@ -21,6 +21,7 @@ import axios from 'axios';
 
 import BasePage from '../BasePage';
 import { AbcPredictionUploadDescription } from './AbcPredictionUploadDescription';
+import { getApiUrl } from '../../env';
 
 function UploadPage() {
   const socket = useContext(SocketContext);
@@ -28,6 +29,9 @@ function UploadPage() {
   const [dataProgressLogs, setDataProgressLogs] = useState<string[]>([]);
   const [isScrolledToBottom, setIsScrolledToBottom] = useState(true);
   const [isTemporaryData, setIsTemporaryData] = useState(true);
+  const [geneUploadProgressLogIndex, setGeneUploadProgressLogIndex] = useState<
+    number | null
+  >(null);
   const logBoxRef = useRef<HTMLElement>();
 
   useEffect(() => {
@@ -35,6 +39,30 @@ function UploadPage() {
       setDataProgressLogs((prevLogs: string[]) => [...prevLogs, v.toString()]);
     });
   }, [socket]);
+
+  useEffect(() => {
+    const eventFn = (v: any) => {
+      let i = 0;
+      setDataProgressLogs((prevLogs: string[]) => {
+        if (!geneUploadProgressLogIndex) {
+          i = prevLogs.length;
+          return [...prevLogs, v.toString()];
+        }
+        return [
+          ...prevLogs.slice(0, geneUploadProgressLogIndex),
+          v.toString(),
+          ...prevLogs.slice(geneUploadProgressLogIndex + 1),
+        ];
+      });
+      if (!geneUploadProgressLogIndex) {
+        setGeneUploadProgressLogIndex(i);
+      }
+    };
+    socket.on('upload-data-progress-gene-creation', eventFn);
+    return () => {
+      socket.off('upload-data-progress-gene-creation', eventFn);
+    };
+  }, [socket, geneUploadProgressLogIndex, dataProgressLogs]);
 
   const onSubmit = async (e: MouseEvent) => {
     if (!selectedFile) {
@@ -47,7 +75,7 @@ function UploadPage() {
     formData.append('isTemporary', isTemporaryData.toString());
     try {
       const response = await axios.post(
-        'http://localhost:4000/upload-data',
+        `${getApiUrl()}/upload-data`,
         formData,
         {
           headers: {
