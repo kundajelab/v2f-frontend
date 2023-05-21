@@ -1,7 +1,6 @@
-# Open Targets Genetics App
+# Variant2Function Frontend App
 
-
-This repo contains the web application code for [Open Targets Genetics](https://genetics.opentargets.org).
+This repo contains the web application code for [Variant2Function](http://v2f-portal.stanford.edu).
 
 It is one component of several and the overarching project is described [here](https://github.com/opentargets/genetics), which is also where issues can be raised.
 
