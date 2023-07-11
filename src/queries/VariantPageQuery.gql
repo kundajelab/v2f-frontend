@@ -20,6 +20,11 @@ fragment VariantPageAbcPrediction on AbcPrediction {
     symbol
   }
 }
+fragment VariantPageBpnetPrediction on BpnetPrediction {
+  id
+  logfc
+  cellTypes
+}
 query VariantPage($variantId: String!) {
   genesForVariantSchema {
     qtls {
