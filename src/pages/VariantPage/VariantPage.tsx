@@ -34,10 +34,12 @@ import {
   VariantHeaderQuery,
   VariantHeaderQueryVariables,
   VariantPageAbcPredictionFragment,
+  VariantPageBpnetPredictionFragment,
   VariantPageQuery,
   VariantPageQueryVariables,
 } from '../../__generated__/graphql';
 import AbcPredictionsTable from '../../components/AbcPredictionsTable';
+import BpnetPredictionsTable from '../../components/BpnetPredictionsTable';
 
 const VARIANT_PAGE_QUERY = loader('../../queries/VariantPageQuery.gql');
 const VARIANT_HEADER_QUERY = loader('./VariantHeader.gql');
@@ -86,7 +88,10 @@ const VariantPage = () => {
     : [];
   const abcPredictions = (pageData?.variantInfo?.abcPredictions ||
     []) as VariantPageAbcPredictionFragment[];
+  const bpnetPredictions = (pageData?.variantInfo?.bpnetPredictions ||
+    []) as VariantPageBpnetPredictionFragment[];
 
+  console.log(pageData)
   // Methods
   const handlePhewasTraitFilter = (
     newPhewasTraitFilterValue?: PhewasOption[]
@@ -184,6 +189,28 @@ const VariantPage = () => {
           loading={pageLoading}
           error={error}
           data={abcPredictions}
+          variantId={variantId}
+          filenameStem={`${variantId}-lead-variants`}
+        />
+
+        <SectionHeading
+          heading="BPNet Model Predictions"
+          subheading="(subheading)"
+          entities={[
+            {
+              type: 'variant',
+              fixed: true,
+            },
+            {
+              type: 'gene',
+              fixed: false,
+            },
+          ]}
+        />
+        <BpnetPredictionsTable
+          loading={pageLoading}
+          error={error}
+          data={bpnetPredictions}
           variantId={variantId}
           filenameStem={`${variantId}-lead-variants`}
         />

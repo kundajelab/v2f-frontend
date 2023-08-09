@@ -23,7 +23,21 @@ fragment VariantPageAbcPrediction on AbcPrediction {
 fragment VariantPageBpnetPrediction on BpnetPrediction {
   id
   logfc
-  cellTypes
+  logfcPval
+  jsd
+  jsdPval
+  maxPercentile
+  logfcMaxPercentile
+  logfcMaxPercentilePval
+  allele1PredCount
+  allele2PredCount
+  allele1TFFamily
+  allele2TFFamily
+  allele1Motif
+  allele2Motif
+  cellType
+  dataset
+  isTemporary
 }
 query VariantPage($variantId: String!) {
   genesForVariantSchema {
@@ -182,6 +196,9 @@ query VariantPage($variantId: String!) {
   variantInfo(variantId: $variantId) {
     abcPredictions {
       ...VariantPageAbcPrediction
+    }
+    bpnetPredictions {
+      ...VariantPageBpnetPrediction
     }
   }
 }

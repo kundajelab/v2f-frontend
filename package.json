@@ -33,6 +33,7 @@
     "graphql": "^15.5.1",
     "graphql-tag": "^2.10.1",
     "lodash": "^4.17.21",
+    "logojs-react": "^2.1.1",
     "polished": "^2.1.1",
     "postcss-normalize": "^10.0.1",
     "query-string": "^8.1.0",
