@@ -14,6 +14,7 @@ import StudyLocusPage from './pages/StudyLocusPage';
 import ImmunobasePage from './pages/ImmunobasePage';
 import { socket, SocketContext } from './socket';
 import UploadPage from './pages/UploadPage';
+import IngestionPage from './pages/IngestionPage';
 
 const App = () => (
   <ApolloProvider client={client}>
@@ -37,6 +38,7 @@ const App = () => (
               />
               <CompatRoute path="/immunobase" component={ImmunobasePage} />
               <CompatRoute path="/upload" component={UploadPage} />
+              <CompatRoute path="/ingestion" component={IngestionPage} />
             </Switch>
           </CompatRouter>
         </Router>
