@@ -33,6 +33,9 @@ import {
 import {
   VariantHeaderQuery,
   VariantHeaderQueryVariables,
+  VariantLinkageDisequilibriumFragment,
+  VariantLinkageDisequilibriumQuery,
+  VariantLinkageDisequilibriumQueryVariables,
   VariantPageAbcPredictionFragment,
   VariantPageBpnetPredictionFragment,
   VariantPageQuery,
@@ -40,9 +43,11 @@ import {
 } from '../../__generated__/graphql';
 import AbcPredictionsTable from '../../components/AbcPredictionsTable';
 import BpnetPredictionsTable from '../../components/BpnetPredictionsTable';
+import LinkageDisequilibriumTable from '../../components/LinkageDisequilibriumTable';
 
 const VARIANT_PAGE_QUERY = loader('../../queries/VariantPageQuery.gql');
 const VARIANT_HEADER_QUERY = loader('./VariantHeader.gql');
+const VARIANT_LD_QUERY = loader('./VariantLinkageDisequilibrium.gql');
 
 // TODO: Update when PHEWAS is typed
 type PhewasOption = {
@@ -71,6 +76,16 @@ const VariantPage = () => {
       variables: { variantId },
     }
   );
+  const {
+    loading: ldLoading,
+    data: ldData,
+    error: ldError,
+  } = useQuery<
+    VariantLinkageDisequilibriumQuery,
+    VariantLinkageDisequilibriumQueryVariables
+  >(VARIANT_LD_QUERY, {
+    variables: { variantId },
+  });
 
   // Derived State
   const isGeneVariant = variantHasAssociatedGenes(pageData);
@@ -90,8 +105,11 @@ const VariantPage = () => {
     []) as VariantPageAbcPredictionFragment[];
   const bpnetPredictions = (pageData?.variantInfo?.bpnetPredictions ||
     []) as VariantPageBpnetPredictionFragment[];
+  const ldTableData = (ldData?.linkageDisequilibriumsForVariant ||
+    []) as VariantLinkageDisequilibriumFragment[];
 
-  console.log(pageData)
+  console.log(ldLoading);
+  console.log(ldData?.linkageDisequilibriumsForVariant);
   // Methods
   const handlePhewasTraitFilter = (
     newPhewasTraitFilterValue?: PhewasOption[]
@@ -171,6 +189,26 @@ const VariantPage = () => {
       <Summary variantId={variantId} />
 
       <>
+        <SectionHeading
+          heading="Linkage Disequilibrium"
+          subheading="Which variants are in linkage disequilibrium with this variant?"
+          entities={[
+            {
+              type: 'variant',
+              fixed: true,
+            },
+            {
+              type: 'variant',
+              fixed: false,
+            },
+          ]}
+        />
+        <LinkageDisequilibriumTable
+          loading={ldLoading}
+          error={ldError}
+          data={ldTableData}
+          filenameStem={`${variantId}-lds`}
+        ></LinkageDisequilibriumTable>
         <SectionHeading
           heading="Activity-By-Contact (ABC) Model Predictions"
           subheading="Which genes are predicted to be regulated by enhancers overlapping this variant?"

@@ -1,0 +1,11 @@
+fragment VariantLinkageDisequilibrium on LinkageDisequilibrium {
+  variantGnomadId
+  variantRsId
+  r2
+  dPrime
+}
+query VariantLinkageDisequilibrium($variantId: String!) {
+  linkageDisequilibriumsForVariant(variantId: $variantId) {
+    ...VariantLinkageDisequilibrium
+  }
+}
