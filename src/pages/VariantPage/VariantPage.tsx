@@ -232,7 +232,7 @@ const VariantPage = () => {
           filenameStem={`${variantId}-lead-variants`}
         />
 
-        <SectionHeading
+        {/* <SectionHeading
           heading="BPNet Model Predictions"
           subheading="(subheading)"
           entities={[
@@ -252,7 +252,7 @@ const VariantPage = () => {
           data={bpnetPredictions}
           variantId={variantId}
           filenameStem={`${variantId}-lead-variants`}
-        />
+        /> */}
 
         <SectionHeading
           heading="Assigned genes"
