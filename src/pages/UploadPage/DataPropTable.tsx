@@ -20,6 +20,7 @@ export function DataPropTable(props: DataPropTableProps) {
           <TableRow>
             <TableCell>Name</TableCell>
             <TableCell>Type</TableCell>
+            <TableCell>Required</TableCell>
             <TableCell>Description</TableCell>
           </TableRow>
         </TableHead>
@@ -31,6 +32,7 @@ export function DataPropTable(props: DataPropTableProps) {
             >
               <TableCell>{row.name}</TableCell>
               <TableCell>{row.type}</TableCell>
+              <TableCell>{row.required ? 'Yes' : 'No'}</TableCell>
               <TableCell>{row.desc}</TableCell>
             </TableRow>
           ))}
