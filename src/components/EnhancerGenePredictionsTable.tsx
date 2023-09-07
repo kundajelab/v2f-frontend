@@ -1,6 +1,6 @@
 import { OtTable, Link, Tooltip } from '../ot-ui-components';
 
-import { VariantPageAbcPredictionFragment } from '../__generated__/graphql';
+import { VariantPageEnhancerGenePredictionFragment } from '../__generated__/graphql';
 import { ApolloError } from '@apollo/client';
 import { HourglassTop } from '@mui/icons-material';
 
@@ -13,11 +13,11 @@ type TableColumn<T> = {
 
 const tableColumns = (
   _variantId: string
-): TableColumn<VariantPageAbcPredictionFragment>[] => [
+): TableColumn<VariantPageEnhancerGenePredictionFragment>[] => [
   {
     id: 'isTemporary',
     label: '',
-    renderCell: (rowData: VariantPageAbcPredictionFragment) =>
+    renderCell: (rowData: VariantPageEnhancerGenePredictionFragment) =>
       rowData.isTemporary ? (
         <Tooltip title="Temporary prediction uploaded by a user">
           <HourglassTop
@@ -29,78 +29,82 @@ const tableColumns = (
   {
     id: 'cellType',
     label: 'Cell Type',
-    renderCell: (rowData: VariantPageAbcPredictionFragment) => rowData.cellType,
+    renderCell: (rowData: VariantPageEnhancerGenePredictionFragment) =>
+      rowData.cellType,
   },
   {
     id: 'targetGene',
     label: 'Target Gene',
-    renderCell: (rowData: VariantPageAbcPredictionFragment) => (
+    renderCell: (rowData: VariantPageEnhancerGenePredictionFragment) => (
       <Link key={rowData.targetGene.id} to={`/gene/${rowData.targetGene.id}`}>
         {rowData.targetGene.symbol}
       </Link>
     ),
   },
   {
-    id: 'abcScore',
-    label: 'ABC Score',
-    renderCell: (rowData: VariantPageAbcPredictionFragment) => rowData.score,
+    id: 'score',
+    label: 'Score',
+    renderCell: (rowData: VariantPageEnhancerGenePredictionFragment) =>
+      rowData.score,
   },
   {
     id: 'dataset',
     label: 'Dataset',
-    renderCell: (rowData: VariantPageAbcPredictionFragment) => rowData.dataset,
+    renderCell: (rowData: VariantPageEnhancerGenePredictionFragment) =>
+      rowData.dataset,
   },
   {
     id: 'model',
     label: 'Model',
-    renderCell: (rowData: VariantPageAbcPredictionFragment) => rowData.model,
+    renderCell: (rowData: VariantPageEnhancerGenePredictionFragment) =>
+      rowData.model,
   },
   {
     id: 'variantGeneDistance',
     label: 'Variant-Gene Distance',
-    renderCell: (rowData: VariantPageAbcPredictionFragment) =>
+    renderCell: (rowData: VariantPageEnhancerGenePredictionFragment) =>
       rowData.variantToGeneDistance,
   },
   {
     id: 'enhancerStart',
     label: 'Enhancer Start',
-    renderCell: (rowData: VariantPageAbcPredictionFragment) =>
+    renderCell: (rowData: VariantPageEnhancerGenePredictionFragment) =>
       rowData.enhancerStart,
   },
   {
     id: 'enhanerEnd',
     label: 'Enhancer End',
-    renderCell: (rowData: VariantPageAbcPredictionFragment) =>
+    renderCell: (rowData: VariantPageEnhancerGenePredictionFragment) =>
       rowData.enhancerEnd,
   },
   {
     id: 'enhancerClass',
     label: 'Enhancer Class',
-    renderCell: (rowData: VariantPageAbcPredictionFragment) =>
+    renderCell: (rowData: VariantPageEnhancerGenePredictionFragment) =>
       rowData.enhancerClass,
   },
   {
     id: 'targetGenePromoterActivityQuantile',
     label: 'Target Gene Promoter Activity Quantile',
-    renderCell: (rowData: VariantPageAbcPredictionFragment) =>
+    renderCell: (rowData: VariantPageEnhancerGenePredictionFragment) =>
       rowData.targetGenePromoterActivityQuantile,
   },
 ];
 
-type AbcPredictionsTableProps = {
+type EnhancerGenePredictionsTableProps = {
   loading: boolean;
   error?: ApolloError;
   filenameStem: string;
-  data: VariantPageAbcPredictionFragment[];
+  data: VariantPageEnhancerGenePredictionFragment[];
   variantId: string;
 };
-const AbcPredictionsTable = ({
+const EnhancerGenePredictionsTable = ({
   loading,
   error,
   filenameStem,
   data,
   variantId,
-}: AbcPredictionsTableProps) => (
+}: EnhancerGenePredictionsTableProps) => (
   <OtTable
     loading={loading}
     error={error}
@@ -112,4 +116,4 @@ const AbcPredictionsTable = ({
   />
 );
 
-export default AbcPredictionsTable;
+export default EnhancerGenePredictionsTable;

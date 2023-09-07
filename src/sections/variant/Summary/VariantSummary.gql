@@ -30,8 +30,8 @@ query VariantSummary($variantId: String!) {
     gnomadNFENWE
     gnomadNFESEU
     gnomadOTH
-    uniqueAbcPredictionCellTypes
-    uniqueAbcPredictionTargetGenes {
+    uniqueEnhancerGenePredictionCellTypes
+    uniqueEnhancerGenePredictionTargetGenes {
       id
       symbol
     }

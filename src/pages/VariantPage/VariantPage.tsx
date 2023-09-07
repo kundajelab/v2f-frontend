@@ -36,12 +36,12 @@ import {
   VariantLinkageDisequilibriumFragment,
   VariantLinkageDisequilibriumQuery,
   VariantLinkageDisequilibriumQueryVariables,
-  VariantPageAbcPredictionFragment,
+  VariantPageEnhancerGenePredictionFragment,
   VariantPageBpnetPredictionFragment,
   VariantPageQuery,
   VariantPageQueryVariables,
 } from '../../__generated__/graphql';
-import AbcPredictionsTable from '../../components/AbcPredictionsTable';
+import EnhancerGenePredictionsTable from '../../components/EnhancerGenePredictionsTable';
 import BpnetPredictionsTable from '../../components/BpnetPredictionsTable';
 import LinkageDisequilibriumTable from '../../components/LinkageDisequilibriumTable';
 
@@ -101,8 +101,9 @@ const VariantPage = () => {
   const genesForVariantSchema = isGeneVariant
     ? variantParseGenesForVariantSchema(pageData!)
     : [];
-  const abcPredictions = (pageData?.variantInfo?.abcPredictions ||
-    []) as VariantPageAbcPredictionFragment[];
+  const enhancerGenePredictions = (pageData?.variantInfo
+    ?.enhancerGenePredictions ||
+    []) as VariantPageEnhancerGenePredictionFragment[];
   const bpnetPredictions = (pageData?.variantInfo?.bpnetPredictions ||
     []) as VariantPageBpnetPredictionFragment[];
   const ldTableData = (ldData?.linkageDisequilibriumsForVariant ||
@@ -210,7 +211,7 @@ const VariantPage = () => {
           filenameStem={`${variantId}-lds`}
         ></LinkageDisequilibriumTable>
         <SectionHeading
-          heading="Activity-By-Contact (ABC) Model Predictions"
+          heading="Enhancer-Gene Model Predictions"
           subheading="Which genes are predicted to be regulated by enhancers overlapping this variant?"
           entities={[
             {
@@ -223,10 +224,10 @@ const VariantPage = () => {
             },
           ]}
         />
-        <AbcPredictionsTable
+        <EnhancerGenePredictionsTable
           loading={pageLoading}
           error={error}
-          data={abcPredictions}
+          data={enhancerGenePredictions}
           variantId={variantId}
           filenameStem={`${variantId}-lead-variants`}
         />

@@ -1,4 +1,4 @@
-fragment VariantPageAbcPrediction on AbcPrediction {
+fragment VariantPageEnhancerGenePrediction on EnhancerGenePrediction {
   id
   score
   cellType
@@ -10,7 +10,6 @@ fragment VariantPageAbcPrediction on AbcPrediction {
   targetGeneTss
   targetGenePromoterActivityQuantile
   enhancerToGeneDistance
-  abcVariantPosition
   pip
   model
   dataset
@@ -194,8 +193,8 @@ query VariantPage($variantId: String!) {
     }
   }
   variantInfo(variantId: $variantId) {
-    abcPredictions {
-      ...VariantPageAbcPrediction
+    enhancerGenePredictions {
+      ...VariantPageEnhancerGenePrediction
     }
     bpnetPredictions {
       ...VariantPageBpnetPrediction

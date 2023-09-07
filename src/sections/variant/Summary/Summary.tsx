@@ -216,17 +216,17 @@ function Summary({ variantId }: VariantSummaryProps) {
         Predictions
       </Typography>
       <Typography variant="subtitle2">
-        <strong>ABC Cell Types: </strong>
+        <strong>Enhancer-Gene Prediction Cell Types: </strong>
         <span className={classes.value}>
-          {data.uniqueAbcPredictionCellTypes?.length ?? 'N/A'}
+          {data.uniqueEnhancerGenePredictionCellTypes?.length ?? 'N/A'}
         </span>
       </Typography>
 
       <Typography variant="subtitle2">
-        <strong>ABC Target Genes: </strong>
+        <strong>Enhancer-Gene Prediction Target Genes: </strong>
         <span className={classes.value}>
-          {data?.uniqueAbcPredictionTargetGenes?.length
-            ? data.uniqueAbcPredictionTargetGenes.map((gene) => (
+          {data?.uniqueEnhancerGenePredictionTargetGenes?.length
+            ? data.uniqueEnhancerGenePredictionTargetGenes.map((gene) => (
                 <>
                   <Link key={gene.id} to={`/gene/${gene.id}`}>
                     {gene.symbol}
