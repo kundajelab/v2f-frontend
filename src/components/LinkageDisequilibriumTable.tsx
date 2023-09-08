@@ -1,4 +1,4 @@
-import { OtTable } from '../ot-ui-components';
+import { Link, OtTable } from '../ot-ui-components';
 
 import { VariantLinkageDisequilibriumFragment } from '../__generated__/graphql';
 import { ApolloError } from '@apollo/client';
@@ -12,34 +12,22 @@ type TableColumn<T> = {
 
 const tableColumns: TableColumn<VariantLinkageDisequilibriumFragment>[] = [
   {
+    id: 'variantGnomadId',
+    label: 'Variant',
+    renderCell: (rowData: VariantLinkageDisequilibriumFragment) => (
+      <Link
+        key={rowData.variantGnomadId}
+        to={`/variant/${rowData.variantGnomadId}`}
+      >
+        {rowData.variantGnomadId}
+      </Link>
+    ),
+  },
+  {
     id: 'variantRsId',
     label: 'rsId',
     renderCell: (rowData: VariantLinkageDisequilibriumFragment) =>
       rowData.variantRsId,
-  },
-  {
-    id: 'chr',
-    label: 'Chr',
-    renderCell: (rowData: VariantLinkageDisequilibriumFragment) =>
-      rowData.variantGnomadId.split('_')[0],
-  },
-  {
-    id: 'position',
-    label: 'Position',
-    renderCell: (rowData: VariantLinkageDisequilibriumFragment) =>
-      rowData.variantGnomadId.split('_')[1],
-  },
-  {
-    id: 'refallele',
-    label: 'Ref',
-    renderCell: (rowData: VariantLinkageDisequilibriumFragment) =>
-      rowData.variantGnomadId.split('_')[2],
-  },
-  {
-    id: 'alt',
-    label: 'Alt',
-    renderCell: (rowData: VariantLinkageDisequilibriumFragment) =>
-      rowData.variantGnomadId.split('_')[3],
   },
   {
     id: 'r2',
