@@ -191,26 +191,6 @@ const VariantPage = () => {
 
       <>
         <SectionHeading
-          heading="Linkage Disequilibrium"
-          subheading="Which variants are in linkage disequilibrium with this variant?"
-          entities={[
-            {
-              type: 'variant',
-              fixed: true,
-            },
-            {
-              type: 'variant',
-              fixed: false,
-            },
-          ]}
-        />
-        <LinkageDisequilibriumTable
-          loading={ldLoading}
-          error={ldError}
-          data={ldTableData}
-          filenameStem={`${variantId}-lds`}
-        ></LinkageDisequilibriumTable>
-        <SectionHeading
           heading="Enhancer-Gene Model Predictions"
           subheading="Which genes are predicted to be regulated by enhancers overlapping this variant?"
           entities={[
@@ -345,6 +325,32 @@ const VariantPage = () => {
           variantId={variantId}
           filenameStem={`${variantId}-tag-variants`}
         />
+        <SectionHeading
+          heading="Linkage Disequilibrium"
+          subheading="Which variants are in linkage disequilibrium with this variant?"
+          entities={[
+            {
+              type: 'variant',
+              fixed: true,
+            },
+            {
+              type: 'variant',
+              fixed: false,
+            },
+          ]}
+        />
+        <Typography variant="body1">
+          LD information is sourced from 1000 Genomes Phase 3 queried from
+          Ensembl using the CEU (Utah residents with Northern and Western
+          European ancestry) population. If this is the first time the variant
+          is being queried, it may take a minute to load.
+        </Typography>
+        <LinkageDisequilibriumTable
+          loading={ldLoading}
+          error={ldError}
+          data={ldTableData}
+          filenameStem={`${variantId}-lds`}
+        ></LinkageDisequilibriumTable>
       </>
     </BasePage>
   );
