@@ -45,7 +45,7 @@ const tableColumns = (
     id: 'score',
     label: 'Score',
     renderCell: (rowData: VariantPageEnhancerGenePredictionFragment) =>
-      rowData.score,
+      rowData.score.toFixed(3),
   },
   {
     id: 'dataset',
