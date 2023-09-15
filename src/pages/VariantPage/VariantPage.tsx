@@ -235,7 +235,7 @@ const VariantPage = () => {
         /> */}
 
         <SectionHeading
-          heading="Assigned genes"
+          heading="Assigned genes (OpenTargets)"
           subheading="Which genes are functionally implicated by this variant?"
           entities={[
             {
