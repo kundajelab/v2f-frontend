@@ -11,6 +11,7 @@ type VariantHeaderProps = {
 const VariantHeader = ({ loading, data }: VariantHeaderProps) => {
   console.log(data);
   const id = data?.variantInfo?.id ?? '';
+  const gnomadId = id.replaceAll('_', '-');
   const rsId = data?.variantInfo?.rsId;
   const chromosome = !loading ? id.split('_')[0] : null;
   const positionString = !loading ? id.split('_')[1] : '';
@@ -25,13 +26,13 @@ const VariantHeader = ({ loading, data }: VariantHeaderProps) => {
         <>
           <ExternalLink
             title="Ensembl"
-            url={`https://identifiers.org/ensembl:${id}`}
-            id={id}
+            url={`https://identifiers.org/ensembl:${rsId}`}
+            id={rsId}
           />
           <ExternalLink
-            title="gnomAD"
-            url={`https://www.ensembl.org/Homo_sapiens/Variation/Explore?v=${rsId}`}
-            id={rsId}
+            title="gnomAD 3"
+            url={`https://gnomad.broadinstitute.org/variant/${gnomadId}?dataset=gnomad_r3`}
+            id={gnomadId}
           />
         </>
       }
