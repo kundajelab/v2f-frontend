@@ -31,7 +31,7 @@ const tableColumns: TableColumn<VariantLinkageDisequilibriumFragment>[] = [
   },
   {
     id: 'r2',
-    label: 'LD (r^2)',
+    label: 'LD (r²)',
     renderCell: (rowData: VariantLinkageDisequilibriumFragment) => rowData.r2,
   },
   {

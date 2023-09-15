@@ -109,8 +109,6 @@ const VariantPage = () => {
   const ldTableData = (ldData?.linkageDisequilibriumsForVariant ||
     []) as VariantLinkageDisequilibriumFragment[];
 
-  console.log(ldLoading);
-  console.log(ldData?.linkageDisequilibriumsForVariant);
   // Methods
   const handlePhewasTraitFilter = (
     newPhewasTraitFilterValue?: PhewasOption[]

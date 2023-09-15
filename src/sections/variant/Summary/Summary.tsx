@@ -226,24 +226,26 @@ function Summary({ variantId }: VariantSummaryProps) {
         <strong>Enhancer-Gene Prediction Target Genes: </strong>
         <span className={classes.value}>
           {data?.uniqueEnhancerGenePredictionTargetGenes?.length
-            ? data.uniqueEnhancerGenePredictionTargetGenes.map((gene) => (
+            ? data.uniqueEnhancerGenePredictionTargetGenes.map((gene, i) => (
                 <>
                   <Link key={gene.id} to={`/gene/${gene.id}`}>
                     {gene.symbol}
                   </Link>
-                  <span>, </span>
+                  {i <
+                    data.uniqueEnhancerGenePredictionTargetGenes!.length -
+                      1 && <span>, </span>}
                 </>
               ))
             : 'N/A'}
         </span>
       </Typography>
 
-      <Typography variant="subtitle2">
+      {/* <Typography variant="subtitle2">
         <strong>ChromBPNet Cell Types</strong>
         <span className={classes.value}>
           {data?.bpnetPredictions?.length ?? 'N/A'}
         </span>
-      </Typography>
+      </Typography> */}
     </>
   );
 }
