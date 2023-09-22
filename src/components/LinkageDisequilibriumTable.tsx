@@ -12,14 +12,11 @@ type TableColumn<T> = {
 
 const tableColumns: TableColumn<VariantLinkageDisequilibriumFragment>[] = [
   {
-    id: 'variantGnomadId',
+    id: 'variantId',
     label: 'Variant',
     renderCell: (rowData: VariantLinkageDisequilibriumFragment) => (
-      <Link
-        key={rowData.variantGnomadId}
-        to={`/variant/${rowData.variantGnomadId}`}
-      >
-        {rowData.variantGnomadId}
+      <Link key={rowData.variantId} to={`/variant/${rowData.variantId}`}>
+        {rowData.variantId}
       </Link>
     ),
   },
@@ -28,6 +25,12 @@ const tableColumns: TableColumn<VariantLinkageDisequilibriumFragment>[] = [
     label: 'rsId',
     renderCell: (rowData: VariantLinkageDisequilibriumFragment) =>
       rowData.variantRsId,
+  },
+  {
+    id: 'position',
+    label: 'Position',
+    renderCell: (rowData: VariantLinkageDisequilibriumFragment) =>
+      rowData.variantPosition,
   },
   {
     id: 'r2',

@@ -1,7 +1,8 @@
 fragment VariantLinkageDisequilibrium on LinkageDisequilibrium {
   id
-  variantGnomadId
+  variantId
   variantRsId
+  variantPosition
   r2
   dPrime
   egCellTypes
