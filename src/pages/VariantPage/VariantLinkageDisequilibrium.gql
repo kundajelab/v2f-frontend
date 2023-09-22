@@ -1,4 +1,5 @@
 fragment VariantLinkageDisequilibrium on LinkageDisequilibrium {
+  id
   variantGnomadId
   variantRsId
   r2
