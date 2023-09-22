@@ -1,4 +1,4 @@
-import { Link, OtTable } from '../ot-ui-components';
+import { Link, OtTable, Tooltip } from '../ot-ui-components';
 
 import { VariantLinkageDisequilibriumFragment } from '../__generated__/graphql';
 import { ApolloError } from '@apollo/client';
@@ -39,6 +39,24 @@ const tableColumns: TableColumn<VariantLinkageDisequilibriumFragment>[] = [
     label: "LD (D')",
     renderCell: (rowData: VariantLinkageDisequilibriumFragment) =>
       rowData.dPrime,
+  },
+  {
+    id: 'egCellTypes',
+    label: 'Cell Types w/ pred. EG Link',
+    renderCell: (rowData: VariantLinkageDisequilibriumFragment) => (
+      <Tooltip title={rowData.egCellTypes.join(', ')}>
+        <div>{rowData.egCellTypes.length}</div>
+      </Tooltip>
+    ),
+  },
+  {
+    id: 'egGenes',
+    label: 'Genes w/ pred. EG link',
+    renderCell: (rowData: VariantLinkageDisequilibriumFragment) => (
+      <Tooltip title={rowData.egGenes.join(', ')}>
+        <div>{rowData.egGenes.length}</div>
+      </Tooltip>
+    ),
   },
 ];
 

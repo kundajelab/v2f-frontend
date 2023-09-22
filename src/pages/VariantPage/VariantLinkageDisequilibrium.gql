@@ -3,6 +3,8 @@ fragment VariantLinkageDisequilibrium on LinkageDisequilibrium {
   variantRsId
   r2
   dPrime
+  egCellTypes
+  egGenes
 }
 query VariantLinkageDisequilibrium($variantId: String!) {
   linkageDisequilibriumsForVariant(variantId: $variantId) {
