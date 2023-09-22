@@ -41,6 +41,12 @@ const tableColumns: TableColumn<VariantLinkageDisequilibriumFragment>[] = [
       rowData.dPrime,
   },
   {
+    id: 'mostSevereConsequence',
+    label: 'Most Severe Consequence',
+    renderCell: (rowData: VariantLinkageDisequilibriumFragment) =>
+      rowData.mostSevereConsequence,
+  },
+  {
     id: 'egCellTypes',
     label: 'Cell Types w/ pred. EG Link',
     renderCell: (rowData: VariantLinkageDisequilibriumFragment) => (
