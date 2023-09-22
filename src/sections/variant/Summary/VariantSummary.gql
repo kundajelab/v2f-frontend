@@ -1,5 +1,6 @@
 query VariantSummary($variantId: String!) {
   variantInfo(variantId: $variantId) {
+    id
     rsId
     chromosome
     position
