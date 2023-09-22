@@ -227,14 +227,14 @@ function Summary({ variantId }: VariantSummaryProps) {
         <span className={classes.value}>
           {data?.uniqueEnhancerGenePredictionTargetGenes?.length
             ? data.uniqueEnhancerGenePredictionTargetGenes.map((gene, i) => (
-                <>
+                <Fragment key={gene.id}>
                   <Link key={gene.id} to={`/gene/${gene.id}`}>
                     {gene.symbol}
                   </Link>
                   {i <
                     data.uniqueEnhancerGenePredictionTargetGenes!.length -
                       1 && <span>, </span>}
-                </>
+                </Fragment>
               ))
             : 'N/A'}
         </span>
