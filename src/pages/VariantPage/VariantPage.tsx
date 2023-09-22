@@ -348,6 +348,7 @@ const VariantPage = () => {
           error={ldError}
           data={ldTableData}
           filenameStem={`${variantId}-lds`}
+          variantId={variantId}
         ></LinkageDisequilibriumTable>
       </>
     </BasePage>
