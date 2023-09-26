@@ -210,6 +210,20 @@ const VariantPage = () => {
           filenameStem={`${variantId}-lead-variants`}
         />
 
+        <Typography variant="body1">
+          LD information is sourced from 1000 Genomes Phase 3 queried from
+          Ensembl using the CEU (Utah residents with Northern and Western
+          European ancestry) population. If this is the first time the variant
+          is being queried, it may take a minute to load. Only LDs with r² ≥ 0.8 are displayed.
+        </Typography>
+        <LinkageDisequilibriumTable
+          loading={ldLoading}
+          error={ldError}
+          data={ldTableData}
+          filenameStem={`${variantId}-lds`}
+          variantId={variantId}
+        ></LinkageDisequilibriumTable>
+
         {/* <SectionHeading
           heading="BPNet Model Predictions"
           subheading="(subheading)"
@@ -337,19 +351,6 @@ const VariantPage = () => {
             },
           ]}
         />
-        <Typography variant="body1">
-          LD information is sourced from 1000 Genomes Phase 3 queried from
-          Ensembl using the CEU (Utah residents with Northern and Western
-          European ancestry) population. If this is the first time the variant
-          is being queried, it may take a minute to load.
-        </Typography>
-        <LinkageDisequilibriumTable
-          loading={ldLoading}
-          error={ldError}
-          data={ldTableData}
-          filenameStem={`${variantId}-lds`}
-          variantId={variantId}
-        ></LinkageDisequilibriumTable>
       </>
     </BasePage>
   );
