@@ -58,7 +58,6 @@ function IngestionPage() {
       files: [file],
       operation: 'add',
     });
-    setFiles(response.data);
   };
 
   const processAllFiles = async () => {
