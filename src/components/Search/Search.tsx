@@ -43,7 +43,7 @@ const useStyles = makeStyles((theme: Theme) => ({
 function Search({ autoFocus = false, embedded = false }) {
   const [open, setOpen] = useState(false);
   const [inputValue, setInputValue] = useState('');
-  const debouncedInputValue = useDebounce(inputValue, 300);
+  const debouncedInputValue = useDebounce(inputValue, 400);
   const [getData, { loading, data }] = useLazyQuery<SearchQueryQuery>(
     SEARCH_QUERY,
     {
