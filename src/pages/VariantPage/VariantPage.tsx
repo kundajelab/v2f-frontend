@@ -210,6 +210,20 @@ const VariantPage = () => {
           filenameStem={`${variantId}-lead-variants`}
         />
 
+        <SectionHeading
+          heading="Linkage Disequilibrium"
+          subheading="Which variants are in linkage disequilibrium with this variant?"
+          entities={[
+            {
+              type: 'variant',
+              fixed: true,
+            },
+            {
+              type: 'variant',
+              fixed: false,
+            },
+          ]}
+        />
         <Typography variant="body1">
           LD information is sourced from 1000 Genomes Phase 3 queried from
           Ensembl using the CEU (Utah residents with Northern and Western
@@ -336,20 +350,6 @@ const VariantPage = () => {
           data={associatedTagVariants}
           variantId={variantId}
           filenameStem={`${variantId}-tag-variants`}
-        />
-        <SectionHeading
-          heading="Linkage Disequilibrium"
-          subheading="Which variants are in linkage disequilibrium with this variant?"
-          entities={[
-            {
-              type: 'variant',
-              fixed: true,
-            },
-            {
-              type: 'variant',
-              fixed: false,
-            },
-          ]}
         />
       </>
     </BasePage>
