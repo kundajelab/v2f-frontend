@@ -83,12 +83,6 @@ const tableColumns = (
     renderCell: (rowData: VariantPageEnhancerGenePredictionFragment) =>
       rowData.enhancerClass,
   },
-  {
-    id: 'targetGenePromoterActivityQuantile',
-    label: 'Target Gene Promoter Activity Quantile',
-    renderCell: (rowData: VariantPageEnhancerGenePredictionFragment) =>
-      rowData.targetGenePromoterActivityQuantile.toFixed(3),
-  },
 ];
 
 type EnhancerGenePredictionsTableProps = {

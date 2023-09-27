@@ -8,7 +8,6 @@ fragment VariantPageEnhancerGenePrediction on EnhancerGenePrediction {
   enhancerClass
   enhancerEnd
   targetGeneTss
-  targetGenePromoterActivityQuantile
   enhancerToGeneDistance
   pip
   model
