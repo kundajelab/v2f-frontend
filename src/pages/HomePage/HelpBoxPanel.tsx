@@ -35,7 +35,7 @@ const HelpBoxPanel = ({ fai, url, label, external }: HelpBoxPanelProps) => {
         <Grid container wrap="nowrap" alignItems="center" spacing={1}>
           <Grid item>
             <div className="fa-layers fa-fw fa-3x">
-              <FontAwesomeIcon icon={faCircle} />
+              <FontAwesomeIcon icon={faCircle as IconProp} />
               <FontAwesomeIcon icon={fai} transform="shrink-8" inverse />
             </div>
           </Grid>
@@ -50,7 +50,7 @@ const HelpBoxPanel = ({ fai, url, label, external }: HelpBoxPanelProps) => {
     <Box className={classes.helpBoxes}>
       <Link to={url} external={external} className={classes.baseLink}>
         <div className="fa-layers fa-fw fa-6x">
-          <FontAwesomeIcon icon={faCircle} />
+          <FontAwesomeIcon icon={faCircle as IconProp} />
           <FontAwesomeIcon icon={fai} transform="shrink-8" inverse />
         </div>
         <Typography>{label}</Typography>

@@ -3,6 +3,7 @@ import BaseHeader from '../../components/Header';
 import { ExternalLink } from '../../components/ExternalLink';
 import LocusLink from '../../components/LocusLink';
 import { VariantHeaderQuery } from '../../__generated__/graphql';
+import { IconProp } from '@fortawesome/fontawesome-svg-core';
 
 type VariantHeaderProps = {
   loading: boolean;
@@ -21,7 +22,7 @@ const VariantHeader = ({ loading, data }: VariantHeaderProps) => {
     <BaseHeader
       title={id}
       loading={loading}
-      Icon={faMapPin}
+      Icon={faMapPin as IconProp}
       externalLinks={
         <>
           <ExternalLink

@@ -4,6 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import Search from '../../components/Search';
 import { makeStyles } from '@mui/styles';
+import { IconProp } from '@fortawesome/fontawesome-svg-core';
 
 const useStyles = makeStyles((theme: Theme) => ({
   icon: {
@@ -30,7 +31,7 @@ const EmptyPage = ({ children }: EmptyPageProps) => {
   return (
     <Grid container direction="column" alignItems="center">
       <FontAwesomeIcon
-        icon={faExclamationTriangle}
+        icon={faExclamationTriangle as IconProp}
         size="3x"
         className={classes.icon}
       />
