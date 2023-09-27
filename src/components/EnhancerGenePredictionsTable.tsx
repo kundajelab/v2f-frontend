@@ -104,8 +104,8 @@ const EnhancerGenePredictionsTable = ({
     error={error}
     columns={tableColumns(variantId)}
     data={data}
-    sortBy="pval"
-    order="asc"
+    sortBy="score"
+    order="desc"
     downloadFileStem={filenameStem}
   />
 );
