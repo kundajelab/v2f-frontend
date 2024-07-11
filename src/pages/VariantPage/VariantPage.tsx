@@ -12,6 +12,7 @@ import AssociatedIndexVariantsTable from '../../components/AssociatedIndexVarian
 import AssociatedGenes from '../../components/AssociatedGenes';
 import ScrollToTop from '../../components/ScrollToTop';
 import PheWASSection from '../../components/PheWASSection';
+import IGVBrowser from '../../components/IGVBrowser';
 
 import NotFoundPage from '../NotFoundPage';
 import Header from './Header';
@@ -300,6 +301,11 @@ const VariantPage = () => {
           isIndexVariant={isIndexVariant}
           isTagVariant={isTagVariant}
         />
+        <SectionHeading
+        heading="IGV Browser"
+        subheading="(subheading)"
+      />
+      <IGVBrowser /> {/* Add the IGV Browser component here */}
 
         <SectionHeading
           heading="GWAS lead variants"
