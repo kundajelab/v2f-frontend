@@ -1,8 +1,12 @@
-import { OtTable, Link, Tooltip } from '../ot-ui-components';
+import { OtTable, Link, Tooltip, Button } from '../ot-ui-components';
 
 import { VariantPageEnhancerGenePredictionFragment } from '../__generated__/graphql';
 import { ApolloError } from '@apollo/client';
 import { HourglassTop } from '@mui/icons-material';
+import { IconButton } from '@mui/material';
+import AddIcon from '@mui/icons-material/Add';
+import { igvTracks } from '../state/igv-tracks';
+import { PrimitiveAtom, SetStateAction, useAtom } from 'jotai';
 
 type TableColumn<T> = {
   id: string;
@@ -12,7 +16,7 @@ type TableColumn<T> = {
 };
 
 const tableColumns = (
-  _variantId: string
+  _variantId: string, igvTracks: string[], addTrack: (track: string) => void
 ): TableColumn<VariantPageEnhancerGenePredictionFragment>[] => [
   {
     id: 'isTemporary',
@@ -83,6 +87,17 @@ const tableColumns = (
     renderCell: (rowData: VariantPageEnhancerGenePredictionFragment) =>
       rowData.enhancerClass,
   },
+  {
+    id: 'datatrackURL',
+    label: 'DataTrack',
+    renderCell: (rowData: VariantPageEnhancerGenePredictionFragment) => {
+      if (rowData.datatrackURL) {
+        return (<IconButton onClick={() => addTrack(rowData.datatrackURL!)}> <AddIcon /> 
+        </IconButton>)
+      }
+      return null;
+    }
+  },
 ];
 
 type EnhancerGenePredictionsTableProps = {
@@ -98,16 +113,19 @@ const EnhancerGenePredictionsTable = ({
   filenameStem,
   data,
   variantId,
-}: EnhancerGenePredictionsTableProps) => (
+}: EnhancerGenePredictionsTableProps) =>{ 
+  const [tracks, setTracks] = useAtom(igvTracks)
+  const addTrack = (track: string) => setTracks([...tracks, track])
+  return (
   <OtTable
     loading={loading}
     error={error}
-    columns={tableColumns(variantId)}
+    columns={tableColumns(variantId, tracks, addTrack)}
     data={data}
     sortBy="score"
     order="desc"
     downloadFileStem={filenameStem}
   />
-);
+)};
 
 export default EnhancerGenePredictionsTable;

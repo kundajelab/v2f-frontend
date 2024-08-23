@@ -13,6 +13,7 @@ fragment VariantPageEnhancerGenePrediction on EnhancerGenePrediction {
   model
   dataset
   isTemporary
+  datatrackURL
   targetGene {
     id
     symbol
