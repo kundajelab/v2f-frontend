@@ -5,8 +5,11 @@ import { ApolloError } from '@apollo/client';
 import { HourglassTop } from '@mui/icons-material';
 import { IconButton } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
-import { igvTracks } from '../state/igv-tracks';
+import RemoveIcon from '@mui/icons-material/Remove';
+import { igvTracksSet } from '../state/igv-tracks';
 import { PrimitiveAtom, SetStateAction, useAtom } from 'jotai';
+
+
 
 type TableColumn<T> = {
   id: string;
@@ -15,8 +18,9 @@ type TableColumn<T> = {
   renderCell?: (rowData: T) => React.ReactNode;
 };
 
+
 const tableColumns = (
-  _variantId: string, igvTracks: string[], addTrack: (track: string) => void
+  _variantId: string, igvTracks: Set<string>, addTrack: (track: string) => void, removeTrack: (track: string) => void
 ): TableColumn<VariantPageEnhancerGenePredictionFragment>[] => [
   {
     id: 'isTemporary',
@@ -76,7 +80,7 @@ const tableColumns = (
       rowData.enhancerStart,
   },
   {
-    id: 'enhanerEnd',
+    id: 'enhancerEnd',
     label: 'Enhancer End',
     renderCell: (rowData: VariantPageEnhancerGenePredictionFragment) =>
       rowData.enhancerEnd,
@@ -92,8 +96,13 @@ const tableColumns = (
     label: 'DataTrack',
     renderCell: (rowData: VariantPageEnhancerGenePredictionFragment) => {
       if (rowData.datatrackURL) {
-        return (<IconButton onClick={() => addTrack(rowData.datatrackURL!)}> <AddIcon /> 
-        </IconButton>)
+        const isTrackAdded = igvTracks.has(rowData.datatrackURL);
+        
+        return (
+          <IconButton onClick={() => isTrackAdded ? removeTrack(rowData.datatrackURL!) : addTrack(rowData.datatrackURL!)}>
+            {isTrackAdded ? <RemoveIcon /> : <AddIcon />}
+          </IconButton>
+        );
       }
       return null;
     }
@@ -114,13 +123,23 @@ const EnhancerGenePredictionsTable = ({
   data,
   variantId,
 }: EnhancerGenePredictionsTableProps) =>{ 
-  const [tracks, setTracks] = useAtom(igvTracks)
-  const addTrack = (track: string) => setTracks([...tracks, track])
+  const [tracksSet, setTracksSet] = useAtom(igvTracksSet)
+  const addTrack = (track: string) => {
+    setTracksSet((prevTrackSet) => new Set(prevTrackSet).add(track));
+  };
+
+  const removeTrack = (track: string) => {
+    setTracksSet((prevTrackSet) => {
+      const newTrackSet = new Set(prevTrackSet);
+      newTrackSet.delete(track);
+      return newTrackSet;
+    })
+  };
   return (
   <OtTable
     loading={loading}
     error={error}
-    columns={tableColumns(variantId, tracks, addTrack)}
+    columns={tableColumns(variantId, tracksSet, addTrack, removeTrack)}
     data={data}
     sortBy="score"
     order="desc"
