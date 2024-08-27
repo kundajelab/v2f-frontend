@@ -179,6 +179,11 @@ const VariantPage = () => {
   if (headerData && !headerData.variantInfo) {
     return <NotFoundPage />;
   }
+
+  // Return the Locus to the IGV component
+  const [chromosome, position] = variantId.split('_');
+  const locus = `${chromosome}:${position}`;
+
   return (
     <BasePage>
       <ScrollToTop />
@@ -305,7 +310,7 @@ const VariantPage = () => {
         heading="IGV Browser"
         subheading="(subheading)"
       />
-      <IGVBrowser /> {/* Add the IGV Browser component here */}
+      <IGVBrowser locus={locus} />  {/* Add the IGV Browser component here */}
 
         <SectionHeading
           heading="GWAS lead variants"

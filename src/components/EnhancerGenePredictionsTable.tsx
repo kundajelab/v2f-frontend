@@ -1,8 +1,15 @@
-import { OtTable, Link, Tooltip } from '../ot-ui-components';
+import { OtTable, Link, Tooltip, Button } from '../ot-ui-components';
 
 import { VariantPageEnhancerGenePredictionFragment } from '../__generated__/graphql';
 import { ApolloError } from '@apollo/client';
 import { HourglassTop } from '@mui/icons-material';
+import { IconButton } from '@mui/material';
+import AddIcon from '@mui/icons-material/Add';
+import RemoveIcon from '@mui/icons-material/Remove';
+import { igvTracksSet } from '../state/igv-tracks';
+import { PrimitiveAtom, SetStateAction, useAtom } from 'jotai';
+
+
 
 type TableColumn<T> = {
   id: string;
@@ -11,8 +18,9 @@ type TableColumn<T> = {
   renderCell?: (rowData: T) => React.ReactNode;
 };
 
+
 const tableColumns = (
-  _variantId: string
+  _variantId: string, igvTracks: Set<string>, addTrack: (track: string) => void, removeTrack: (track: string) => void
 ): TableColumn<VariantPageEnhancerGenePredictionFragment>[] => [
   {
     id: 'isTemporary',
@@ -72,7 +80,7 @@ const tableColumns = (
       rowData.enhancerStart,
   },
   {
-    id: 'enhanerEnd',
+    id: 'enhancerEnd',
     label: 'Enhancer End',
     renderCell: (rowData: VariantPageEnhancerGenePredictionFragment) =>
       rowData.enhancerEnd,
@@ -82,6 +90,22 @@ const tableColumns = (
     label: 'Enhancer Class',
     renderCell: (rowData: VariantPageEnhancerGenePredictionFragment) =>
       rowData.enhancerClass,
+  },
+  {
+    id: 'datatrackURL',
+    label: 'DataTrack',
+    renderCell: (rowData: VariantPageEnhancerGenePredictionFragment) => {
+      if (rowData.datatrackURL) {
+        const isTrackAdded = igvTracks.has(rowData.datatrackURL);
+        
+        return (
+          <IconButton onClick={() => isTrackAdded ? removeTrack(rowData.datatrackURL!) : addTrack(rowData.datatrackURL!)}>
+            {isTrackAdded ? <RemoveIcon /> : <AddIcon />}
+          </IconButton>
+        );
+      }
+      return null;
+    }
   },
 ];
 
@@ -98,16 +122,29 @@ const EnhancerGenePredictionsTable = ({
   filenameStem,
   data,
   variantId,
-}: EnhancerGenePredictionsTableProps) => (
+}: EnhancerGenePredictionsTableProps) =>{ 
+  const [tracksSet, setTracksSet] = useAtom(igvTracksSet)
+  const addTrack = (track: string) => {
+    setTracksSet((prevTrackSet) => new Set(prevTrackSet).add(track));
+  };
+
+  const removeTrack = (track: string) => {
+    setTracksSet((prevTrackSet) => {
+      const newTrackSet = new Set(prevTrackSet);
+      newTrackSet.delete(track);
+      return newTrackSet;
+    })
+  };
+  return (
   <OtTable
     loading={loading}
     error={error}
-    columns={tableColumns(variantId)}
+    columns={tableColumns(variantId, tracksSet, addTrack, removeTrack)}
     data={data}
     sortBy="score"
     order="desc"
     downloadFileStem={filenameStem}
   />
-);
+)};
 
 export default EnhancerGenePredictionsTable;
