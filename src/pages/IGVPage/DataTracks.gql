@@ -1,0 +1,10 @@
+query DataTracksTable {
+    getDataTracks {
+    id
+    url
+    cellType
+    bioSample
+    model
+    }
+}
+
