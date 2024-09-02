@@ -8,6 +8,7 @@ import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 import { igvTracksSet } from '../state/igv-tracks';
 import { PrimitiveAtom, SetStateAction, useAtom } from 'jotai';
+import { useEffect } from 'react';
 
 
 
@@ -124,6 +125,9 @@ const EnhancerGenePredictionsTable = ({
   variantId,
 }: EnhancerGenePredictionsTableProps) =>{ 
   const [tracksSet, setTracksSet] = useAtom(igvTracksSet)
+  useEffect(() => {
+    setTracksSet(new Set()); // This will clear the set
+}, [setTracksSet]);
   const addTrack = (track: string) => {
     setTracksSet((prevTrackSet) => new Set(prevTrackSet).add(track));
   };
@@ -135,6 +139,7 @@ const EnhancerGenePredictionsTable = ({
       return newTrackSet;
     })
   };
+
   return (
   <OtTable
     loading={loading}
