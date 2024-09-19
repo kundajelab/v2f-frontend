@@ -4,7 +4,9 @@ query DataTracksTable {
     url
     cellType
     bioSample
-    model
+    trackType
+    trackSubType
+    fileFormat
     }
 }
 

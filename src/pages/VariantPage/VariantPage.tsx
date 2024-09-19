@@ -215,6 +215,11 @@ const VariantPage = () => {
           variantId={variantId}
           filenameStem={`${variantId}-lead-variants`}
         />
+        <SectionHeading
+        heading="IGV Browser"
+        subheading="Chosen datatracks for this variant can be viewed here"
+        />
+        <IGVBrowser locus={locus} />  {}
 
         <SectionHeading
           heading="Linkage Disequilibrium"
@@ -306,12 +311,6 @@ const VariantPage = () => {
           isIndexVariant={isIndexVariant}
           isTagVariant={isTagVariant}
         />
-        <SectionHeading
-        heading="IGV Browser"
-        subheading="(subheading)"
-      />
-      <IGVBrowser locus={locus} />  {/* Add the IGV Browser component here */}
-
         <SectionHeading
           heading="GWAS lead variants"
           subheading="Which GWAS lead variants are linked with this variant?"
