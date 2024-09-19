@@ -1,3 +1,3 @@
 import { atom, useAtom } from "jotai";
-
-export const igvTracksSet = atom<Set<string>>(new Set<string>())
+import ITrackInfo from "./ITrackInfo";
+export const igvTracksSet = atom<Set<ITrackInfo>>(new Set<ITrackInfo>());
