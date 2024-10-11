@@ -1,5 +1,4 @@
 import { OtTable, Link, Tooltip, Button } from '../ot-ui-components';
-
 import { VariantPageEnhancerGenePredictionFragment } from '../__generated__/graphql';
 import { ApolloError } from '@apollo/client';
 import { HourglassTop } from '@mui/icons-material';
@@ -8,8 +7,15 @@ import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 import { igvTracksSet } from '../state/igv-tracks';
 import { PrimitiveAtom, SetStateAction, useAtom } from 'jotai';
+import { useEffect } from 'react';
 
-
+interface ITrackInfo {
+  cellType: string;
+  bioSample: string;
+  trackSubType?: string | null;
+  fileFormat: string;
+  url: string;
+}  
 
 type TableColumn<T> = {
   id: string;
@@ -18,9 +24,8 @@ type TableColumn<T> = {
   renderCell?: (rowData: T) => React.ReactNode;
 };
 
-
 const tableColumns = (
-  _variantId: string, igvTracks: Set<string>, addTrack: (track: string) => void, removeTrack: (track: string) => void
+  _variantId: string, igvTracks: Set<ITrackInfo>, addTrack: (track: ITrackInfo) => void, removeTrack: (track: ITrackInfo) => void
 ): TableColumn<VariantPageEnhancerGenePredictionFragment>[] => [
   {
     id: 'isTemporary',
@@ -65,7 +70,7 @@ const tableColumns = (
     id: 'model',
     label: 'Model',
     renderCell: (rowData: VariantPageEnhancerGenePredictionFragment) =>
-      rowData.model,
+      rowData.model || 'N/A', // Default to 'N/A' if model is missing
   },
   {
     id: 'variantGeneDistance',
@@ -96,10 +101,20 @@ const tableColumns = (
     label: 'DataTrack',
     renderCell: (rowData: VariantPageEnhancerGenePredictionFragment) => {
       if (rowData.datatrackURL) {
-        const isTrackAdded = igvTracks.has(rowData.datatrackURL);
-        
+        const trackInfo: ITrackInfo = {
+          cellType: rowData.cellType,
+          bioSample: rowData.dataset,
+          trackSubType: rowData.model|| 'N/A', 
+          fileFormat: 'N/A', // Update later with actual file type
+          url: rowData.datatrackURL,
+        };
+
+        const isTrackAdded = Array.from(igvTracks).some(
+          (track) => track.url === trackInfo.url
+        );
+
         return (
-          <IconButton onClick={() => isTrackAdded ? removeTrack(rowData.datatrackURL!) : addTrack(rowData.datatrackURL!)}>
+          <IconButton onClick={() => isTrackAdded ? removeTrack(trackInfo) : addTrack(trackInfo)}>
             {isTrackAdded ? <RemoveIcon /> : <AddIcon />}
           </IconButton>
         );
@@ -116,35 +131,43 @@ type EnhancerGenePredictionsTableProps = {
   data: VariantPageEnhancerGenePredictionFragment[];
   variantId: string;
 };
+
 const EnhancerGenePredictionsTable = ({
   loading,
   error,
   filenameStem,
   data,
   variantId,
-}: EnhancerGenePredictionsTableProps) =>{ 
-  const [tracksSet, setTracksSet] = useAtom(igvTracksSet)
-  const addTrack = (track: string) => {
+}: EnhancerGenePredictionsTableProps) => { 
+  const [tracksSet, setTracksSet] = useAtom(igvTracksSet);
+
+  useEffect(() => {
+    setTracksSet(new Set()); // This will clear the set on component mount
+  }, [setTracksSet]);
+
+  const addTrack = (track: ITrackInfo) => {
     setTracksSet((prevTrackSet) => new Set(prevTrackSet).add(track));
   };
 
-  const removeTrack = (track: string) => {
+  const removeTrack = (track: ITrackInfo) => {
     setTracksSet((prevTrackSet) => {
       const newTrackSet = new Set(prevTrackSet);
-      newTrackSet.delete(track);
+      newTrackSet.delete(track); // Deleting the track object
       return newTrackSet;
-    })
+    });
   };
+
   return (
-  <OtTable
-    loading={loading}
-    error={error}
-    columns={tableColumns(variantId, tracksSet, addTrack, removeTrack)}
-    data={data}
-    sortBy="score"
-    order="desc"
-    downloadFileStem={filenameStem}
-  />
-)};
+    <OtTable
+      loading={loading}
+      error={error}
+      columns={tableColumns(variantId, tracksSet, addTrack, removeTrack)}
+      data={data}
+      sortBy="score"
+      order="desc"
+      downloadFileStem={filenameStem}
+    />
+  );
+};
 
 export default EnhancerGenePredictionsTable;
