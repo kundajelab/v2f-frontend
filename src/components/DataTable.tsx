@@ -1,14 +1,14 @@
-import React from 'react';
-import { OtTable, Tooltip } from '../ot-ui-components';
-import { IconButton, Button } from '@mui/material';
+import React, { useState } from 'react';
+import { OtTable } from '../ot-ui-components';
+import { IconButton, Button, Table, TableBody, TableCell, TableRow, Collapse, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle} from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { useAtom } from 'jotai';
 import { igvTracksSet } from '../state/igv-tracks';
 import { DataTrack } from '../__generated__/graphql';
 
-// Define the ITrackInfo interface
 interface ITrackInfo {
   cellType: string;
   bioSample: string;
@@ -17,80 +17,6 @@ interface ITrackInfo {
   url: string;
 }
 
-type TableColumn<T> = {
-  id: string;
-  label: string;
-  tooltip?: React.ReactNode;
-  renderCell?: (rowData: T) => React.ReactNode;
-};
-
-// Updated tableColumns function to use ITrackInfo objects
-const tableColumns = (
-  igvTracks: Set<ITrackInfo>,
-  addTrack: (track: ITrackInfo) => void,
-  removeTrack: (track: ITrackInfo) => void
-): TableColumn<DataTrack>[] => [
-  {
-    id: 'cellType',
-    label: 'Cell Type',
-    renderCell: (rowData: DataTrack) => rowData.cellType,
-  },
-  {
-    id: 'bioSample',
-    label: 'Dataset',
-    renderCell: (rowData: DataTrack) => rowData.bioSample,
-  },
-  {
-    id: 'trackType',
-    label: 'Track Type',
-    renderCell: (rowData: DataTrack) => rowData.trackType || 'N/A',
-  },
-  {
-    id: 'trackSubType',
-    label: 'Track SubType',
-    renderCell: (rowData: DataTrack) => rowData.trackSubType || 'N/A',
-  },
-  {
-    id: 'datatrack',
-    label: 'DataTrack',
-    renderCell: (rowData: DataTrack) => {
-      if (rowData.url) {
-        const trackInfo: ITrackInfo = {
-          cellType: rowData.cellType,
-          bioSample: rowData.bioSample,
-          trackSubType: rowData.trackSubType || 'N/A',
-          fileFormat: 'N/A', // Can update based on available data
-          url: rowData.url,
-        };
-
-        const isTrackAdded = Array.from(igvTracks).some(
-          (track) => track.url === trackInfo.url
-        );
-
-        return (
-          <IconButton onClick={() => isTrackAdded ? removeTrack(trackInfo) : addTrack(trackInfo)}>
-            {isTrackAdded ? <RemoveIcon /> : <AddIcon />}
-          </IconButton>
-        );
-      }
-      return null;
-    },
-  },
-  {
-    id: 'url',
-    label: 'URL',
-    renderCell: (rowData: DataTrack) => (
-      <IconButton
-        href={rowData.url}
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        <OpenInNewIcon />
-      </IconButton>
-    ),
-  },
-];
-
 type DataTableProps = {
   loading: boolean;
   error: any;
@@ -98,20 +24,26 @@ type DataTableProps = {
   filenameStem: string;
 };
 
-const DataTable = ({
-  loading,
-  error,
-  data,
-  filenameStem,
-}: DataTableProps) => {
+const DataTable: React.FC<DataTableProps> = ({ loading, error, data, filenameStem }) => {
   const [tracksSet, setTracksSet] = useAtom(igvTracksSet);
+  const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set());
+  const [openConfirmDialog, setOpenConfirmDialog] = useState(false);
 
-  // Updated addTrack function to handle ITrackInfo
+  // Toggle expanded state for each row
+  const toggleExpand = (rowId: string) => {
+    setExpandedRows((prev) => {
+      const newExpandedRows = new Set(prev);
+      newExpandedRows.has(rowId) ? newExpandedRows.delete(rowId) : newExpandedRows.add(rowId);
+      return newExpandedRows;
+    });
+  };
+
+  // Add a single track
   const addTrack = (track: ITrackInfo) => {
     setTracksSet((prevTrackSet) => new Set(prevTrackSet).add(track));
   };
 
-  // Updated removeTrack function to handle ITrackInfo
+  // Remove a single track
   const removeTrack = (track: ITrackInfo) => {
     setTracksSet((prevTrackSet) => {
       const newTrackSet = new Set(prevTrackSet);
@@ -124,7 +56,7 @@ const DataTable = ({
     });
   };
 
-  // Updated addAllTracks function to handle ITrackInfo
+  // Add all tracks currently in the table
   const addAllTracks = () => {
     setTracksSet((prevTrackSet) => {
       const newTrackSet = new Set(prevTrackSet);
@@ -146,19 +78,170 @@ const DataTable = ({
     });
   };
 
+  const removeAllTracks = () => {
+    setTracksSet(new Set()); // Clears all tracks by resetting to an empty set
+  };
+
+  // Add all tracks for the specific Dataset/BioSample combination
+  const addAllTracksForRow = (bioSample: string, cellType: string) => {
+    setTracksSet((prevTrackSet) => {
+      const newTrackSet = new Set(prevTrackSet);
+      data.forEach((track) => {
+        if (track.bioSample === bioSample && track.cellType === cellType && track.url) {
+          const trackInfo: ITrackInfo = {
+            cellType: track.cellType,
+            bioSample: track.bioSample,
+            trackSubType: track.trackSubType || 'N/A',
+            fileFormat: track.fileFormat,
+            url: track.url,
+          };
+          if (!Array.from(newTrackSet).some((t) => t.url === trackInfo.url)) {
+            newTrackSet.add(trackInfo);
+          }
+        }
+      });
+      return newTrackSet;
+    });
+  };
+
+
+  // Handle "Add All Tracks" button click
+  const handleAddAllTracksClick = () => {
+    if (data.length > 10) {
+      setOpenConfirmDialog(true); // Open dialog if more than 10 tracks
+    } else {
+      addAllTracks();
+    }
+  };
+
+  // Confirm and add all tracks when user accepts in dialog
+  const handleConfirmAddAllTracks = () => {
+    addAllTracks();
+    setOpenConfirmDialog(false); // Close dialog after confirmation
+  };
+
+  // Table is now defined here
+  const tableColumns = [
+    {
+      id: 'bioSample',
+      label: 'DataSet',
+      renderCell: (rowData: DataTrack) => rowData.bioSample,
+    },
+    {
+      id: 'cellType',
+      label: 'BioSample',
+      renderCell: (rowData: DataTrack) => rowData.cellType,
+    },
+    {
+      id: 'addTracks',
+      label: 'Add Tracks',
+      renderCell: (rowData: DataTrack) => (
+        <Button
+          onClick={() => addAllTracksForRow(rowData.bioSample, rowData.cellType)}
+          variant="contained"
+          color="primary"
+          size="small"
+        >
+          Add Tracks
+        </Button>
+      ),
+    },
+    {
+      id: 'tracks',
+      label: 'Tracks',
+      renderCell: (rowData: DataTrack) => (
+        <>
+          <IconButton onClick={() => toggleExpand(`${rowData.bioSample}-${rowData.cellType}`)}>
+            <ExpandMoreIcon />
+          </IconButton>
+          <Collapse in={expandedRows.has(`${rowData.bioSample}-${rowData.cellType}`)} timeout="auto" unmountOnExit>
+            <Table size="small">
+              <TableBody>
+                {data
+                  .filter(
+                    (track: DataTrack) =>
+                      track.bioSample === rowData.bioSample && track.cellType === rowData.cellType
+                  )
+                  .map((track: DataTrack) => {
+                    const trackInfo: ITrackInfo = {
+                      cellType: track.cellType,
+                      bioSample: track.bioSample,
+                      trackSubType: track.trackSubType || 'N/A',
+                      fileFormat: track.fileFormat,
+                      url: track.url,
+                    };
+
+                    // Check if the track is currently in the tracksSet
+                    const isTrackAdded = Array.from(tracksSet).some((t) => t.url === trackInfo.url);
+
+                    return (
+                      <TableRow key={track.url}>
+                        <TableCell>
+                          {track.trackSubType} ({track.fileFormat})
+                        </TableCell>
+                        <TableCell>
+                          <IconButton
+                            onClick={() => isTrackAdded ? removeTrack(trackInfo) : addTrack(trackInfo)}
+                            size="small"
+                            color="primary"
+                          >
+                            {isTrackAdded ? <RemoveIcon fontSize="small" /> : <AddIcon fontSize="small" />}
+                          </IconButton>
+                        </TableCell>
+                        <TableCell>
+                          <IconButton href={track.url} target="_blank" rel="noopener noreferrer">
+                            <OpenInNewIcon fontSize="small" />
+                          </IconButton>
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
+              </TableBody>
+            </Table>
+          </Collapse>
+        </>
+      ),
+    },
+  ];
+
   return (
     <>
-      <Button onClick={addAllTracks} variant="contained" color="primary">
+      {/* Add All Tracks Button for All Tracks in the Table */}
+      <Button onClick={handleAddAllTracksClick} variant="contained" color="primary" style={{ marginBottom: '1rem' }}>
         Add All Tracks
       </Button>
+      <Button onClick={removeAllTracks} variant="contained" color="secondary" style={{ marginBottom: '1rem' }}>
+        Remove All Tracks
+      </Button>
+
+      {/* Confirmation Dialog */}
+      <Dialog open={openConfirmDialog} onClose={() => setOpenConfirmDialog(false)}>
+        <DialogTitle>Confirm Add All Tracks</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            You are about to add more than 10 tracks. Do you want to continue?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOpenConfirmDialog(false)} color="secondary">
+            Cancel
+          </Button>
+          <Button onClick={handleConfirmAddAllTracks} color="primary" autoFocus>
+            Confirm
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+
       <OtTable
         loading={loading}
         error={error}
-        columns={tableColumns(tracksSet, addTrack, removeTrack)}
+        columns={tableColumns}
         data={data}
-        sortBy="id" // You can sort by any column; adjust as needed
+        sortBy="id"
         order="asc"
         downloadFileStem={filenameStem}
+        pageSize={20}
       />
     </>
   );
