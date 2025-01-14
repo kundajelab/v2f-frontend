@@ -8,11 +8,13 @@ interface FiltersProps {
   setSelectedCellTypes: (cellTypes: string[]) => void;
   selectedBioSamples: string[];
   setSelectedBioSamples: (bioSamples: string[]) => void;
-  selectedTrackTypes: string[];  // TrackType filter
+  selectedBioSampleIds: string[];
+  setSelectedBioSampleIds: (bioSampleIds: string[]) => void;
+  selectedTrackTypes: string[];
   setSelectedTrackTypes: (trackTypes: string[]) => void;
-  selectedTrackSubTypes: string[]; // TrackSubType filter
+  selectedTrackSubTypes: string[];
   setSelectedTrackSubTypes: (trackSubTypes: string[]) => void;
-  selectedFileFormats: string[]; // FileFormats filter
+  selectedFileFormats: string[];
   setSelectedFileFormats: (fileFormats: string[]) => void;
 }
 
@@ -22,6 +24,8 @@ const Filters: React.FC<FiltersProps> = ({
   setSelectedCellTypes,
   selectedBioSamples,
   setSelectedBioSamples,
+  selectedBioSampleIds,
+  setSelectedBioSampleIds,
   selectedTrackTypes,
   setSelectedTrackTypes,
   selectedTrackSubTypes,
@@ -29,54 +33,75 @@ const Filters: React.FC<FiltersProps> = ({
   selectedFileFormats,
   setSelectedFileFormats,
 }) => {
-  // Extract unique values for cell types, bio samples, track types, track subtypes, and file formats
-  const cellTypes = Array.from(new Set(data.map(track => track.cellType)));
-  const bioSamples = Array.from(new Set(data.map(track => track.bioSample)));
-  const trackTypes = Array.from(new Set(data.map(track => track.trackType || '')));
-  const trackSubTypes = Array.from(new Set(data.map(track => track.trackSubType || '')));
-  const fileFormats = Array.from(new Set(data.map(track => track.fileFormat)));
+  // Get unique values for each filter
+  const uniqueCellTypes = Array.from(new Set(data.map((track) => track.cellType)));
+  const uniqueBioSamples = Array.from(new Set(data.map((track) => track.bioSample)));
+  const uniqueBioSampleIds = Array.from(new Set(data.map((track) => track.bioSampleID)));
+  const uniqueTrackTypes = Array.from(new Set(data.map((track) => track.trackType)));
+  const uniqueTrackSubTypes = Array.from(new Set(data.map((track) => track.trackSubType || '')));
+  const uniqueFileFormats = Array.from(new Set(data.map((track) => track.fileFormat)));
 
   return (
-    <Box>
+    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mb: 2 }}>
       <Autocomplete
         multiple
-        options={cellTypes}
+        options={uniqueCellTypes}
         value={selectedCellTypes}
-        onChange={(event, newValue) => setSelectedCellTypes(newValue)}
-        renderInput={(params) => <TextField {...params} label="Cell Types" />}
-        sx={{ marginBottom: 2 }}
+        onChange={(_, newValue) => setSelectedCellTypes(newValue)}
+        renderInput={(params) => (
+          <TextField {...params} label="Filter by Cell Type" variant="outlined" />
+        )}
       />
+
       <Autocomplete
         multiple
-        options={bioSamples}
+        options={uniqueBioSamples}
         value={selectedBioSamples}
-        onChange={(event, newValue) => setSelectedBioSamples(newValue)}
-        renderInput={(params) => <TextField {...params} label="BioSamples" />}
-        sx={{ marginBottom: 2 }}
+        onChange={(_, newValue) => setSelectedBioSamples(newValue)}
+        renderInput={(params) => (
+          <TextField {...params} label="Filter by Dataset Name" variant="outlined" />
+        )}
       />
+
+      {/* New BioSample ID Filter */}
       <Autocomplete
         multiple
-        options={trackTypes}
+        options={uniqueBioSampleIds}
+        value={selectedBioSampleIds}
+        onChange={(_, newValue) => setSelectedBioSampleIds(newValue)}
+        renderInput={(params) => (
+          <TextField {...params} label="Filter by Dataset ID" variant="outlined" />
+        )}
+      />
+
+      <Autocomplete
+        multiple
+        options={uniqueTrackTypes}
         value={selectedTrackTypes}
-        onChange={(event, newValue) => setSelectedTrackTypes(newValue)}
-        renderInput={(params) => <TextField {...params} label="Track Types" />}
-        sx={{ marginBottom: 2 }}
+        onChange={(_, newValue) => setSelectedTrackTypes(newValue)}
+        renderInput={(params) => (
+          <TextField {...params} label="Filter by Track Type" variant="outlined" />
+        )}
       />
+
       <Autocomplete
         multiple
-        options={trackSubTypes}
+        options={uniqueTrackSubTypes}
         value={selectedTrackSubTypes}
-        onChange={(event, newValue) => setSelectedTrackSubTypes(newValue)}
-        renderInput={(params) => <TextField {...params} label="Track SubTypes" />}
-        sx={{ marginBottom: 2 }}
+        onChange={(_, newValue) => setSelectedTrackSubTypes(newValue)}
+        renderInput={(params) => (
+          <TextField {...params} label="Filter by Track SubType" variant="outlined" />
+        )}
       />
+
       <Autocomplete
         multiple
-        options={fileFormats}
+        options={uniqueFileFormats}
         value={selectedFileFormats}
-        onChange={(event, newValue) => setSelectedFileFormats(newValue)}
-        renderInput={(params) => <TextField {...params} label="File Formats" />}
-        sx={{ marginBottom: 2 }}
+        onChange={(_, newValue) => setSelectedFileFormats(newValue)}
+        renderInput={(params) => (
+          <TextField {...params} label="Filter by File Format" variant="outlined" />
+        )}
       />
     </Box>
   );

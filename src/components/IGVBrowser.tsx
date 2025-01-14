@@ -10,8 +10,7 @@ import ITrackInfo from '../state/ITrackInfo';
 const IGVBrowser = ({ locus }: { locus: string }) => {
   const containerRef = useRef(null);
   const [hasRendered, setHasRendered] = useState(false);
-  const [tracksSet, setTracksSet] = useAtom(igvTracksSet);
-  // IGVBrowser is not in TS, so we need to use any here
+  const [tracksSet] = useAtom(igvTracksSet);
   const browserRef = useRef<any>(null);
   const prevTrackSet = useRef(new Set<ITrackInfo>(tracksSet));
 
@@ -30,7 +29,7 @@ const IGVBrowser = ({ locus }: { locus: string }) => {
         browserRef.current = browser;
       });
     }
-  }, [containerRef.current, hasRendered, locus]);
+  }, [hasRendered, locus]);
 
   useEffect(() => {
     if (!browserRef.current) {
