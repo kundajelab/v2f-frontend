@@ -21,10 +21,7 @@ const IGVPage = () => {
     const [selectedTrackTypes, setSelectedTrackTypes] = useState<string[]>([]);
     const [selectedTrackSubTypes, setSelectedTrackSubTypes] = useState<string[]>([]);
     const [selectedFileFormats, setSelectedFileFormats] = useState<string[]>([]); // FileFormats state
-
-    // Base height of the IGV browser
-    const baseHeight = 20; // when there are no tracks
-    const heightPerTrack = 13; // 10vh for each track
+    const [selectedBioSampleIds, setSelectedBioSampleIds] = useState<string[]>([]);
 
     // Optionally adjust the content margin if needed
     const contentMarginTop = tracksSet.size > 0 ? '2vh' : '0';
@@ -33,10 +30,11 @@ const IGVPage = () => {
     const filteredData = data?.getDataTracks.filter((track) => {
         const matchesCellType = selectedCellTypes.length === 0 || selectedCellTypes.includes(track.cellType);
         const matchesBioSample = selectedBioSamples.length === 0 || selectedBioSamples.includes(track.bioSample);
+        const matchesBioSampleId = selectedBioSampleIds.length === 0 || selectedBioSampleIds.includes(track.bioSampleID);
         const matchesTrackType = selectedTrackTypes.length === 0 || selectedTrackTypes.includes(track.trackType || '');
         const matchesTrackSubType = selectedTrackSubTypes.length === 0 || selectedTrackSubTypes.includes(track.trackSubType || '');
         const matchesFileFormat = selectedFileFormats.length === 0 || selectedFileFormats.includes(track.fileFormat);
-        return matchesCellType && matchesBioSample && matchesTrackType && matchesTrackSubType && matchesFileFormat;
+        return matchesCellType && matchesBioSample && matchesBioSampleId && matchesTrackType && matchesTrackSubType && matchesFileFormat;
     });
 
     // Clear the tracks set when the component first mounts
@@ -50,7 +48,7 @@ const IGVPage = () => {
           <ExportIGVSession />
   
           <Box sx={{ transition: 'height 0.3s' }}>
-            <IGVBrowser locus="chr1:1-1000" />
+            <IGVBrowser locus="chr1:1-248,956,422" />
           </Box>
   
           <Grid container sx={{ height: `calc(${contentMarginTop})`, marginTop: contentMarginTop, transition: 'margin-top 0.3s' }}>
@@ -63,6 +61,8 @@ const IGVPage = () => {
                 setSelectedCellTypes={setSelectedCellTypes}
                 selectedBioSamples={selectedBioSamples}
                 setSelectedBioSamples={setSelectedBioSamples}
+                selectedBioSampleIds={selectedBioSampleIds}
+                setSelectedBioSampleIds={setSelectedBioSampleIds}
                 selectedTrackTypes={selectedTrackTypes} 
                 setSelectedTrackTypes={setSelectedTrackTypes} 
                 selectedTrackSubTypes={selectedTrackSubTypes}
