@@ -129,7 +129,7 @@ const DataTable: React.FC<DataTableProps> = ({ loading, error, data, filenameSte
     },
     {
       id: 'cellType',
-      label: 'BioSample',
+      label: 'Cell Type',
       renderCell: (rowData: DataTrack) => rowData.cellType,
     },
     {
