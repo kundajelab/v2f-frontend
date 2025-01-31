@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Button, ButtonGroup, Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material';
+import { Button, Box, Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material';
 import { useAtom } from 'jotai';
 import { igvTracksSet } from '../state/igv-tracks';
 import ITrackInfo from "../state/ITrackInfo";
@@ -147,14 +147,14 @@ const ExportIGVSession: React.FC = () => {
 
   return (
     <>
-      <ButtonGroup variant="contained" color="primary">
-        <Button onClick={() => setOpenExportDialog(true)}>
+      <Box sx={{mb:2}}>
+        <Button variant="contained" onClick={() => setOpenExportDialog(true)} sx={{mr:1}}>
           Export Session
         </Button>
-        <Button onClick={() => setOpenImportDialog(true)}>
+        <Button variant="contained" onClick={() => setOpenImportDialog(true)}>
           Import Session
         </Button>
-      </ButtonGroup>
+      </Box>
 
       {/* Export Dialog */}
       <Dialog open={openExportDialog} onClose={() => setOpenExportDialog(false)}>
