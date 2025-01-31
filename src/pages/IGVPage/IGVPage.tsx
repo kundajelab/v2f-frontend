@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Box, Paper, Grid } from '@mui/material';
+import { Box, Paper, Grid, Button } from '@mui/material';
 import IGVBrowser from '../../components/IGVBrowser';
 import { useQuery } from '@apollo/client';
 import { DataTracksTableDocument, DataTracksTableQuery } from '../../__generated__/graphql';
@@ -10,6 +10,13 @@ import { igvTracksSet } from '../../state/igv-tracks';
 import BasePage from '../BasePage';
 import ExportIGVSession from '../../components/ExportIGV';
 import DefaultTracksTable from '../../components/DefaultTracksTable';
+import { 
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogContentText,
+    DialogTitle,
+} from '@mui/material';
 
 const IGVPage = () => {
     const [tracksSet, setTracksSet] = useAtom(igvTracksSet);
@@ -37,6 +44,47 @@ const IGVPage = () => {
         return matchesCellType && matchesBioSample && matchesBioSampleId && matchesTrackType && matchesTrackSubType && matchesFileFormat;
     });
 
+    // Add these functions from DataTable
+    const addAllTracks = () => {
+        setTracksSet((prevTrackSet) => {
+            const newTrackSet = new Set(prevTrackSet);
+            filteredData?.forEach((track) => {
+                if (track.url) {
+                    const trackInfo = {
+                        cellType: track.cellType,
+                        bioSample: track.bioSample,
+                        trackSubType: track.trackSubType || 'N/A',
+                        fileFormat: track.fileFormat,
+                        url: track.url,
+                    };
+                    if (!Array.from(newTrackSet).some((t) => t.url === trackInfo.url)) {
+                        newTrackSet.add(trackInfo);
+                    }
+                }
+            });
+            return newTrackSet;
+        });
+    };
+
+    const removeAllTracks = () => {
+        setTracksSet(new Set());
+    };
+
+    const [openConfirmDialog, setOpenConfirmDialog] = useState(false);
+
+    const handleAddAllTracksClick = () => {
+        if (filteredData && filteredData.length > 10) {
+            setOpenConfirmDialog(true);
+        } else {
+            addAllTracks();
+        }
+    };
+
+    const handleConfirmAddAllTracks = () => {
+        addAllTracks();
+        setOpenConfirmDialog(false);
+    };
+
     // Clear the tracks set when the component first mounts
     useEffect(() => {
         setTracksSet(new Set()); // This will clear the set
@@ -46,15 +94,23 @@ const IGVPage = () => {
       <BasePage>
         <Box sx={{ width: '100%', height: '100vh' }}>
           <ExportIGVSession />
-  
+
           <Box sx={{ transition: 'height 0.3s' }}>
             <IGVBrowser locus="chr1:1-248,956,422" />
           </Box>
   
-          <Grid container sx={{ height: `calc(${contentMarginTop})`, marginTop: contentMarginTop, transition: 'margin-top 0.3s' }}>
-            <Grid item xs={3} sx={{ padding: 2 }}>
-            <DefaultTracksTable />
-            <Box sx={{ mt: 3 }}></Box> 
+          <Box 
+            sx={{ 
+              display: 'flex', 
+              marginTop: contentMarginTop, 
+              transition: 'margin-top 0.3s',
+              height: `calc(${contentMarginTop})`
+            }}
+          >
+            {/* Left side - Filters */}
+            <Box sx={{ width: '25%', padding: 2 }}>
+              <DefaultTracksTable />
+              <Box sx={{ mt: 3 }}></Box>
               <Filters
                 data={data?.getDataTracks || []}
                 selectedCellTypes={selectedCellTypes}
@@ -63,15 +119,25 @@ const IGVPage = () => {
                 setSelectedBioSamples={setSelectedBioSamples}
                 selectedBioSampleIds={selectedBioSampleIds}
                 setSelectedBioSampleIds={setSelectedBioSampleIds}
-                selectedTrackTypes={selectedTrackTypes} 
-                setSelectedTrackTypes={setSelectedTrackTypes} 
+                selectedTrackTypes={selectedTrackTypes}
+                setSelectedTrackTypes={setSelectedTrackTypes}
                 selectedTrackSubTypes={selectedTrackSubTypes}
                 setSelectedTrackSubTypes={setSelectedTrackSubTypes}
-                selectedFileFormats={selectedFileFormats} // Pass FileFormats filter
-                setSelectedFileFormats={setSelectedFileFormats} // Pass FileFormats setter
+                selectedFileFormats={selectedFileFormats}
+                setSelectedFileFormats={setSelectedFileFormats}
               />
-            </Grid>
-            <Grid item xs={9} sx={{ padding: 2 }}>
+            </Box>
+
+            {/* Right side - DataTable */}
+            <Box sx={{ width: '75%', padding: 2 }}>
+              <Box sx={{ mb: 2 }}>
+                <Button onClick={handleAddAllTracksClick} variant="contained" sx={{ mr: 1 }}>
+                  Add All Tracks
+                </Button>
+                <Button onClick={removeAllTracks} variant="contained" color="secondary">
+                  Remove All Tracks
+                </Button>
+              </Box>
               <Paper sx={{ height: '100%', overflow: 'auto' }}>
                 <DataTable
                   data={filteredData || []}
@@ -80,8 +146,25 @@ const IGVPage = () => {
                   filenameStem="DataTracks"
                 />
               </Paper>
-            </Grid>
-          </Grid>
+            </Box>
+          </Box>
+  
+          <Dialog open={openConfirmDialog} onClose={() => setOpenConfirmDialog(false)}>
+            <DialogTitle>Confirm Add All Tracks</DialogTitle>
+            <DialogContent>
+              <DialogContentText>
+                You are about to add more than 10 tracks. Do you want to continue?
+              </DialogContentText>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={() => setOpenConfirmDialog(false)} color="secondary">
+                Cancel
+              </Button>
+              <Button onClick={handleConfirmAddAllTracks} color="primary" autoFocus>
+                Confirm
+              </Button>
+            </DialogActions>
+          </Dialog>
         </Box>
       </BasePage>
     );
