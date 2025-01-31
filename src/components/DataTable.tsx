@@ -78,10 +78,6 @@ const DataTable: React.FC<DataTableProps> = ({ loading, error, data, filenameSte
     });
   };
 
-  const removeAllTracks = () => {
-    setTracksSet(new Set()); // Clears all tracks by resetting to an empty set
-  };
-
   // Add all tracks for the specific Dataset/BioSample combination
   const addAllTracksForRow = (bioSample: string, cellType: string) => {
     setTracksSet((prevTrackSet) => {
@@ -102,22 +98,6 @@ const DataTable: React.FC<DataTableProps> = ({ loading, error, data, filenameSte
       });
       return newTrackSet;
     });
-  };
-
-
-  // Handle "Add All Tracks" button click
-  const handleAddAllTracksClick = () => {
-    if (data.length > 10) {
-      setOpenConfirmDialog(true); // Open dialog if more than 10 tracks
-    } else {
-      addAllTracks();
-    }
-  };
-
-  // Confirm and add all tracks when user accepts in dialog
-  const handleConfirmAddAllTracks = () => {
-    addAllTracks();
-    setOpenConfirmDialog(false); // Close dialog after confirmation
   };
 
   // Table is now defined here
@@ -206,33 +186,6 @@ const DataTable: React.FC<DataTableProps> = ({ loading, error, data, filenameSte
 
   return (
     <>
-      {/* Add All Tracks Button for All Tracks in the Table */}
-      <Button onClick={handleAddAllTracksClick} variant="contained" color="primary" style={{ marginBottom: '1rem' }}>
-        Add All Tracks
-      </Button>
-      <Button onClick={removeAllTracks} variant="contained" color="secondary" style={{ marginBottom: '1rem' }}>
-        Remove All Tracks
-      </Button>
-
-      {/* Confirmation Dialog */}
-      <Dialog open={openConfirmDialog} onClose={() => setOpenConfirmDialog(false)}>
-        <DialogTitle>Confirm Add All Tracks</DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            You are about to add more than 10 tracks. Do you want to continue?
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setOpenConfirmDialog(false)} color="secondary">
-            Cancel
-          </Button>
-          <Button onClick={handleConfirmAddAllTracks} color="primary" autoFocus>
-            Confirm
-          </Button>
-        </DialogActions>
-      </Dialog>
-
-
       <OtTable
         loading={loading}
         error={error}
