@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Box, Paper, Grid, Button } from '@mui/material';
+import { Box, Paper, Button } from '@mui/material';
 import IGVBrowser from '../../components/IGVBrowser';
 import { useQuery } from '@apollo/client';
 import { DataTracksTableDocument, DataTracksTableQuery } from '../../__generated__/graphql';
@@ -92,7 +92,7 @@ const IGVPage = () => {
 
     return (
       <BasePage>
-        <Box sx={{ width: '100%', height: '100vh' }}>
+        <Box sx={{ width: '100%', minHeight: '100vh' }}>
           <ExportIGVSession />
 
           <Box sx={{ transition: 'height 0.3s' }}>
@@ -104,7 +104,7 @@ const IGVPage = () => {
               display: 'flex', 
               marginTop: contentMarginTop, 
               transition: 'margin-top 0.3s',
-              height: `calc(${contentMarginTop})`
+              minHeight: '500px'
             }}
           >
             {/* Left side - Filters */}
@@ -138,7 +138,7 @@ const IGVPage = () => {
                   Remove All Tracks
                 </Button>
               </Box>
-              <Paper sx={{ height: '100%', overflow: 'auto' }}>
+              <Paper sx={{ height: 'fit-content', overflow: 'auto' }}>
                 <DataTable
                   data={filteredData || []}
                   loading={loading}
