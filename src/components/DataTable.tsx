@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { OtTable } from '../ot-ui-components';
-import { IconButton, Button, Table, TableBody, TableCell, TableRow, Collapse, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle} from '@mui/material';
+import { IconButton, Button, Table, TableBody, TableCell, TableRow, Collapse} from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
@@ -27,7 +27,6 @@ type DataTableProps = {
 const DataTable: React.FC<DataTableProps> = ({ loading, error, data, filenameStem }) => {
   const [tracksSet, setTracksSet] = useAtom(igvTracksSet);
   const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set());
-  const [openConfirmDialog, setOpenConfirmDialog] = useState(false);
 
   // Toggle expanded state for each row
   const toggleExpand = (rowId: string) => {
@@ -50,28 +49,6 @@ const DataTable: React.FC<DataTableProps> = ({ loading, error, data, filenameSte
       newTrackSet.forEach((t) => {
         if (t.url === track.url) {
           newTrackSet.delete(t);
-        }
-      });
-      return newTrackSet;
-    });
-  };
-
-  // Add all tracks currently in the table
-  const addAllTracks = () => {
-    setTracksSet((prevTrackSet) => {
-      const newTrackSet = new Set(prevTrackSet);
-      data.forEach((track) => {
-        if (track.url) {
-          const trackInfo: ITrackInfo = {
-            cellType: track.cellType,
-            bioSample: track.bioSample,
-            trackSubType: track.trackSubType || 'N/A',
-            fileFormat: track.fileFormat,
-            url: track.url,
-          };
-          if (!Array.from(newTrackSet).some((t) => t.url === trackInfo.url)) {
-            newTrackSet.add(trackInfo);
-          }
         }
       });
       return newTrackSet;
