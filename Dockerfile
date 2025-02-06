@@ -1,13 +1,8 @@
-FROM node:18 as build
+FROM nginx
 
-COPY package.json yarn.lock /tmp/genetics-app/
-WORKDIR /tmp/genetics-app/
+COPY nginx.conf /etc/nginx/nginx.conf
 
-RUN yarn
-COPY . /tmp/genetics-app/
+COPY .htpasswd /etc/apache2/.htpasswd
 
-ARG REACT_APP_BE_DOMAIN
-ARG REACT_APP_BE_PORT
-ARG REACT_APP_FE_DOMAIN
-RUN yarn build
-CMD yarn build:serve
+COPY ./build /usr/share/nginx/html
+
