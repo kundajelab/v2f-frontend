@@ -12,6 +12,7 @@ import AssociatedIndexVariantsTable from '../../components/AssociatedIndexVarian
 import AssociatedGenes from '../../components/AssociatedGenes';
 import ScrollToTop from '../../components/ScrollToTop';
 import PheWASSection from '../../components/PheWASSection';
+import IGVBrowser from '../../components/IGVBrowser';
 
 import NotFoundPage from '../NotFoundPage';
 import Header from './Header';
@@ -178,6 +179,11 @@ const VariantPage = () => {
   if (headerData && !headerData.variantInfo) {
     return <NotFoundPage />;
   }
+
+  // Return the Locus to the IGV component
+  const [chromosome, position] = variantId.split('_');
+  const locus = `${chromosome}:${position}`;
+
   return (
     <BasePage>
       <ScrollToTop />
@@ -209,6 +215,11 @@ const VariantPage = () => {
           variantId={variantId}
           filenameStem={`${variantId}-lead-variants`}
         />
+        <SectionHeading
+        heading="IGV Browser"
+        subheading="Chosen datatracks for this variant can be viewed here"
+        />
+        <IGVBrowser locus={locus} />  {}
 
         <SectionHeading
           heading="Linkage Disequilibrium"
@@ -300,7 +311,6 @@ const VariantPage = () => {
           isIndexVariant={isIndexVariant}
           isTagVariant={isTagVariant}
         />
-
         <SectionHeading
           heading="GWAS lead variants"
           subheading="Which GWAS lead variants are linked with this variant?"
