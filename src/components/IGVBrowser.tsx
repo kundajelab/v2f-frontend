@@ -6,7 +6,6 @@ import { igvTracksSet } from '../state/igv-tracks';
 import { useAtom } from 'jotai';
 import ITrackInfo from '../state/ITrackInfo';
 
-
 const IGVBrowser = ({ locus }: { locus: string }) => {
   const containerRef = useRef(null);
   const [hasRendered, setHasRendered] = useState(false);
@@ -42,21 +41,101 @@ const IGVBrowser = ({ locus }: { locus: string }) => {
     // Add new tracks
     for (const track of newTracks) {
       if (!oldTracks.has(track)) {
-        browserRef.current.loadTrack({
-          name: createTrackName(track),
-          url: track.url,
-          color: '',
-          height: 100,
-        });
+        // Check each URL type and add if present
+        if (track.dnaseSignalUrl) {
+          browserRef.current.loadTrack({
+            name: `${createTrackName(track)} - DNase Signal`,
+            url: track.dnaseSignalUrl,
+            color: '#FF0000',
+            height: 100,
+          });
+        }
+        
+        if (track.atacSignalUrl) {
+          browserRef.current.loadTrack({
+            name: `${createTrackName(track)} - ATAC Signal`,
+            url: track.atacSignalUrl,
+            color: '#00FF00',
+            height: 100,
+          });
+        }
+        
+        if (track.e2gPredictionsUrl) {
+          browserRef.current.loadTrack({
+            name: `${createTrackName(track)} - E2G Predictions`,
+            url: track.e2gPredictionsUrl,
+            color: '#0000FF',
+            height: 100,
+          });
+        }
+        
+        if (track.variantPredictionsUrl) {
+          browserRef.current.loadTrack({
+            name: `${createTrackName(track)} - Variant Predictions`,
+            url: track.variantPredictionsUrl,
+            color: '#FF00FF',
+            height: 100,
+          });
+        }
+        
+        if (track.elementsUrl) {
+          browserRef.current.loadTrack({
+            name: `${createTrackName(track)} - Elements`,
+            url: track.elementsUrl,
+            color: '#00FFFF',
+            height: 100,
+          });
+        }
       }
     }
 
     // Remove old tracks
     for (const track of oldTracks) {
       if (!newTracks.has(track)) {
-        const trackToRemove = browserRef.current.trackViews.find((trackView: any) => trackView.track.url === track.url);
-        if (trackToRemove) {
-          browserRef.current.removeTrack(trackToRemove.track);
+        // Check each URL type and remove if present
+        if (track.dnaseSignalUrl) {
+          const trackToRemove = browserRef.current.trackViews.find(
+            (trackView: any) => trackView.track.url === track.dnaseSignalUrl
+          );
+          if (trackToRemove) {
+            browserRef.current.removeTrack(trackToRemove.track);
+          }
+        }
+        
+        if (track.atacSignalUrl) {
+          const trackToRemove = browserRef.current.trackViews.find(
+            (trackView: any) => trackView.track.url === track.atacSignalUrl
+          );
+          if (trackToRemove) {
+            browserRef.current.removeTrack(trackToRemove.track);
+          }
+        }
+        
+        if (track.e2gPredictionsUrl) {
+          const trackToRemove = browserRef.current.trackViews.find(
+            (trackView: any) => trackView.track.url === track.e2gPredictionsUrl
+          );
+          if (trackToRemove) {
+            browserRef.current.removeTrack(trackToRemove.track);
+          }
+        }
+        
+        if (track.variantPredictionsUrl) {
+          const trackToRemove = browserRef.current.trackViews.find(
+            (trackView: any) => trackView.track.url === track.variantPredictionsUrl
+          );
+          if (trackToRemove) {
+            browserRef.current.removeTrack(trackToRemove.track);
+          }
+        }
+        
+        if (track.elementsUrl) {
+          const trackToRemove = browserRef.current.trackViews.find(
+            (trackView: any) => trackView.track.url === track.elementsUrl
+          );
+          if (trackToRemove) {
+            browserRef.current.removeTrack(trackToRemove.track);
+          }
         }
       }
     }
@@ -70,7 +149,7 @@ const IGVBrowser = ({ locus }: { locus: string }) => {
 };
 
 function createTrackName(track: ITrackInfo) {
-  return `${track.bioSample} ${track.cellType} ${track.trackSubType} ${track.fileFormat}`;
+  return `${track.cellTypeName} - ${track.study} ${track.model ? `(${track.model})` : ''}`;
 }
 
 export default IGVBrowser;

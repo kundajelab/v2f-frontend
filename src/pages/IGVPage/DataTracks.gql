@@ -1,13 +1,17 @@
 query DataTracksTable {
     getDataTracks {
-    id
-    url
-    cellType
-    bioSample
-    bioSampleID
-    trackType
-    trackSubType
-    fileFormat
+       id
+       cellTypeId
+       cellType
+       study
+       studyId
+       paperUrl
+       dnaseSignalUrl
+       atacSignalUrl
+       e2gPredictionsUrl
+       variantPredsUrl
+       elementsUrl
+       modelType
     }
 }
 
