@@ -45,30 +45,61 @@ const IGVPage = () => {
         setTracksSet((prevTrackSet) => {
             const newTrackSet = new Set(prevTrackSet);
             filteredData?.forEach((track) => {
-                // Create a list of available tracks for this cell type/study
-                if (track.dnaseSignalUrl || track.atacSignalUrl || track.e2gPredictionsUrl || 
-                    track.variantPredsUrl || track.elementsUrl) {
-                    const trackInfo = {
+                // Add each track type individually
+                if (track.dnaseSignalUrl) {
+                    newTrackSet.add({
                         cellTypeID: track.cellTypeId,
                         cellTypeName: track.cellType,
                         study: track.study,
                         studyUrl: track.paperUrl || '',
-                        dnaseSignalUrl: track.dnaseSignalUrl,
-                        atacSignalUrl: track.atacSignalUrl,
-                        e2gPredictionsUrl: track.e2gPredictionsUrl,
-                        variantPredictionsUrl: track.variantPredsUrl,
-                        elementsUrl: track.elementsUrl,
+                        trackUrl: track.dnaseSignalUrl,
+                        trackType: 'DNase Signal',
                         model: track.modelType,
-                    };
-                    
-                    // Check if this track is already in the set
-                    const isTrackAlreadyAdded = Array.from(newTrackSet).some(
-                        (t) => t.cellTypeID === trackInfo.cellTypeID && t.study === trackInfo.study
-                    );
-                    
-                    if (!isTrackAlreadyAdded) {
-                        newTrackSet.add(trackInfo);
-                    }
+                    });
+                }
+                if (track.atacSignalUrl) {
+                    newTrackSet.add({
+                        cellTypeID: track.cellTypeId,
+                        cellTypeName: track.cellType,
+                        study: track.study,
+                        studyUrl: track.paperUrl || '',
+                        trackUrl: track.atacSignalUrl,
+                        trackType: 'ATAC Signal',
+                        model: track.modelType,
+                    });
+                }
+                if (track.e2gPredictionsUrl) {
+                    newTrackSet.add({
+                        cellTypeID: track.cellTypeId,
+                        cellTypeName: track.cellType,
+                        study: track.study,
+                        studyUrl: track.paperUrl || '',
+                        trackUrl: track.e2gPredictionsUrl,
+                        trackType: 'E2G Predictions',
+                        model: track.modelType,
+                    });
+                }
+                if (track.variantPredsUrl) {
+                    newTrackSet.add({
+                        cellTypeID: track.cellTypeId,
+                        cellTypeName: track.cellType,
+                        study: track.study,
+                        studyUrl: track.paperUrl || '',
+                        trackUrl: track.variantPredsUrl,
+                        trackType: 'Variant Predictions',
+                        model: track.modelType,
+                    });
+                }
+                if (track.elementsUrl) {
+                    newTrackSet.add({
+                        cellTypeID: track.cellTypeId,
+                        cellTypeName: track.cellType,
+                        study: track.study,
+                        studyUrl: track.paperUrl || '',
+                        trackUrl: track.elementsUrl,
+                        trackType: 'Elements',
+                        model: track.modelType,
+                    });
                 }
             });
             return newTrackSet;

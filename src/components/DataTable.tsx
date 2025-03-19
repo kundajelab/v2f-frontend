@@ -8,19 +8,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { useAtom } from 'jotai';
 import { igvTracksSet } from '../state/igv-tracks';
 import { DataTrack } from '../__generated__/graphql';
-
-interface ITrackInfo {
-  cellTypeID: string;
-  cellTypeName: string;
-  study: string;
-  studyUrl: string;
-  dnaseSignalUrl?: string | null;
-  atacSignalUrl?: string | null;
-  e2gPredictionsUrl?: string | null;
-  variantPredictionsUrl?: string | null;
-  elementsUrl?: string | null;
-  model?: string | null;
-}
+import ITrackInfo from '../state/ITrackInfo';
 
 type DataTableProps = {
   loading: boolean;
@@ -52,7 +40,7 @@ const DataTable: React.FC<DataTableProps> = ({ loading, error, data, filenameSte
     setTracksSet((prevTrackSet) => {
       const newTrackSet = new Set(prevTrackSet);
       newTrackSet.forEach((t) => {
-        if (t.studyUrl === track.studyUrl) {
+        if (t.trackUrl === track.trackUrl) {
           newTrackSet.delete(t);
         }
       });
@@ -66,25 +54,70 @@ const DataTable: React.FC<DataTableProps> = ({ loading, error, data, filenameSte
       const newTrackSet = new Set(prevTrackSet);
       data.forEach((track) => {
         if (track.study === study && track.cellType === cellTypeName) {
-          const trackInfo: ITrackInfo = {
-            cellTypeID: track.cellTypeId,
-            cellTypeName: track.cellType,
-            study: track.study,
-            studyUrl: track.paperUrl || '',
-            dnaseSignalUrl: track.dnaseSignalUrl,
-            atacSignalUrl: track.atacSignalUrl,
-            e2gPredictionsUrl: track.e2gPredictionsUrl,
-            variantPredictionsUrl: track.variantPredsUrl,
-            elementsUrl: track.elementsUrl,
-            model: track.modelType,
-          };
+          // Create a track for each available URL
+          if (track.dnaseSignalUrl) {
+            const trackInfo: ITrackInfo = {
+              cellTypeID: track.cellTypeId,
+              cellTypeName: track.cellType,
+              study: track.study,
+              studyUrl: track.paperUrl || '',
+              trackUrl: track.dnaseSignalUrl,
+              trackType: 'DNase Signal',
+              model: track.modelType,
+            };
+            newTrackSet.add(trackInfo);
+          }
           
-          // Check if this track is already in the set
-          const isTrackAlreadyAdded = Array.from(newTrackSet).some(
-            (t) => t.cellTypeID === trackInfo.cellTypeID && t.study === trackInfo.study
-          );
+          if (track.atacSignalUrl) {
+            const trackInfo: ITrackInfo = {
+              cellTypeID: track.cellTypeId,
+              cellTypeName: track.cellType,
+              study: track.study,
+              studyUrl: track.paperUrl || '',
+              trackUrl: track.atacSignalUrl,
+              trackType: 'ATAC Signal',
+              model: track.modelType,
+            };
+            newTrackSet.add(trackInfo);
+          }
           
-          if (!isTrackAlreadyAdded) {
+          // Add similar blocks for other track types
+          if (track.e2gPredictionsUrl) {
+            const trackInfo: ITrackInfo = {
+              cellTypeID: track.cellTypeId,
+              cellTypeName: track.cellType,
+              study: track.study,
+              studyUrl: track.paperUrl || '',
+              trackUrl: track.e2gPredictionsUrl,
+              trackType: 'E2G Predictions',
+              model: track.modelType,
+            };
+            newTrackSet.add(trackInfo);
+          }
+          
+          if (track.variantPredsUrl) {
+            const trackInfo: ITrackInfo = {
+              cellTypeID: track.cellTypeId,
+              cellTypeName: track.cellType,
+              study: track.study,
+              studyUrl: track.paperUrl || '',
+              trackUrl: track.variantPredsUrl,
+              trackType: 'Variant Predictions',
+              model: track.modelType,
+            };
+            newTrackSet.add(trackInfo);
+          }
+          
+          if (track.elementsUrl) {
+            const trackInfo: ITrackInfo = {
+              cellTypeID: track.cellTypeId,
+              cellTypeName: track.cellType,
+              study: track.study,
+              studyUrl: track.paperUrl || '',
+              trackUrl: track.elementsUrl,
+              trackType: 'Elements',
+              model: track.modelType,
+            };
             newTrackSet.add(trackInfo);
           }
         }
@@ -186,29 +219,15 @@ const DataTable: React.FC<DataTableProps> = ({ loading, error, data, filenameSte
                         cellTypeName: track.cellType,
                         study: track.study,
                         studyUrl: track.paperUrl || '',
-                        dnaseSignalUrl: availableTrack.type === 'DNase Signal' ? availableTrack.url : null,
-                        atacSignalUrl: availableTrack.type === 'ATAC Signal' ? availableTrack.url : null,
-                        e2gPredictionsUrl: availableTrack.type === 'E2G Predictions' ? availableTrack.url : null,
-                        variantPredictionsUrl: availableTrack.type === 'Variant Predictions' ? availableTrack.url : null,
-                        elementsUrl: availableTrack.type === 'Elements' ? availableTrack.url : null,
+                        trackUrl: availableTrack.url,
+                        trackType: availableTrack.type,
                         model: track.modelType,
                       };
 
                       // Check if this specific track is in the tracksSet
-                      const isTrackAdded = Array.from(tracksSet).some((t) => {
-                        if (availableTrack.type === 'DNase Signal') {
-                          return t.dnaseSignalUrl === availableTrack.url;
-                        } else if (availableTrack.type === 'ATAC Signal') {
-                          return t.atacSignalUrl === availableTrack.url;
-                        } else if (availableTrack.type === 'E2G Predictions') {
-                          return t.e2gPredictionsUrl === availableTrack.url;
-                        } else if (availableTrack.type === 'Variant Predictions') {
-                          return t.variantPredictionsUrl === availableTrack.url;
-                        } else if (availableTrack.type === 'Elements') {
-                          return t.elementsUrl === availableTrack.url;
-                        }
-                        return false;
-                      });
+                      const isTrackAdded = Array.from(tracksSet).some(
+                        (t) => t.trackUrl === trackInfo.trackUrl
+                      );
 
                       return (
                         <TableRow key={availableTrack.url}>

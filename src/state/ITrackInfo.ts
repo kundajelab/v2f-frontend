@@ -3,11 +3,9 @@ interface ITrackInfo {
     cellTypeName: string;
     study: string;
     studyUrl: string;
-    dnaseSignalUrl?: string | null;
-    atacSignalUrl?: string | null;
-    e2gPredictionsUrl?: string | null;
-    variantPredictionsUrl?: string | null;
-    elementsUrl?: string | null;
+    trackUrl: string;
+    trackType: string;
     model?: string | null;
+    color?: string;
   }  
 export default ITrackInfo;

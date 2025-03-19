@@ -12,8 +12,8 @@ const ExportIGVSession: React.FC = () => {
 
   const createSessionObject = () => {
     const tracks = Array.from(tracksSet).map((track: ITrackInfo) => ({
-      name: track.bioSample,
-      url: track.url,
+      name: track.study,
+      url: track.elementsUrl,
       color: '#0000FF',
       height: 100,
       metadata: {
