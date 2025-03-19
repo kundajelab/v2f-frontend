@@ -24,11 +24,9 @@ const IGVPage = () => {
 
     // State for the selected filters
     const [selectedCellTypes, setSelectedCellTypes] = useState<string[]>([]);
-    const [selectedBioSamples, setSelectedBioSamples] = useState<string[]>([]);
-    const [selectedTrackTypes, setSelectedTrackTypes] = useState<string[]>([]);
-    const [selectedTrackSubTypes, setSelectedTrackSubTypes] = useState<string[]>([]);
-    const [selectedFileFormats, setSelectedFileFormats] = useState<string[]>([]); // FileFormats state
-    const [selectedBioSampleIds, setSelectedBioSampleIds] = useState<string[]>([]);
+    const [selectedCellTypeIds, setSelectedCellTypeIds] = useState<string[]>([]);
+    const [selectedStudies, setSelectedStudies] = useState<string[]>([]);
+    const [selectedModels, setSelectedModels] = useState<string[]>([]);
 
     // Optionally adjust the content margin if needed
     const contentMarginTop = tracksSet.size > 0 ? '2vh' : '0';
@@ -36,28 +34,39 @@ const IGVPage = () => {
     // Filtered data based on selected filters
     const filteredData = data?.getDataTracks.filter((track) => {
         const matchesCellType = selectedCellTypes.length === 0 || selectedCellTypes.includes(track.cellType);
-        const matchesBioSample = selectedBioSamples.length === 0 || selectedBioSamples.includes(track.bioSample);
-        const matchesBioSampleId = selectedBioSampleIds.length === 0 || selectedBioSampleIds.includes(track.bioSampleID);
-        const matchesTrackType = selectedTrackTypes.length === 0 || selectedTrackTypes.includes(track.trackType || '');
-        const matchesTrackSubType = selectedTrackSubTypes.length === 0 || selectedTrackSubTypes.includes(track.trackSubType || '');
-        const matchesFileFormat = selectedFileFormats.length === 0 || selectedFileFormats.includes(track.fileFormat);
-        return matchesCellType && matchesBioSample && matchesBioSampleId && matchesTrackType && matchesTrackSubType && matchesFileFormat;
+        const matchesCellTypeId = selectedCellTypeIds.length === 0 || selectedCellTypeIds.includes(track.cellTypeId);
+        const matchesStudy = selectedStudies.length === 0 || selectedStudies.includes(track.study);
+        const matchesModel = selectedModels.length === 0 || (track.modelType && selectedModels.includes(track.modelType));
+        return matchesCellType && matchesCellTypeId && matchesStudy && matchesModel;
     });
 
-    // Add these functions from DataTable
+    // Add all tracks function
     const addAllTracks = () => {
         setTracksSet((prevTrackSet) => {
             const newTrackSet = new Set(prevTrackSet);
             filteredData?.forEach((track) => {
-                if (track.url) {
+                // Create a list of available tracks for this cell type/study
+                if (track.dnaseSignalUrl || track.atacSignalUrl || track.e2gPredictionsUrl || 
+                    track.variantPredsUrl || track.elementsUrl) {
                     const trackInfo = {
-                        cellType: track.cellType,
-                        bioSample: track.bioSample,
-                        trackSubType: track.trackSubType || 'N/A',
-                        fileFormat: track.fileFormat,
-                        url: track.url,
+                        cellTypeID: track.cellTypeId,
+                        cellTypeName: track.cellType,
+                        study: track.study,
+                        studyUrl: track.paperUrl || '',
+                        dnaseSignalUrl: track.dnaseSignalUrl,
+                        atacSignalUrl: track.atacSignalUrl,
+                        e2gPredictionsUrl: track.e2gPredictionsUrl,
+                        variantPredictionsUrl: track.variantPredsUrl,
+                        elementsUrl: track.elementsUrl,
+                        model: track.modelType,
                     };
-                    if (!Array.from(newTrackSet).some((t) => t.url === trackInfo.url)) {
+                    
+                    // Check if this track is already in the set
+                    const isTrackAlreadyAdded = Array.from(newTrackSet).some(
+                        (t) => t.cellTypeID === trackInfo.cellTypeID && t.study === trackInfo.study
+                    );
+                    
+                    if (!isTrackAlreadyAdded) {
                         newTrackSet.add(trackInfo);
                     }
                 }
@@ -115,16 +124,12 @@ const IGVPage = () => {
                 data={data?.getDataTracks || []}
                 selectedCellTypes={selectedCellTypes}
                 setSelectedCellTypes={setSelectedCellTypes}
-                selectedBioSamples={selectedBioSamples}
-                setSelectedBioSamples={setSelectedBioSamples}
-                selectedBioSampleIds={selectedBioSampleIds}
-                setSelectedBioSampleIds={setSelectedBioSampleIds}
-                selectedTrackTypes={selectedTrackTypes}
-                setSelectedTrackTypes={setSelectedTrackTypes}
-                selectedTrackSubTypes={selectedTrackSubTypes}
-                setSelectedTrackSubTypes={setSelectedTrackSubTypes}
-                selectedFileFormats={selectedFileFormats}
-                setSelectedFileFormats={setSelectedFileFormats}
+                selectedCellTypeIds={selectedCellTypeIds}
+                setSelectedCellTypeIds={setSelectedCellTypeIds}
+                selectedStudies={selectedStudies}
+                setSelectedStudies={setSelectedStudies}
+                selectedModels={selectedModels}
+                setSelectedModels={setSelectedModels}
               />
             </Box>
 
