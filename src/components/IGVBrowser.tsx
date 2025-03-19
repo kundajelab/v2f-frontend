@@ -41,101 +41,48 @@ const IGVBrowser = ({ locus }: { locus: string }) => {
     // Add new tracks
     for (const track of newTracks) {
       if (!oldTracks.has(track)) {
-        // Check each URL type and add if present
-        if (track.dnaseSignalUrl) {
-          browserRef.current.loadTrack({
-            name: `${createTrackName(track)} - DNase Signal`,
-            url: track.dnaseSignalUrl,
-            color: '#FF0000',
-            height: 100,
-          });
+        // Load the track based on its trackType
+        const trackConfig = {
+          name: `${createTrackName(track)} - ${track.trackType}`,
+          url: track.trackUrl,
+          height: 100,
+          color: track.color,
+        };
+
+        // Add color based on track type
+        switch (track.trackType) {
+          case 'DNase Signal':
+            trackConfig.color = '#FF0000';
+            break;
+          case 'ATAC Signal':
+            trackConfig.color = '#00FF00';
+            break;
+          case 'E2G Predictions':
+            trackConfig.color = '#0000FF';
+            break;
+          case 'Variant Predictions':
+            trackConfig.color = '#FF00FF';
+            break;
+          case 'Elements':
+            trackConfig.color = '#00FFFF';
+            break;
+          default:
+            trackConfig.color = '#888888';
         }
-        
-        if (track.atacSignalUrl) {
-          browserRef.current.loadTrack({
-            name: `${createTrackName(track)} - ATAC Signal`,
-            url: track.atacSignalUrl,
-            color: '#00FF00',
-            height: 100,
-          });
-        }
-        
-        if (track.e2gPredictionsUrl) {
-          browserRef.current.loadTrack({
-            name: `${createTrackName(track)} - E2G Predictions`,
-            url: track.e2gPredictionsUrl,
-            color: '#0000FF',
-            height: 100,
-          });
-        }
-        
-        if (track.variantPredictionsUrl) {
-          browserRef.current.loadTrack({
-            name: `${createTrackName(track)} - Variant Predictions`,
-            url: track.variantPredictionsUrl,
-            color: '#FF00FF',
-            height: 100,
-          });
-        }
-        
-        if (track.elementsUrl) {
-          browserRef.current.loadTrack({
-            name: `${createTrackName(track)} - Elements`,
-            url: track.elementsUrl,
-            color: '#00FFFF',
-            height: 100,
-          });
-        }
+
+        browserRef.current.loadTrack(trackConfig);
       }
     }
 
     // Remove old tracks
     for (const track of oldTracks) {
       if (!newTracks.has(track)) {
-        // Check each URL type and remove if present
-        if (track.dnaseSignalUrl) {
-          const trackToRemove = browserRef.current.trackViews.find(
-            (trackView: any) => trackView.track.url === track.dnaseSignalUrl
-          );
-          if (trackToRemove) {
-            browserRef.current.removeTrack(trackToRemove.track);
-          }
-        }
+        const trackToRemove = browserRef.current.trackViews.find(
+          (trackView: any) => trackView.track.url === track.trackUrl
+        );
         
-        if (track.atacSignalUrl) {
-          const trackToRemove = browserRef.current.trackViews.find(
-            (trackView: any) => trackView.track.url === track.atacSignalUrl
-          );
-          if (trackToRemove) {
-            browserRef.current.removeTrack(trackToRemove.track);
-          }
-        }
-        
-        if (track.e2gPredictionsUrl) {
-          const trackToRemove = browserRef.current.trackViews.find(
-            (trackView: any) => trackView.track.url === track.e2gPredictionsUrl
-          );
-          if (trackToRemove) {
-            browserRef.current.removeTrack(trackToRemove.track);
-          }
-        }
-        
-        if (track.variantPredictionsUrl) {
-          const trackToRemove = browserRef.current.trackViews.find(
-            (trackView: any) => trackView.track.url === track.variantPredictionsUrl
-          );
-          if (trackToRemove) {
-            browserRef.current.removeTrack(trackToRemove.track);
-          }
-        }
-        
-        if (track.elementsUrl) {
-          const trackToRemove = browserRef.current.trackViews.find(
-            (trackView: any) => trackView.track.url === track.elementsUrl
-          );
-          if (trackToRemove) {
-            browserRef.current.removeTrack(trackToRemove.track);
-          }
+        if (trackToRemove) {
+          browserRef.current.removeTrack(trackToRemove.track);
         }
       }
     }
