@@ -8,14 +8,7 @@ import RemoveIcon from '@mui/icons-material/Remove';
 import { igvTracksSet } from '../state/igv-tracks';
 import { PrimitiveAtom, SetStateAction, useAtom } from 'jotai';
 import { useEffect } from 'react';
-
-interface ITrackInfo {
-  cellType: string;
-  bioSample: string;
-  trackSubType?: string | null;
-  fileFormat: string;
-  url: string;
-}  
+import ITrackInfo from '../state/ITrackInfo';
 
 type TableColumn<T> = {
   id: string;
@@ -102,15 +95,17 @@ const tableColumns = (
     renderCell: (rowData: VariantPageEnhancerGenePredictionFragment) => {
       if (rowData.datatrackURL) {
         const trackInfo: ITrackInfo = {
-          cellType: rowData.cellType,
-          bioSample: rowData.dataset,
-          trackSubType: rowData.model|| 'N/A', 
-          fileFormat: 'N/A', // Update later with actual file type
-          url: rowData.datatrackURL,
+          cellTypeID: rowData.cellType,
+          cellTypeName: rowData.cellType,
+          study: rowData.dataset,
+          studyUrl: '',
+          trackUrl: rowData.datatrackURL,
+          trackType: rowData.model,
+          model: rowData.model
         };
 
         const isTrackAdded = Array.from(igvTracks).some(
-          (track) => track.url === trackInfo.url
+          (track) => track.trackUrl === trackInfo.trackUrl
         );
 
         return (
@@ -145,14 +140,14 @@ const EnhancerGenePredictionsTable = ({
     setTracksSet(new Set()); // This will clear the set on component mount
   }, [setTracksSet]);
 
-  const addTrack = (track: ITrackInfo) => {
-    setTracksSet((prevTrackSet) => new Set(prevTrackSet).add(track));
+  const addTrack = (trackInfo: ITrackInfo) => {
+    setTracksSet((prevTrackSet) => new Set(prevTrackSet).add(trackInfo));
   };
 
-  const removeTrack = (track: ITrackInfo) => {
+  const removeTrack = (trackInfo: ITrackInfo) => {
     setTracksSet((prevTrackSet) => {
       const newTrackSet = new Set(prevTrackSet);
-      newTrackSet.delete(track); // Deleting the track object
+      newTrackSet.delete(trackInfo); 
       return newTrackSet;
     });
   };
