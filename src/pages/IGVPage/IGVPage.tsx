@@ -24,11 +24,9 @@ const IGVPage = () => {
 
     // State for the selected filters
     const [selectedCellTypes, setSelectedCellTypes] = useState<string[]>([]);
-    const [selectedBioSamples, setSelectedBioSamples] = useState<string[]>([]);
-    const [selectedTrackTypes, setSelectedTrackTypes] = useState<string[]>([]);
-    const [selectedTrackSubTypes, setSelectedTrackSubTypes] = useState<string[]>([]);
-    const [selectedFileFormats, setSelectedFileFormats] = useState<string[]>([]); // FileFormats state
-    const [selectedBioSampleIds, setSelectedBioSampleIds] = useState<string[]>([]);
+    const [selectedCellTypeIds, setSelectedCellTypeIds] = useState<string[]>([]);
+    const [selectedStudies, setSelectedStudies] = useState<string[]>([]);
+    const [selectedModels, setSelectedModels] = useState<string[]>([]);
 
     // Optionally adjust the content margin if needed
     const contentMarginTop = tracksSet.size > 0 ? '2vh' : '0';
@@ -36,30 +34,72 @@ const IGVPage = () => {
     // Filtered data based on selected filters
     const filteredData = data?.getDataTracks.filter((track) => {
         const matchesCellType = selectedCellTypes.length === 0 || selectedCellTypes.includes(track.cellType);
-        const matchesBioSample = selectedBioSamples.length === 0 || selectedBioSamples.includes(track.bioSample);
-        const matchesBioSampleId = selectedBioSampleIds.length === 0 || selectedBioSampleIds.includes(track.bioSampleID);
-        const matchesTrackType = selectedTrackTypes.length === 0 || selectedTrackTypes.includes(track.trackType || '');
-        const matchesTrackSubType = selectedTrackSubTypes.length === 0 || selectedTrackSubTypes.includes(track.trackSubType || '');
-        const matchesFileFormat = selectedFileFormats.length === 0 || selectedFileFormats.includes(track.fileFormat);
-        return matchesCellType && matchesBioSample && matchesBioSampleId && matchesTrackType && matchesTrackSubType && matchesFileFormat;
+        const matchesCellTypeId = selectedCellTypeIds.length === 0 || selectedCellTypeIds.includes(track.cellTypeId);
+        const matchesStudy = selectedStudies.length === 0 || selectedStudies.includes(track.study);
+        const matchesModel = selectedModels.length === 0 || (track.modelType && selectedModels.includes(track.modelType));
+        return matchesCellType && matchesCellTypeId && matchesStudy && matchesModel;
     });
 
-    // Add these functions from DataTable
+    // Add all tracks function
     const addAllTracks = () => {
         setTracksSet((prevTrackSet) => {
             const newTrackSet = new Set(prevTrackSet);
             filteredData?.forEach((track) => {
-                if (track.url) {
-                    const trackInfo = {
-                        cellType: track.cellType,
-                        bioSample: track.bioSample,
-                        trackSubType: track.trackSubType || 'N/A',
-                        fileFormat: track.fileFormat,
-                        url: track.url,
-                    };
-                    if (!Array.from(newTrackSet).some((t) => t.url === trackInfo.url)) {
-                        newTrackSet.add(trackInfo);
-                    }
+                // Add each track type individually
+                if (track.dnaseSignalUrl) {
+                    newTrackSet.add({
+                        cellTypeID: track.cellTypeId,
+                        cellTypeName: track.cellType,
+                        study: track.study,
+                        studyUrl: track.paperUrl || '',
+                        trackUrl: track.dnaseSignalUrl,
+                        trackType: 'DNase Signal',
+                        model: track.modelType,
+                    });
+                }
+                if (track.atacSignalUrl) {
+                    newTrackSet.add({
+                        cellTypeID: track.cellTypeId,
+                        cellTypeName: track.cellType,
+                        study: track.study,
+                        studyUrl: track.paperUrl || '',
+                        trackUrl: track.atacSignalUrl,
+                        trackType: 'ATAC Signal',
+                        model: track.modelType,
+                    });
+                }
+                if (track.e2gPredictionsUrl) {
+                    newTrackSet.add({
+                        cellTypeID: track.cellTypeId,
+                        cellTypeName: track.cellType,
+                        study: track.study,
+                        studyUrl: track.paperUrl || '',
+                        trackUrl: track.e2gPredictionsUrl,
+                        trackType: 'E2G Predictions',
+                        model: track.modelType,
+                    });
+                }
+                if (track.variantPredsUrl) {
+                    newTrackSet.add({
+                        cellTypeID: track.cellTypeId,
+                        cellTypeName: track.cellType,
+                        study: track.study,
+                        studyUrl: track.paperUrl || '',
+                        trackUrl: track.variantPredsUrl,
+                        trackType: 'Variant Predictions',
+                        model: track.modelType,
+                    });
+                }
+                if (track.elementsUrl) {
+                    newTrackSet.add({
+                        cellTypeID: track.cellTypeId,
+                        cellTypeName: track.cellType,
+                        study: track.study,
+                        studyUrl: track.paperUrl || '',
+                        trackUrl: track.elementsUrl,
+                        trackType: 'Elements',
+                        model: track.modelType,
+                    });
                 }
             });
             return newTrackSet;
@@ -115,16 +155,12 @@ const IGVPage = () => {
                 data={data?.getDataTracks || []}
                 selectedCellTypes={selectedCellTypes}
                 setSelectedCellTypes={setSelectedCellTypes}
-                selectedBioSamples={selectedBioSamples}
-                setSelectedBioSamples={setSelectedBioSamples}
-                selectedBioSampleIds={selectedBioSampleIds}
-                setSelectedBioSampleIds={setSelectedBioSampleIds}
-                selectedTrackTypes={selectedTrackTypes}
-                setSelectedTrackTypes={setSelectedTrackTypes}
-                selectedTrackSubTypes={selectedTrackSubTypes}
-                setSelectedTrackSubTypes={setSelectedTrackSubTypes}
-                selectedFileFormats={selectedFileFormats}
-                setSelectedFileFormats={setSelectedFileFormats}
+                selectedCellTypeIds={selectedCellTypeIds}
+                setSelectedCellTypeIds={setSelectedCellTypeIds}
+                selectedStudies={selectedStudies}
+                setSelectedStudies={setSelectedStudies}
+                selectedModels={selectedModels}
+                setSelectedModels={setSelectedModels}
               />
             </Box>
 

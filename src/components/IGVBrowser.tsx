@@ -6,7 +6,6 @@ import { igvTracksSet } from '../state/igv-tracks';
 import { useAtom } from 'jotai';
 import ITrackInfo from '../state/ITrackInfo';
 
-
 const IGVBrowser = ({ locus }: { locus: string }) => {
   const containerRef = useRef(null);
   const [hasRendered, setHasRendered] = useState(false);
@@ -42,19 +41,46 @@ const IGVBrowser = ({ locus }: { locus: string }) => {
     // Add new tracks
     for (const track of newTracks) {
       if (!oldTracks.has(track)) {
-        browserRef.current.loadTrack({
-          name: createTrackName(track),
-          url: track.url,
-          color: '',
+        // Load the track based on its trackType
+        const trackConfig = {
+          name: `${createTrackName(track)} - ${track.trackType}`,
+          url: track.trackUrl,
           height: 100,
-        });
+          color: track.color,
+        };
+
+        // Add color based on track type
+        switch (track.trackType) {
+          case 'DNase Signal':
+            trackConfig.color = '#FF0000';
+            break;
+          case 'ATAC Signal':
+            trackConfig.color = '#00FF00';
+            break;
+          case 'E2G Predictions':
+            trackConfig.color = '#0000FF';
+            break;
+          case 'Variant Predictions':
+            trackConfig.color = '#FF00FF';
+            break;
+          case 'Elements':
+            trackConfig.color = '#00FFFF';
+            break;
+          default:
+            trackConfig.color = '#888888';
+        }
+
+        browserRef.current.loadTrack(trackConfig);
       }
     }
 
     // Remove old tracks
     for (const track of oldTracks) {
       if (!newTracks.has(track)) {
-        const trackToRemove = browserRef.current.trackViews.find((trackView: any) => trackView.track.url === track.url);
+        const trackToRemove = browserRef.current.trackViews.find(
+          (trackView: any) => trackView.track.url === track.trackUrl
+        );
+        
         if (trackToRemove) {
           browserRef.current.removeTrack(trackToRemove.track);
         }
@@ -70,7 +96,7 @@ const IGVBrowser = ({ locus }: { locus: string }) => {
 };
 
 function createTrackName(track: ITrackInfo) {
-  return `${track.bioSample} ${track.cellType} ${track.trackSubType} ${track.fileFormat}`;
+  return `${track.cellTypeName} - ${track.study} ${track.model ? `(${track.model})` : ''}`;
 }
 
 export default IGVBrowser;

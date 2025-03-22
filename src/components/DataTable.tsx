@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { OtTable } from '../ot-ui-components';
-import { IconButton, Button, Table, TableBody, TableCell, TableRow, Collapse} from '@mui/material';
+import { IconButton, Button, Table, TableBody, TableCell, TableRow, Collapse, Box } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
@@ -8,14 +8,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { useAtom } from 'jotai';
 import { igvTracksSet } from '../state/igv-tracks';
 import { DataTrack } from '../__generated__/graphql';
-
-interface ITrackInfo {
-  cellType: string;
-  bioSample: string;
-  trackSubType?: string | null;
-  fileFormat: string;
-  url: string;
-}
+import ITrackInfo from '../state/ITrackInfo';
 
 type DataTableProps = {
   loading: boolean;
@@ -47,7 +40,7 @@ const DataTable: React.FC<DataTableProps> = ({ loading, error, data, filenameSte
     setTracksSet((prevTrackSet) => {
       const newTrackSet = new Set(prevTrackSet);
       newTrackSet.forEach((t) => {
-        if (t.url === track.url) {
+        if (t.trackUrl === track.trackUrl) {
           newTrackSet.delete(t);
         }
       });
@@ -55,20 +48,76 @@ const DataTable: React.FC<DataTableProps> = ({ loading, error, data, filenameSte
     });
   };
 
-  // Add all tracks for the specific Dataset/BioSample combination
-  const addAllTracksForRow = (bioSample: string, cellType: string) => {
+  // Add all tracks for the specific study/cellType combination
+  const addAllTracksForRow = (study: string, cellTypeName: string) => {
     setTracksSet((prevTrackSet) => {
       const newTrackSet = new Set(prevTrackSet);
       data.forEach((track) => {
-        if (track.bioSample === bioSample && track.cellType === cellType && track.url) {
-          const trackInfo: ITrackInfo = {
-            cellType: track.cellType,
-            bioSample: track.bioSample,
-            trackSubType: track.trackSubType || 'N/A',
-            fileFormat: track.fileFormat,
-            url: track.url,
-          };
-          if (!Array.from(newTrackSet).some((t) => t.url === trackInfo.url)) {
+        if (track.study === study && track.cellType === cellTypeName) {
+          // Create a track for each available URL
+          if (track.dnaseSignalUrl) {
+            const trackInfo: ITrackInfo = {
+              cellTypeID: track.cellTypeId,
+              cellTypeName: track.cellType,
+              study: track.study,
+              studyUrl: track.paperUrl || '',
+              trackUrl: track.dnaseSignalUrl,
+              trackType: 'DNase Signal',
+              model: track.modelType,
+            };
+            newTrackSet.add(trackInfo);
+          }
+          
+          if (track.atacSignalUrl) {
+            const trackInfo: ITrackInfo = {
+              cellTypeID: track.cellTypeId,
+              cellTypeName: track.cellType,
+              study: track.study,
+              studyUrl: track.paperUrl || '',
+              trackUrl: track.atacSignalUrl,
+              trackType: 'ATAC Signal',
+              model: track.modelType,
+            };
+            newTrackSet.add(trackInfo);
+          }
+          
+          // Add similar blocks for other track types
+          if (track.e2gPredictionsUrl) {
+            const trackInfo: ITrackInfo = {
+              cellTypeID: track.cellTypeId,
+              cellTypeName: track.cellType,
+              study: track.study,
+              studyUrl: track.paperUrl || '',
+              trackUrl: track.e2gPredictionsUrl,
+              trackType: 'E2G Predictions',
+              model: track.modelType,
+            };
+            newTrackSet.add(trackInfo);
+          }
+          
+          if (track.variantPredsUrl) {
+            const trackInfo: ITrackInfo = {
+              cellTypeID: track.cellTypeId,
+              cellTypeName: track.cellType,
+              study: track.study,
+              studyUrl: track.paperUrl || '',
+              trackUrl: track.variantPredsUrl,
+              trackType: 'Variant Predictions',
+              model: track.modelType,
+            };
+            newTrackSet.add(trackInfo);
+          }
+          
+          if (track.elementsUrl) {
+            const trackInfo: ITrackInfo = {
+              cellTypeID: track.cellTypeId,
+              cellTypeName: track.cellType,
+              study: track.study,
+              studyUrl: track.paperUrl || '',
+              trackUrl: track.elementsUrl,
+              trackType: 'Elements',
+              model: track.modelType,
+            };
             newTrackSet.add(trackInfo);
           }
         }
@@ -80,78 +129,128 @@ const DataTable: React.FC<DataTableProps> = ({ loading, error, data, filenameSte
   // Table is now defined here
   const tableColumns = [
     {
-      id: 'bioSample',
-      label: 'DataSet',
-      renderCell: (rowData: DataTrack) => rowData.bioSample,
-    },
-    {
       id: 'cellType',
       label: 'Cell Type',
       renderCell: (rowData: DataTrack) => rowData.cellType,
     },
     {
-      id: 'addTracks',
-      label: 'Add Tracks',
-      renderCell: (rowData: DataTrack) => (
-        <Button
-          onClick={() => addAllTracksForRow(rowData.bioSample, rowData.cellType)}
-          variant="contained"
-          color="primary"
-          size="small"
-        >
-          Add Tracks
-        </Button>
-      ),
+      id: 'cellTypeId',
+      label: 'Cell Type ID',
+      renderCell: (rowData: DataTrack) => rowData.cellTypeId,
+    },
+    {
+      id: 'study',
+      label: 'Study',
+      renderCell: (rowData: DataTrack) => rowData.study,
+    },
+    {
+      id: 'model',
+      label: 'Model',
+      renderCell: (rowData: DataTrack) => rowData.modelType || 'N/A',
     },
     {
       id: 'tracks',
       label: 'Tracks',
       renderCell: (rowData: DataTrack) => (
         <>
-          <IconButton onClick={() => toggleExpand(`${rowData.bioSample}-${rowData.cellType}`)}>
+          <IconButton onClick={() => toggleExpand(`${rowData.study}-${rowData.cellTypeId}`)}>
             <ExpandMoreIcon />
           </IconButton>
-          <Collapse in={expandedRows.has(`${rowData.bioSample}-${rowData.cellType}`)} timeout="auto" unmountOnExit>
+          
+          <Collapse in={expandedRows.has(`${rowData.study}-${rowData.cellTypeId}`)} timeout="auto" unmountOnExit>
+            <Box sx={{ mb: 2, mt: 1 }}>
+              <Button
+                variant="contained"
+                size="small"
+                onClick={() => addAllTracksForRow(rowData.study, rowData.cellType)}
+              >
+                Add All Tracks
+              </Button>
+            </Box>
             <Table size="small">
               <TableBody>
                 {data
                   .filter(
                     (track: DataTrack) =>
-                      track.bioSample === rowData.bioSample && track.cellType === rowData.cellType
+                      track.study === rowData.study && track.cellTypeId === rowData.cellTypeId
                   )
                   .map((track: DataTrack) => {
-                    const trackInfo: ITrackInfo = {
-                      cellType: track.cellType,
-                      bioSample: track.bioSample,
-                      trackSubType: track.trackSubType || 'N/A',
-                      fileFormat: track.fileFormat,
-                      url: track.url,
-                    };
+                    // Create a list of available tracks for this cell type/study
+                    const availableTracks = [];
+                    
+                    if (track.dnaseSignalUrl) {
+                      availableTracks.push({
+                        type: 'DNase Signal',
+                        url: track.dnaseSignalUrl
+                      });
+                    }
+                    
+                    if (track.atacSignalUrl) {
+                      availableTracks.push({
+                        type: 'ATAC Signal',
+                        url: track.atacSignalUrl
+                      });
+                    }
+                    
+                    if (track.e2gPredictionsUrl) {
+                      availableTracks.push({
+                        type: 'E2G Predictions',
+                        url: track.e2gPredictionsUrl
+                      });
+                    }
+                    
+                    if (track.variantPredsUrl) {
+                      availableTracks.push({
+                        type: 'Variant Predictions',
+                        url: track.variantPredsUrl
+                      });
+                    }
+                    
+                    if (track.elementsUrl) {
+                      availableTracks.push({
+                        type: 'Elements',
+                        url: track.elementsUrl
+                      });
+                    }
+                    
+                    return availableTracks.map((availableTrack) => {
+                      const trackInfo: ITrackInfo = {
+                        cellTypeID: track.cellTypeId,
+                        cellTypeName: track.cellType,
+                        study: track.study,
+                        studyUrl: track.paperUrl || '',
+                        trackUrl: availableTrack.url,
+                        trackType: availableTrack.type,
+                        model: track.modelType,
+                      };
 
-                    // Check if the track is currently in the tracksSet
-                    const isTrackAdded = Array.from(tracksSet).some((t) => t.url === trackInfo.url);
+                      // Check if this specific track is in the tracksSet
+                      const isTrackAdded = Array.from(tracksSet).some(
+                        (t) => t.trackUrl === trackInfo.trackUrl
+                      );
 
-                    return (
-                      <TableRow key={track.url}>
-                        <TableCell>
-                          {track.trackSubType} ({track.fileFormat})
-                        </TableCell>
-                        <TableCell>
-                          <IconButton
-                            onClick={() => isTrackAdded ? removeTrack(trackInfo) : addTrack(trackInfo)}
-                            size="small"
-                            color="primary"
-                          >
-                            {isTrackAdded ? <RemoveIcon fontSize="small" /> : <AddIcon fontSize="small" />}
-                          </IconButton>
-                        </TableCell>
-                        <TableCell>
-                          <IconButton href={track.url} target="_blank" rel="noopener noreferrer">
-                            <OpenInNewIcon fontSize="small" />
-                          </IconButton>
-                        </TableCell>
-                      </TableRow>
-                    );
+                      return (
+                        <TableRow key={availableTrack.url}>
+                          <TableCell>
+                            {availableTrack.type}
+                          </TableCell>
+                          <TableCell>
+                            <IconButton
+                              onClick={() => isTrackAdded ? removeTrack(trackInfo) : addTrack(trackInfo)}
+                              size="small"
+                              color="primary"
+                            >
+                              {isTrackAdded ? <RemoveIcon fontSize="small" /> : <AddIcon fontSize="small" />}
+                            </IconButton>
+                          </TableCell>
+                          <TableCell>
+                            <IconButton href={availableTrack.url} target="_blank" rel="noopener noreferrer">
+                              <OpenInNewIcon fontSize="small" />
+                            </IconButton>
+                          </TableCell>
+                        </TableRow>
+                      );
+                    });
                   })}
               </TableBody>
             </Table>

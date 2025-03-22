@@ -36,10 +36,5 @@ query VariantSummary($variantId: String!) {
       id
       symbol
     }
-    bpnetPredictions {
-      logfc
-      logfcPval
-      cellType
-    }
   }
 }
