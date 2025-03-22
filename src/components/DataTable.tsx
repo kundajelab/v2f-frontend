@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { OtTable } from '../ot-ui-components';
-import { IconButton, Button, Table, TableBody, TableCell, TableRow, Collapse, Box } from '@mui/material';
+import { IconButton, Button, Table, TableBody, TableCell, TableRow, Collapse, Box, Tooltip } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
@@ -81,7 +81,6 @@ const DataTable: React.FC<DataTableProps> = ({ loading, error, data, filenameSte
             newTrackSet.add(trackInfo);
           }
           
-          // Add similar blocks for other track types
           if (track.e2gPredictionsUrl) {
             const trackInfo: ITrackInfo = {
               cellTypeID: track.cellTypeId,
@@ -131,12 +130,11 @@ const DataTable: React.FC<DataTableProps> = ({ loading, error, data, filenameSte
     {
       id: 'cellType',
       label: 'Cell Type',
-      renderCell: (rowData: DataTrack) => rowData.cellType,
-    },
-    {
-      id: 'cellTypeId',
-      label: 'Cell Type ID',
-      renderCell: (rowData: DataTrack) => rowData.cellTypeId,
+      renderCell: (rowData: DataTrack) => (
+        <Tooltip title={`Cell Type ID: ${rowData.cellTypeId}`} placement="top">
+          <span>{rowData.cellType}</span>
+        </Tooltip>
+      ),
     },
     {
       id: 'study',
@@ -158,15 +156,6 @@ const DataTable: React.FC<DataTableProps> = ({ loading, error, data, filenameSte
           </IconButton>
           
           <Collapse in={expandedRows.has(`${rowData.study}-${rowData.cellTypeId}`)} timeout="auto" unmountOnExit>
-            <Box sx={{ mb: 2, mt: 1 }}>
-              <Button
-                variant="contained"
-                size="small"
-                onClick={() => addAllTracksForRow(rowData.study, rowData.cellType)}
-              >
-                Add All Tracks
-              </Button>
-            </Box>
             <Table size="small">
               <TableBody>
                 {data
@@ -256,6 +245,19 @@ const DataTable: React.FC<DataTableProps> = ({ loading, error, data, filenameSte
             </Table>
           </Collapse>
         </>
+      ),
+    },
+    {
+      id: 'addAll',
+      label: 'Add All Tracks',
+      renderCell: (rowData: DataTrack) => (
+        <Button
+          variant="contained"
+          size="small"
+          onClick={() => addAllTracksForRow(rowData.study, rowData.cellType)}
+        >
+          Add All
+        </Button>
       ),
     },
   ];
