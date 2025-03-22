@@ -38,12 +38,10 @@ import {
   VariantLinkageDisequilibriumQuery,
   VariantLinkageDisequilibriumQueryVariables,
   VariantPageEnhancerGenePredictionFragment,
-  VariantPageBpnetPredictionFragment,
   VariantPageQuery,
   VariantPageQueryVariables,
 } from '../../__generated__/graphql';
 import EnhancerGenePredictionsTable from '../../components/EnhancerGenePredictionsTable';
-import BpnetPredictionsTable from '../../components/BpnetPredictionsTable';
 import LinkageDisequilibriumTable from '../../components/LinkageDisequilibriumTable';
 
 const VARIANT_PAGE_QUERY = loader('../../queries/VariantPageQuery.gql');
@@ -105,8 +103,6 @@ const VariantPage = () => {
   const enhancerGenePredictions = (pageData?.variantInfo
     ?.enhancerGenePredictions ||
     []) as VariantPageEnhancerGenePredictionFragment[];
-  const bpnetPredictions = (pageData?.variantInfo?.bpnetPredictions ||
-    []) as VariantPageBpnetPredictionFragment[];
   const ldTableData = (ldData?.linkageDisequilibriumsForVariant ||
     []) as VariantLinkageDisequilibriumFragment[];
 
