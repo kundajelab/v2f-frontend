@@ -9,7 +9,7 @@ import { useAtom } from 'jotai';
 import { igvTracksSet } from '../../state/igv-tracks';
 import BasePage from '../BasePage';
 import ExportIGVSession from '../../components/ExportIGV';
-import DefaultTracksTable from '../../components/DefaultTracksTable';
+import DefaultTracksTable from '../../components/SpecialTracks';
 import { 
     Dialog,
     DialogActions,
