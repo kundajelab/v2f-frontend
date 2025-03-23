@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { OtTable } from '../ot-ui-components';
-import { IconButton, Button, Table, TableBody, TableCell, TableRow, Collapse, Box, Tooltip } from '@mui/material';
+import { IconButton, Button, Table, TableBody, TableCell, TableRow, Collapse, Tooltip } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
@@ -48,12 +48,12 @@ const DataTable: React.FC<DataTableProps> = ({ loading, error, data, filenameSte
     });
   };
 
-  // Add all tracks for the specific study/cellType combination
-  const addAllTracksForRow = (study: string, cellTypeName: string) => {
+  // Add all tracks for the specific cellTypeId/study combination
+  const addAllTracksForRow = (study: string, cellTypeId: string) => {
     setTracksSet((prevTrackSet) => {
       const newTrackSet = new Set(prevTrackSet);
       data.forEach((track) => {
-        if (track.study === study && track.cellType === cellTypeName) {
+        if (track.study === study && track.cellTypeId === cellTypeId) {
           // Create a track for each available URL
           if (track.dnaseSignalUrl) {
             const trackInfo: ITrackInfo = {
@@ -123,6 +123,20 @@ const DataTable: React.FC<DataTableProps> = ({ loading, error, data, filenameSte
       });
       return newTrackSet;
     });
+  };
+
+  // Prepare data for display - group by cellTypeId and study
+  const prepareTableData = () => {
+    const uniqueRows = new Map();
+    
+    data.forEach(track => {
+      const key = `${track.cellTypeId}-${track.study}`;
+      if (!uniqueRows.has(key)) {
+        uniqueRows.set(key, track);
+      }
+    });
+    
+    return Array.from(uniqueRows.values());
   };
 
   // Table is now defined here
@@ -254,7 +268,7 @@ const DataTable: React.FC<DataTableProps> = ({ loading, error, data, filenameSte
         <Button
           variant="contained"
           size="small"
-          onClick={() => addAllTracksForRow(rowData.study, rowData.cellType)}
+          onClick={() => addAllTracksForRow(rowData.study, rowData.cellTypeId)}
         >
           Add All
         </Button>
@@ -268,8 +282,8 @@ const DataTable: React.FC<DataTableProps> = ({ loading, error, data, filenameSte
         loading={loading}
         error={error}
         columns={tableColumns}
-        data={data}
-        sortBy="id"
+        data={prepareTableData()}
+        sortBy="cellType"
         order="asc"
         downloadFileStem={filenameStem}
         pageSize={20}
