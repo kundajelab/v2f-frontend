@@ -12,15 +12,16 @@ const ExportIGVSession: React.FC = () => {
 
   const createSessionObject = () => {
     const tracks = Array.from(tracksSet).map((track: ITrackInfo) => ({
-      name: track.study,
-      url: track.elementsUrl,
-      color: '#0000FF',
+      name: `${track.cellTypeName} - ${track.trackType} (${track.study})`,
+      url: track.trackUrl,
+      color: track.color || getColorForTrackType(track.trackType),
       height: 100,
       metadata: {
-        bioSample: track.bioSample,
-        cellType: track.cellType,
-        trackSubType: track.trackSubType,
-        fileFormat: track.fileFormat
+        cellTypeID: track.cellTypeID,
+        cellTypeName: track.cellTypeName,
+        study: track.study,
+        trackType: track.trackType,
+        model: track.model
       }
     }));
 
@@ -29,6 +30,23 @@ const ExportIGVSession: React.FC = () => {
       locus: 'chr1:1-1000',
       tracks,
     };
+  };
+
+  const getColorForTrackType = (trackType: string): string => {
+    switch (trackType) {
+      case 'DNase Signal':
+        return '#FF0000';
+      case 'ATAC Signal':
+        return '#00FF00';
+      case 'E2G Predictions':
+        return '#0000FF';
+      case 'Variant Predictions':
+        return '#FF00FF';
+      case 'Elements':
+        return '#00FFFF';
+      default:
+        return '#888888';
+    }
   };
 
   const exportSessionAsFile = () => {
@@ -54,9 +72,9 @@ const ExportIGVSession: React.FC = () => {
     url.searchParams.set('genome', genome);
 
     tracks.forEach((track) => {
-      if (track.url) {
-        url.searchParams.append('file', track.url);
-        url.searchParams.append('name', `${track.cellType} - ${track.bioSample}`);
+      if (track.trackUrl) {
+        url.searchParams.append('file', track.trackUrl);
+        url.searchParams.append('name', `${track.cellTypeName} - ${track.trackType}`);
       }
     });
 
@@ -79,11 +97,14 @@ const ExportIGVSession: React.FC = () => {
       try {
         const session = JSON.parse(e.target?.result as string);
         const importedTracks = session.tracks.map((track: any) => ({
-          bioSample: track.metadata?.bioSample || track.name || 'Imported',
-          cellType: track.metadata?.cellType || 'Unknown',
-          trackSubType: track.metadata?.trackSubType || 'Track',
-          fileFormat: track.metadata?.fileFormat || track.url.split('.').pop()?.toUpperCase() || 'Unknown',
-          url: track.url,
+          cellTypeID: track.metadata?.cellTypeID || 'unknown',
+          cellTypeName: track.metadata?.cellTypeName || track.name.split(' - ')[0] || 'Unknown',
+          study: track.metadata?.study || 'Imported',
+          studyUrl: '',
+          trackUrl: track.url,
+          trackType: track.metadata?.trackType || inferTrackType(track.url),
+          model: track.metadata?.model || null,
+          color: track.color
         }));
         
         setTracksSet(new Set(importedTracks));
@@ -96,6 +117,25 @@ const ExportIGVSession: React.FC = () => {
     reader.readAsText(file);
   };
 
+  const inferTrackType = (url: string): string => {
+    const fileExtension = url.split('.').pop()?.split('?')[0]?.toLowerCase() || '';
+    
+    switch (fileExtension) {
+      case 'bw':
+      case 'bigwig':
+        return 'Signal';
+      case 'bedpe':
+        return 'Interaction';
+      case 'bed':
+        return 'Elements';
+      case 'bb':
+      case 'bigbed':
+        return 'Annotation';
+      default:
+        return 'Track';
+    }
+  };
+
   const importSessionFromUrl = () => {
     const urlString = prompt('Please enter the IGV session URL:');
     if (!urlString) return;
@@ -106,34 +146,19 @@ const ExportIGVSession: React.FC = () => {
       const names = url.searchParams.getAll('name') || [];
       
       const importedTracks = files.map((fileUrl, index) => {
-        const fileExtension = fileUrl.split('.').pop()?.split('?')[0]?.toLowerCase() || '';
+        const trackType = inferTrackType(fileUrl);
+        const nameParts = names[index]?.split(' - ') || [];
+        const cellTypeName = nameParts[0] || 'Unknown';
         
-        let format;
-        switch (fileExtension) {
-          case 'bw':
-          case 'bigwig':
-            format = 'bigWig';
-            break;
-          case 'bedpe':
-            format = 'bedpe';
-            break;
-          case 'bed':
-            format = 'bed';
-            break;
-          case 'bb':
-          case 'bigbed':
-            format = 'bigBed';
-            break;
-          default:
-            format = fileExtension || 'Unknown';
-        }
-
         return {
-          bioSample: names[index]?.split(' - ')[1] || fileUrl.split('/').pop() || 'Imported',
-          cellType: names[index]?.split(' - ')[0] || 'Unknown',
-          trackSubType: 'Track',
-          fileFormat: format,
-          url: fileUrl,
+          cellTypeID: `imported_${index}`,
+          cellTypeName: cellTypeName,
+          study: 'Imported',
+          studyUrl: '',
+          trackUrl: fileUrl,
+          trackType: nameParts[1] || trackType,
+          model: null,
+          color: getColorForTrackType(trackType)
         };
       });
 
