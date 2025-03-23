@@ -7,38 +7,41 @@ import { igvTracksSet } from '../state/igv-tracks';
 import ITrackInfo from '../state/ITrackInfo';
 
 // Default tracks to be loaded into IGV
-const defaultTracks: ITrackInfo[] = [
+const specialTracks: ITrackInfo[] = [
   { 
-    cellTypeID: 'default_crediblesets',
+    cellTypeID: 'special_crediblesets',
     cellTypeName: 'CredibleSets',
-    study: 'Default',
+    study: 'Special',
     studyUrl: '',
-    elementsUrl: 'https://mitra.stanford.edu/engreitz/oak/Users/rosaxma/share/mitra/2409_heartmap/variants_cs/all_CredibleSets.bed'
+    trackUrl: 'https://mitra.stanford.edu/engreitz/oak/Users/rosaxma/share/mitra/2409_heartmap/variants_cs/all_CredibleSets.bed',
+    trackType: 'bed'
   },
   { 
-    cellTypeID: 'default_variants',
+    cellTypeID: 'special_variants',
     cellTypeName: 'Variants',
-    study: 'Default',
+    study: 'Special',
     studyUrl: '',
-    elementsUrl: 'https://mitra.stanford.edu/engreitz/oak/Users/rosaxma/share/mitra/2409_heartmap/variants_cs/all_Variants.bed'
+    trackUrl: 'https://mitra.stanford.edu/engreitz/oak/Users/rosaxma/share/mitra/2409_heartmap/variants_cs/all_Variants.bed',
+    trackType: 'bed'
   },
   { 
-    cellTypeID: 'default_tss',
+    cellTypeID: 'special_tss',
     cellTypeName: 'TSS',
-    study: 'Default',
+    study: 'Special',
     studyUrl: '',
-    elementsUrl: 'https://mitra.stanford.edu/engreitz/oak/Users/rosaxma/share/mitra/2409_heartmap/variants_cs/CollapsedGeneBounds.hg38.TSS500bp.bed'
+    trackUrl: 'https://mitra.stanford.edu/engreitz/oak/Users/rosaxma/share/mitra/2409_heartmap/variants_cs/CollapsedGeneBounds.hg38.TSS500bp.bed',
+    trackType: 'bed'
   },
 ];
 
-const DefaultTracksTable: React.FC = () => {
+const SpecialTracksTable: React.FC = () => {
   const [tracksSet, setTracksSet] = useAtom(igvTracksSet);
 
   // Initialize default tracks on mount
   useEffect(() => {
     setTracksSet((prevTrackSet) => {
       const newTrackSet = new Set(prevTrackSet);
-      defaultTracks.forEach((track) => newTrackSet.add(track));
+      specialTracks.forEach((track) => newTrackSet.add(track));
       return newTrackSet;
     });
   }, [setTracksSet]);
@@ -62,7 +65,7 @@ const DefaultTracksTable: React.FC = () => {
   };
 
   // Toggle the track state based on existence in `tracksSet`
-  const toggleDefaultTrack = (track: ITrackInfo) => {
+  const toggleSpecialTrack = (track: ITrackInfo) => {
     const isTrackAdded = Array.from(tracksSet).some(
       (t) => t.cellTypeID === track.cellTypeID && t.study === track.study
     );
@@ -76,10 +79,10 @@ const DefaultTracksTable: React.FC = () => {
 
   return (
     <Paper sx={{ padding: 2, marginTop: 2 }}>
-      <Typography variant="h6">Default Tracks</Typography>
+      <Typography variant="h6">Special Tracks</Typography>
       <Table size="small">
         <TableBody>
-          {defaultTracks.map((track) => {
+          {specialTracks.map((track) => {
             const isTrackAdded = Array.from(tracksSet).some(
               (t) => t.cellTypeID === track.cellTypeID && t.study === track.study
             );
@@ -89,7 +92,7 @@ const DefaultTracksTable: React.FC = () => {
                 <TableCell>{track.cellTypeName}</TableCell>
                 <TableCell>
                   <IconButton
-                    onClick={() => toggleDefaultTrack(track)}
+                    onClick={() => toggleSpecialTrack(track)}
                     color={isTrackAdded ? 'primary' : 'default'}
                   >
                     {isTrackAdded ? <RemoveIcon /> : <AddIcon />}
@@ -104,4 +107,4 @@ const DefaultTracksTable: React.FC = () => {
   );
 };
 
-export default DefaultTracksTable;
+export default SpecialTracksTable;
