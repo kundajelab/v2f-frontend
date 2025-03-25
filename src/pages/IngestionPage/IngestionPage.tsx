@@ -70,6 +70,15 @@ function IngestionPage() {
     });
   };
 
+  const processSheetIngestion = async () => {
+    try {
+      const response = await axios.post(`${getApiUrl()}/sheet-ingestion`, {});
+      console.log('Sheet ingestion initiated:', response.data);
+    } catch (error) {
+      console.error('Error initiating sheet ingestion:', error);
+    }
+  };
+
   return (
     <BasePage>
       <Box>
@@ -104,9 +113,14 @@ function IngestionPage() {
           Processed:{' '}
           {files?.filter((file) => file.status === 'Processed').length}
         </Typography>
-        <Button variant="contained" onClick={processAllFiles}>
-          Queue All Unprocessed
-        </Button>
+        <Stack direction="row" spacing={2} sx={{ marginBottom: '16px' }}>
+          <Button variant="contained" onClick={processAllFiles}>
+            Queue All Unprocessed
+          </Button>
+          <Button variant="contained" onClick={processSheetIngestion} color="secondary">
+            Process Sheet Ingestion
+          </Button>
+        </Stack>
         <Box sx={{ marginTop: '16px' }}>
           {files?.map((file) => (
             <Accordion
