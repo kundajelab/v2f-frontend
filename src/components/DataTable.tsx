@@ -160,6 +160,7 @@ const DataTable: React.FC<DataTableProps> = ({ loading, error, data, filenameSte
       label: 'Model',
       renderCell: (rowData: DataTrack) => rowData.modelType || 'N/A',
     },
+    /*
     {
       id: 'tracks',
       label: 'Tracks',
@@ -261,6 +262,7 @@ const DataTable: React.FC<DataTableProps> = ({ loading, error, data, filenameSte
         </>
       ),
     },
+    */
     {
       id: 'addAll',
       label: 'Add All Tracks',
