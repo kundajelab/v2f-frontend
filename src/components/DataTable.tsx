@@ -160,6 +160,109 @@ const DataTable: React.FC<DataTableProps> = ({ loading, error, data, filenameSte
       label: 'Model',
       renderCell: (rowData: DataTrack) => rowData.modelType || 'N/A',
     },
+    /*
+    {
+      id: 'tracks',
+      label: 'Tracks',
+      renderCell: (rowData: DataTrack) => (
+        <>
+          <IconButton onClick={() => toggleExpand(`${rowData.study}-${rowData.cellTypeId}`)}>
+            <ExpandMoreIcon />
+          </IconButton>
+          
+          <Collapse in={expandedRows.has(`${rowData.study}-${rowData.cellTypeId}`)} timeout="auto" unmountOnExit>
+            <Table size="small">
+              <TableBody>
+                {data
+                  .filter(
+                    (track: DataTrack) =>
+                      track.study === rowData.study && track.cellTypeId === rowData.cellTypeId
+                  )
+                  .map((track: DataTrack) => {
+                    // Create a list of available tracks for this cell type/study
+                    const availableTracks = [];
+                    
+                    if (track.dnaseSignalUrl) {
+                      availableTracks.push({
+                        type: 'DNase Signal',
+                        url: track.dnaseSignalUrl
+                      });
+                    }
+                    
+                    if (track.atacSignalUrl) {
+                      availableTracks.push({
+                        type: 'ATAC Signal',
+                        url: track.atacSignalUrl
+                      });
+                    }
+                    
+                    if (track.e2gPredictionsUrl) {
+                      availableTracks.push({
+                        type: 'E2G Predictions',
+                        url: track.e2gPredictionsUrl
+                      });
+                    }
+                    
+                    if (track.variantPredsUrl) {
+                      availableTracks.push({
+                        type: 'Variant Predictions',
+                        url: track.variantPredsUrl
+                      });
+                    }
+                    
+                    if (track.elementsUrl) {
+                      availableTracks.push({
+                        type: 'Elements',
+                        url: track.elementsUrl
+                      });
+                    }
+                    
+                    return availableTracks.map((availableTrack) => {
+                      const trackInfo: ITrackInfo = {
+                        cellTypeID: track.cellTypeId,
+                        cellTypeName: track.cellType,
+                        study: track.study,
+                        studyUrl: track.paperUrl || '',
+                        trackUrl: availableTrack.url,
+                        trackType: availableTrack.type,
+                        model: track.modelType,
+                      };
+
+                      // Check if this specific track is in the tracksSet
+                      const isTrackAdded = Array.from(tracksSet).some(
+                        (t) => t.trackUrl === trackInfo.trackUrl
+                      );
+
+                      return (
+                        <TableRow key={availableTrack.url}>
+                          <TableCell>
+                            {availableTrack.type}
+                          </TableCell>
+                          <TableCell>
+                            <IconButton
+                              onClick={() => isTrackAdded ? removeTrack(trackInfo) : addTrack(trackInfo)}
+                              size="small"
+                              color="primary"
+                            >
+                              {isTrackAdded ? <RemoveIcon fontSize="small" /> : <AddIcon fontSize="small" />}
+                            </IconButton>
+                          </TableCell>
+                          <TableCell>
+                            <IconButton href={availableTrack.url} target="_blank" rel="noopener noreferrer">
+                              <OpenInNewIcon fontSize="small" />
+                            </IconButton>
+                          </TableCell>
+                        </TableRow>
+                      );
+                    });
+                  })}
+              </TableBody>
+            </Table>
+          </Collapse>
+        </>
+      ),
+    },
+    */
     {
       id: 'addAll',
       label: 'Add All Tracks',
