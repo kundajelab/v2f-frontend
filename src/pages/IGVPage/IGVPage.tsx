@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Box, Paper, Button } from '@mui/material';
+import { Box, Paper, Button, Typography } from '@mui/material';
 import IGVBrowser from '../../components/IGVBrowser';
 import { useQuery } from '@apollo/client';
 import { DataTracksTableDocument, DataTracksTableQuery } from '../../__generated__/graphql';
@@ -173,6 +173,9 @@ const IGVPage = () => {
                 <Button onClick={removeAllTracks} variant="contained" color="secondary">
                   Remove All Tracks
                 </Button>
+                <Typography variant="body2" sx={{ mt: 1, color: 'text.secondary' }}>
+                  Select cell types and click 'Add Tracks' to view E2G predictions in the IGV browser
+                </Typography>
               </Box>
               <Paper sx={{ height: 'fit-content', overflow: 'auto' }}>
                 <DataTable
