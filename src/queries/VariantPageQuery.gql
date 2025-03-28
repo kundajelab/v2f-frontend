@@ -3,17 +3,21 @@ fragment VariantPageEnhancerGenePrediction on EnhancerGenePrediction {
   score
   cellType
   score
-  variantToGeneDistance
+  # variantToGeneDistance
   enhancerStart
   enhancerClass
   enhancerEnd
   targetGeneTss
   enhancerToGeneDistance
-  pip
   model
   dataset
-  isTemporary
-  datatrackURL
+  datatrack {
+    id
+    atacSignalUrl
+    dnaseSignalUrl
+    e2gPredictionsUrl
+    elementsUrl
+  }
   targetGene {
     id
     symbol
