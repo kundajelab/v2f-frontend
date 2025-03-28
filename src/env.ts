@@ -7,11 +7,12 @@ if (!process.env.REACT_APP_BE_DOMAIN) {
 }
 
 export function getApiUrl() {
-  const domain = `http://${process.env.REACT_APP_BE_DOMAIN}`;
-  const port = process.env.REACT_APP_BE_PORT;
+  const domain = process.env.REACT_APP_BE_DOMAIN?.includes("$") ? process.env.BE_DOMAIN : process.env.REACT_APP_BE_DOMAIN;
+  const domainUrl = `http://${domain}`;
+  const port = process.env.REACT_APP_BE_PORT?.includes("$") ? process.env.BE_LOCAL_PORT : process.env.REACT_APP_BE_PORT;
   if (port) {
-    return `${domain}:${port}`;
+    return `${domainUrl}:${port}`;
   } else {
-    return domain;
+    return domainUrl;
   }
 }

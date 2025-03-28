@@ -79,17 +79,6 @@ const IGVPage = () => {
                         model: track.modelType,
                     });
                 }
-                if (track.variantPredsUrl) {
-                    newTrackSet.add({
-                        cellTypeID: track.cellTypeId,
-                        cellTypeName: track.cellType,
-                        study: track.study,
-                        studyUrl: track.paperUrl || '',
-                        trackUrl: track.variantPredsUrl,
-                        trackType: 'Variant Predictions',
-                        model: track.modelType,
-                    });
-                }
                 if (track.elementsUrl) {
                     newTrackSet.add({
                         cellTypeID: track.cellTypeId,

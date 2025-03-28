@@ -21,18 +21,6 @@ const tableColumns = (
   _variantId: string, igvTracks: Set<ITrackInfo>, addTrack: (track: ITrackInfo) => void, removeTrack: (track: ITrackInfo) => void
 ): TableColumn<VariantPageEnhancerGenePredictionFragment>[] => [
   {
-    id: 'isTemporary',
-    label: '',
-    renderCell: (rowData: VariantPageEnhancerGenePredictionFragment) =>
-      rowData.isTemporary ? (
-        <Tooltip title="Temporary prediction uploaded by a user">
-          <HourglassTop
-            sx={{ opacity: 0.5, fontSize: '20px', verticalAlign: 'middle' }}
-          />
-        </Tooltip>
-      ) : null,
-  },
-  {
     id: 'cellType',
     label: 'Cell Type',
     renderCell: (rowData: VariantPageEnhancerGenePredictionFragment) =>
@@ -65,12 +53,12 @@ const tableColumns = (
     renderCell: (rowData: VariantPageEnhancerGenePredictionFragment) =>
       rowData.model || 'N/A', // Default to 'N/A' if model is missing
   },
-  {
-    id: 'variantGeneDistance',
-    label: 'Variant-Gene Distance',
-    renderCell: (rowData: VariantPageEnhancerGenePredictionFragment) =>
-      rowData.variantToGeneDistance,
-  },
+  // {
+  //   id: 'variantGeneDistance',
+  //   label: 'Variant-Gene Distance',
+  //   renderCell: (rowData: VariantPageEnhancerGenePredictionFragment) =>
+  //     rowData.variantToGeneDistance,
+  // },
   {
     id: 'enhancerStart',
     label: 'Enhancer Start',
@@ -90,26 +78,72 @@ const tableColumns = (
       rowData.enhancerClass,
   },
   {
-    id: 'datatrackURL',
+    id: 'enhancerGeneDistance',
+    label: 'E-G Distance',
+    renderCell: (rowData: VariantPageEnhancerGenePredictionFragment) =>
+      rowData.enhancerToGeneDistance,
+  },
+  {
+    id: 'datatrack',
     label: 'DataTrack',
     renderCell: (rowData: VariantPageEnhancerGenePredictionFragment) => {
-      if (rowData.datatrackURL) {
-        const trackInfo: ITrackInfo = {
-          cellTypeID: rowData.cellType,
-          cellTypeName: rowData.cellType,
-          study: rowData.dataset,
-          studyUrl: '',
-          trackUrl: rowData.datatrackURL,
-          trackType: rowData.model,
-          model: rowData.model
-        };
+      if (rowData.datatrack) {
+        const tracks: ITrackInfo[] = [
+          {
+            cellTypeID: rowData.cellType,
+            cellTypeName: rowData.cellType,
+            study: rowData.dataset,
+            studyUrl: '',
+            trackUrl: rowData.datatrack.e2gPredictionsUrl || '',
+            trackType: 'E2G Predictions',
+            model: rowData.model
+          },
+
+          {
+            cellTypeID: rowData.cellType,
+            cellTypeName: rowData.cellType,
+            study: rowData.dataset,
+            studyUrl: '',
+            trackUrl: rowData.datatrack.atacSignalUrl || '',
+            trackType: 'ATAC Signal',
+            model: rowData.model
+          },
+          {
+            cellTypeID: rowData.cellType,
+            cellTypeName: rowData.cellType,
+            study: rowData.dataset,
+            studyUrl: '',
+            trackUrl: rowData.datatrack.dnaseSignalUrl || '',
+            trackType: 'DNase Signal',
+            model: rowData.model
+          },
+          {
+            cellTypeID: rowData.cellType,
+            cellTypeName: rowData.cellType,
+            study: rowData.dataset,
+            studyUrl: '',
+            trackUrl: rowData.datatrack.elementsUrl || '',
+            trackType: 'Elements',
+            model: rowData.model
+          }
+        ].filter((track) => track.trackUrl !== '');
+
 
         const isTrackAdded = Array.from(igvTracks).some(
-          (track) => track.trackUrl === trackInfo.trackUrl
+          (track) => track.trackUrl === tracks[0].trackUrl
         );
 
+        const addTracks = () => {
+          tracks.forEach((track) => addTrack(track));
+        };
+
+        const removeTracks = () => {
+          console.log('trying')
+          tracks.forEach((track) => removeTrack(track));
+        };
+
         return (
-          <IconButton onClick={() => isTrackAdded ? removeTrack(trackInfo) : addTrack(trackInfo)}>
+          <IconButton onClick={() => isTrackAdded ? removeTracks() : addTracks()}>
             {isTrackAdded ? <RemoveIcon /> : <AddIcon />}
           </IconButton>
         );
@@ -146,9 +180,7 @@ const EnhancerGenePredictionsTable = ({
 
   const removeTrack = (trackInfo: ITrackInfo) => {
     setTracksSet((prevTrackSet) => {
-      const newTrackSet = new Set(prevTrackSet);
-      newTrackSet.delete(trackInfo); 
-      return newTrackSet;
+      return new Set(Array.from(prevTrackSet).filter((track) => track.trackUrl !== trackInfo.trackUrl));
     });
   };
 
