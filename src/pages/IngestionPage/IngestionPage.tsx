@@ -7,7 +7,6 @@ import axios from 'axios';
 import BasePage from '../BasePage';
 import { getApiUrl } from '../../env';
 
-
 function IngestionPage() {
   const socket = useContext(SocketContext);
 
@@ -20,12 +19,31 @@ function IngestionPage() {
     }
   };
 
+  const cancelSheetIngestion = async () => {
+    try {
+      const response = await axios.post(
+        `${getApiUrl()}/sheet-ingestion/cancel`,
+        {}
+      );
+      console.log('Sheet ingestion cancelled:', response.data);
+    } catch (error) {
+      console.error('Error cancelling sheet ingestion:', error);
+    }
+  };
+
   return (
     <BasePage>
       <Box>
         <Stack direction="row" spacing={2} sx={{ marginBottom: '16px' }}>
           <Button variant="contained" onClick={processSheetIngestion}>
             Process Sheet Ingestion
+          </Button>
+          <Button
+            variant="contained"
+            onClick={cancelSheetIngestion}
+            color="secondary"
+          >
+            Cancel Sheet Ingestion
           </Button>
         </Stack>
         <Box
