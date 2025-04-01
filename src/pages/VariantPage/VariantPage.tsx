@@ -1,7 +1,8 @@
-import Helmet from 'react-helmet';
+import { Helmet } from 'react-helmet';
 import { loader } from 'graphql.macro';
 import queryString, { ParsedQuery } from 'query-string';
 import { useQuery } from '@apollo/client';
+import { useCallback, useMemo } from 'react';
 
 import { SectionHeading, Typography } from '../../ot-ui-components';
 import { PlotContainer } from '../../ot-ui-components';
@@ -58,91 +59,9 @@ const VariantPage = () => {
   const location = useLocation();
   const { variantId = '' } = useParams<{ variantId: string }>();
 
-  // Queries
-  const { loading: headerLoading, data: headerData } = useQuery<
-    VariantHeaderQuery,
-    VariantHeaderQueryVariables
-  >(VARIANT_HEADER_QUERY, {
-    variables: { variantId },
-  });
-  const {
-    loading: pageLoading,
-    error,
-    data: pageData,
-  } = useQuery<VariantPageQuery, VariantPageQueryVariables>(
-    VARIANT_PAGE_QUERY,
-    {
-      variables: { variantId },
-    }
-  );
-  const {
-    loading: ldLoading,
-    data: ldData,
-    error: ldError,
-  } = useQuery<
-    VariantLinkageDisequilibriumQuery,
-    VariantLinkageDisequilibriumQueryVariables
-  >(VARIANT_LD_QUERY, {
-    variables: { variantId },
-  });
-
-  // Derived State
-  const isGeneVariant = variantHasAssociatedGenes(pageData);
-  const isTagVariant = variantHasAssociatedIndexVariants(pageData);
-  const isIndexVariant = variantHasAssociatedTagVariants(pageData);
-  const associatedIndexVariants = isTagVariant
-    ? variantTransformAssociatedIndexVariants(pageData!)
-    : [];
-  const associatedTagVariants = isIndexVariant
-    ? variantTransformAssociatedTagVariants(pageData!)
-    : [];
-
-  const genesForVariantSchema = isGeneVariant
-    ? variantParseGenesForVariantSchema(pageData!)
-    : [];
-  const enhancerGenePredictions = (pageData?.variantInfo
-    ?.enhancerGenePredictions ||
-    []) as VariantPageEnhancerGenePredictionFragment[];
-  const ldTableData = (ldData?.linkageDisequilibriumsForVariant ||
-    []) as VariantLinkageDisequilibriumFragment[];
-
-  // Methods
-  const handlePhewasTraitFilter = (
-    newPhewasTraitFilterValue?: PhewasOption[]
-  ) => {
-    const { phewasTraitFilter, ...rest } = _parseQueryProps();
-    const newQueryParams = {
-      ...rest,
-    };
-    if (newPhewasTraitFilterValue && newPhewasTraitFilterValue.length > 0) {
-      newQueryParams.phewasTraitFilter = newPhewasTraitFilterValue.map(
-        (d) => d.value
-      );
-    }
-    _stringifyQueryProps(newQueryParams);
-  };
-
-  const handlePhewasCategoryFilter = (
-    newPhewasCategoryFilterValue?: PhewasOption[]
-  ) => {
-    const { phewasCategoryFilter, ...rest } = _parseQueryProps();
-    const newQueryParams = {
-      ...rest,
-    };
-    if (
-      newPhewasCategoryFilterValue &&
-      newPhewasCategoryFilterValue.length > 0
-    ) {
-      newQueryParams.phewasCategoryFilter = newPhewasCategoryFilterValue.map(
-        (d) => d.value
-      );
-    }
-    _stringifyQueryProps(newQueryParams);
-  };
-
-  const _parseQueryProps = () => {
+  // Memoize the parsed query parameters
+  const parsedQueryProps = useMemo(() => {
     const queryProps = queryString.parse(location.search);
-
     // single values need to be put in lists
     if (queryProps.phewasTraitFilter) {
       queryProps.phewasTraitFilter = Array.isArray(queryProps.phewasTraitFilter)
@@ -157,28 +76,127 @@ const VariantPage = () => {
         : [queryProps.phewasCategoryFilter];
     }
     return queryProps;
-  };
+  }, [location.search]); // Dependency: location.search
 
-  const _stringifyQueryProps = (newQueryParams: ParsedQuery) => {
+  // Memoize the stringify function helper
+  const _stringifyQueryProps = useCallback((newQueryParams: ParsedQuery) => {
     navigate({
       ...location,
       search: queryString.stringify(newQueryParams),
     });
-  };
+  }, [navigate, location]); // Dependencies: navigate, location
+
+  // Queries
+  const queryVariables = useMemo(() => ({ variantId }), [variantId]);
+
+  const { loading: headerLoading, data: headerData } = useQuery<
+    VariantHeaderQuery,
+    VariantHeaderQueryVariables
+  >(VARIANT_HEADER_QUERY, {
+    variables: queryVariables,
+    fetchPolicy: 'cache-first',
+  });
+  const {
+    loading: pageLoading,
+    error,
+    data: pageData,
+  } = useQuery<VariantPageQuery, VariantPageQueryVariables>(
+    VARIANT_PAGE_QUERY,
+    {
+      variables: queryVariables,
+      fetchPolicy: 'cache-first',
+    }
+  );
+  const {
+    loading: ldLoading,
+    data: ldData,
+    error: ldError,
+  } = useQuery<
+    VariantLinkageDisequilibriumQuery,
+    VariantLinkageDisequilibriumQueryVariables
+  >(VARIANT_LD_QUERY, {
+    variables: queryVariables,
+    fetchPolicy: 'cache-first',
+  });
+
+  // Derived State
+  const isGeneVariant = useMemo(() => variantHasAssociatedGenes(pageData), [pageData]);
+  const isTagVariant = useMemo(() => variantHasAssociatedIndexVariants(pageData), [pageData]);
+  const isIndexVariant = useMemo(() => variantHasAssociatedTagVariants(pageData), [pageData]);
+
+  const associatedIndexVariants = useMemo(() => {
+    return isTagVariant ? variantTransformAssociatedIndexVariants(pageData!) : [];
+  }, [isTagVariant, pageData]);
+
+  const associatedTagVariants = useMemo(() => {
+    return isIndexVariant ? variantTransformAssociatedTagVariants(pageData!) : [];
+  }, [isIndexVariant, pageData]);
+
+  const genesForVariantSchema = useMemo(() => {
+    return isGeneVariant ? variantParseGenesForVariantSchema(pageData!) : [];
+  }, [isGeneVariant, pageData]);
+
+  const enhancerGenePredictions = useMemo(() => {
+    return (pageData?.variantInfo?.enhancerGenePredictions ||
+      []) as VariantPageEnhancerGenePredictionFragment[];
+  }, [pageData]);
+
+  const ldTableData = useMemo(() => {
+    return (ldData?.linkageDisequilibriumsForVariant ||
+      []) as VariantLinkageDisequilibriumFragment[];
+  }, [ldData]);
+
+  // Methods
+
+  // Memoize the handlers
+  const handlePhewasTraitFilter = useCallback((
+    newPhewasTraitFilterValue?: PhewasOption[]
+  ) => {
+    const { phewasTraitFilter, ...rest } = parsedQueryProps; // Use memoized parsed props
+    const newQueryParams = {
+      ...rest,
+    };
+    if (newPhewasTraitFilterValue && newPhewasTraitFilterValue.length > 0) {
+      newQueryParams.phewasTraitFilter = newPhewasTraitFilterValue.map(
+        (d) => d.value
+      );
+    }
+    _stringifyQueryProps(newQueryParams);
+  }, [parsedQueryProps, _stringifyQueryProps]); // Dependencies: memoized parsed props, memoized stringify
+
+  const handlePhewasCategoryFilter = useCallback((
+    newPhewasCategoryFilterValue?: PhewasOption[]
+  ) => {
+    const { phewasCategoryFilter, ...rest } = parsedQueryProps; // Use memoized parsed props
+    const newQueryParams = {
+      ...rest,
+    };
+    if (
+      newPhewasCategoryFilterValue &&
+      newPhewasCategoryFilterValue.length > 0
+    ) {
+      newQueryParams.phewasCategoryFilter = newPhewasCategoryFilterValue.map(
+        (d) => d.value
+      );
+    }
+    _stringifyQueryProps(newQueryParams);
+  }, [parsedQueryProps, _stringifyQueryProps]); // Dependencies: memoized parsed props, memoized stringify
 
   const {
     phewasTraitFilter: phewasTraitFilterUrl,
     phewasCategoryFilter: phewasCategoryFilterUrl,
-  } = _parseQueryProps();
+  } = parsedQueryProps; // Use memoized parsed props
+
+  // Memoize the Locus for the IGV component
+  const locus = useMemo(() => {
+    const [chromosome, position] = variantId.split('_');
+    return `${chromosome}:${position}`;
+  }, [variantId]);
 
   // Render
   if (headerData && !headerData.variantInfo) {
     return <NotFoundPage />;
   }
-
-  // Return the Locus to the IGV component
-  const [chromosome, position] = variantId.split('_');
-  const locus = `${chromosome}:${position}`;
 
   return (
     <BasePage>
