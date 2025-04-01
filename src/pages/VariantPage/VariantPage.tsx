@@ -190,7 +190,8 @@ const VariantPage = () => {
   // Memoize the Locus for the IGV component
   const locus = useMemo(() => {
     const [chromosome, position] = variantId.split('_');
-    return `${chromosome}:${position}`;
+    const intPosition = parseInt(position);
+    return `${chromosome}:${intPosition-5000}-${intPosition+5000}`;
   }, [variantId]);
 
   // Render
