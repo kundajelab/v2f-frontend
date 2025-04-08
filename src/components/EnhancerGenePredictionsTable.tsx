@@ -45,7 +45,7 @@ const tableColumns = (
     id: 'dataset',
     label: 'Dataset',
     renderCell: (rowData: VariantPageEnhancerGenePredictionFragment) =>
-      rowData.dataset,
+      rowData.dataset.startsWith('ENCSR') ? <Link to={`https://www.encodeproject.org/experiments/${rowData.dataset}`} external>{rowData.dataset}</Link> : rowData.dataset,
   },
   {
     id: 'model',
