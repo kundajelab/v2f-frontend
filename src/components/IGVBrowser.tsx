@@ -6,20 +6,42 @@ import { igvTracksSet } from '../state/igv-tracks';
 import { useAtom } from 'jotai';
 import ITrackInfo from '../state/ITrackInfo';
 
-const IGVBrowser = ({ locus }: { locus: string }) => {
+const IGVBrowser = ({ locus, variantId }: { locus: string, variantId?: string }) => {
   const containerRef = useRef(null);
   const [hasRendered, setHasRendered] = useState(false);
   const [tracksSet] = useAtom(igvTracksSet);
   const browserRef = useRef<any>(null);
   const prevTrackSet = useRef(new Set<ITrackInfo>(tracksSet));
 
+
   useEffect(() => {
     if (containerRef.current && !hasRendered && locus) {
       setHasRendered(true);
 
+      let roi: any[] = [];
+      if (variantId) {
+        const [chr, pos, ref, alt] = variantId.split('_');
+        roi = [
+          {
+            name: `Variant ${variantId}`,
+            color: 'rgba(94,255,1,0.5)',
+            indexed: false,
+            features: [
+              {
+                chr: `chr${chr}`,
+                start: parseInt(pos) - 1,
+                end: parseInt(pos) + ref.length - 1,
+              }
+            ]
+          }
+        ]
+        
+      }
+
       const browserOptions = {
         genome: 'hg38',
-        locus, // Use the passed locus prop here
+        locus, // Use the passed locus prop here,
+        roi,
       };
 
       const browserPromise: Promise<any> = igv.createBrowser(containerRef.current, browserOptions);
@@ -28,7 +50,7 @@ const IGVBrowser = ({ locus }: { locus: string }) => {
         browserRef.current = browser;
       });
     }
-  }, [hasRendered, locus]);
+  }, [hasRendered, locus, variantId]);
 
   useEffect(() => {
     if (!browserRef.current) {
