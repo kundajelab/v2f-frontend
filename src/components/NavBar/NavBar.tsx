@@ -4,6 +4,8 @@ import Toolbar from '@mui/material/Toolbar';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import { Divider, MenuItem, MenuList, Theme } from '@mui/material';
+import IconButton from '@mui/material/IconButton';
+import GitHubIcon from '@mui/icons-material/GitHub';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { ClassNameMap } from '@mui/styles/withStyles';
 import classNames from 'classnames';
@@ -123,11 +125,24 @@ const NavBar = ({
         )}
         <div className={classes.flex} />
         {search ? search : null}
-        <Button variant="contained" color="secondary" onClick={() => navigate('/igv')} sx={{
-          marginLeft: '2rem',
-        }}>
+        <Button
+          variant="contained"
+          color="secondary"
+          onClick={() => navigate('/igv')}
+          sx={{ marginLeft: '2rem' }}
+        >
           <Typography color="inherit">IGV Browser</Typography>
         </Button>
+        <IconButton
+          component="a"
+          href="https://github.com/kundajelab/v2f-frontend"
+          target="_blank"
+          rel="noopener noreferrer"
+          color="inherit"
+          sx={{ marginLeft: '0.5rem' }}
+        >
+          <GitHubIcon />
+        </IconButton>
       </Toolbar>
     </AppBar>
   );
