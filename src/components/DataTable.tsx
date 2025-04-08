@@ -93,20 +93,7 @@ const DataTable: React.FC<DataTableProps> = ({ loading, error, data, filenameSte
             };
             newTrackSet.add(trackInfo);
           }
-          
-          if (track.variantPredsUrl) {
-            const trackInfo: ITrackInfo = {
-              cellTypeID: track.cellTypeId,
-              cellTypeName: track.cellType,
-              study: track.study,
-              studyUrl: track.paperUrl || '',
-              trackUrl: track.variantPredsUrl,
-              trackType: 'Variant Predictions',
-              model: track.modelType,
-            };
-            newTrackSet.add(trackInfo);
-          }
-          
+
           if (track.elementsUrl) {
             const trackInfo: ITrackInfo = {
               cellTypeID: track.cellTypeId,
@@ -124,6 +111,19 @@ const DataTable: React.FC<DataTableProps> = ({ loading, error, data, filenameSte
       return newTrackSet;
     });
   };
+
+  const removeAllTracksForRow = (study: string, cellTypeId: string) => {
+    setTracksSet((prevTrackSet) => {
+      const newTrackSet = new Set(prevTrackSet);
+      newTrackSet.forEach((t) => {
+        if (t.study === study && t.cellTypeID === cellTypeId) {
+          newTrackSet.delete(t);
+        }
+      });
+      return newTrackSet;
+    });
+  };
+  
 
   // Prepare data for display - group by cellTypeId and study
   const prepareTableData = () => {
@@ -265,16 +265,15 @@ const DataTable: React.FC<DataTableProps> = ({ loading, error, data, filenameSte
     */
     {
       id: 'addAll',
-      label: 'Add All Tracks',
-      renderCell: (rowData: DataTrack) => (
-        <Button
-          variant="contained"
-          size="small"
-          onClick={() => addAllTracksForRow(rowData.study, rowData.cellTypeId)}
-        >
-          Add All
-        </Button>
-      ),
+      label: 'Data Tracks',
+      renderCell: (rowData: DataTrack) => {
+        const isTrackAdded = Array.from(tracksSet).some((t) => t.study === rowData.study && t.cellTypeID === rowData.cellTypeId);
+        return (
+          <IconButton onClick={() => isTrackAdded ? removeAllTracksForRow(rowData.study, rowData.cellTypeId) : addAllTracksForRow(rowData.study, rowData.cellTypeId)}>
+            {isTrackAdded ? <RemoveIcon /> : <AddIcon />}
+          </IconButton>
+        );
+      }
     },
   ];
 

@@ -234,7 +234,7 @@ const VariantPage = () => {
         heading="IGV Browser"
         subheading="Chosen datatracks for this variant can be viewed here"
         />
-        <IGVBrowser locus={locus} />  {}
+        <IGVBrowser locus={locus} variantId={variantId} /> 
 
         <SectionHeading
           heading="Linkage Disequilibrium"

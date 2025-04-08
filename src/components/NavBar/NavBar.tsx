@@ -3,7 +3,7 @@ import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
-import { MenuItem, MenuList, Theme } from '@mui/material';
+import { Divider, MenuItem, MenuList, Theme } from '@mui/material';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { ClassNameMap } from '@mui/styles/withStyles';
 import classNames from 'classnames';
@@ -11,7 +11,7 @@ import {Link} from '../../ot-ui-components';
 import OpenTargetsTitle from './OpenTargetsTitle';
 import HeaderMenu, { HeaderMenuItem } from './HeaderMenu';
 import { makeStyles } from '@mui/styles';
-
+import { useNavigate } from 'react-router-dom-v5-compat';
 const useStyles = makeStyles((theme: Theme) => ({
   navbar: {
     backgroundColor: theme.palette.primary.main,
@@ -105,6 +105,7 @@ const NavBar = ({
   const smMQ = useMediaQuery('(max-width:800px)');
   const isHomePageRegular = homepage && !smMQ;
   const classes = useStyles();
+  const navigate = useNavigate();
   return (
     <AppBar
       className={classNames(classes.navbar, {
@@ -122,8 +123,11 @@ const NavBar = ({
         )}
         <div className={classes.flex} />
         {search ? search : null}
-
-        
+        <Button variant="contained" color="secondary" onClick={() => navigate('/igv')} sx={{
+          marginLeft: '2rem',
+        }}>
+          <Typography color="inherit">IGV Browser</Typography>
+        </Button>
       </Toolbar>
     </AppBar>
   );
