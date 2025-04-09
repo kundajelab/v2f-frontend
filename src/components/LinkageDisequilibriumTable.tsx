@@ -68,24 +68,28 @@ const tableColumns = (
     {
       id: 'egCellTypes',
       label: 'Cell Types w/ pred. EG Link',
-      renderCell: (rowData: VariantLinkageDisequilibriumFragment) =>
-        conditionalBold(
+      renderCell: (rowData: VariantLinkageDisequilibriumFragment) => {
+        const cellTypeSet = new Set(rowData.egCellTypes);
+        return conditionalBold(
           rowData,
-          <Tooltip title={rowData.egCellTypes.join(', ')}>
-            <div>{rowData.egCellTypes.length}</div>
+          <Tooltip title={<ul style={{ margin: 0, paddingLeft: 0, listStylePosition: 'inside' }}>{Array.from(cellTypeSet).sort((a, b) => a.toLocaleLowerCase().localeCompare(b.toLocaleLowerCase())).map(cellType => <li key={cellType}>{cellType}</li>)}</ul>}>
+            <div>{cellTypeSet.size}</div>
           </Tooltip>
-        ),
+        )
+      }
     },
     {
       id: 'egGenes',
       label: 'Genes w/ pred. EG link',
-      renderCell: (rowData: VariantLinkageDisequilibriumFragment) =>
-        conditionalBold(
+      renderCell: (rowData: VariantLinkageDisequilibriumFragment) => {
+        const geneSet = new Set(rowData.egGenes);
+        return conditionalBold(
           rowData,
-          <Tooltip title={rowData.egGenes.join(', ')}>
-            <div>{rowData.egGenes.length}</div>
+          <Tooltip title={<div>{Array.from(geneSet).sort((a, b) => a.toLocaleLowerCase().localeCompare(b.toLocaleLowerCase())).map(gene => <div key={gene}>{gene}</div>)}</div>}>
+            <div>{geneSet.size}</div>
           </Tooltip>
-        ),
+        )
+      }
     },
   ];
 };
