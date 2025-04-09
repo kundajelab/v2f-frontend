@@ -74,19 +74,16 @@ const IGVBrowser = ({ locus, variantId }: { locus: string, variantId?: string })
         // Add color based on track type
         switch (track.trackType) {
           case 'DNase Signal':
-            trackConfig.color = '#FF0000';
-            break;
-          case 'ATAC Signal':
-            trackConfig.color = '#00FF00';
-            break;
-          case 'E2G Predictions':
             trackConfig.color = '#0000FF';
             break;
-          case 'Variant Predictions':
-            trackConfig.color = '#FF00FF';
+          case 'ATAC Signal':
+            trackConfig.color = '#0000FF';
+            break;
+          case 'E2G Predictions':
+            trackConfig.color = '#FF0000';
             break;
           case 'Elements':
-            trackConfig.color = '#00FFFF';
+            trackConfig.color = 'rgb(83, 83, 83)';
             break;
           default:
             trackConfig.color = '#888888';
