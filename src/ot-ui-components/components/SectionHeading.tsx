@@ -26,7 +26,7 @@ const useStyles = makeStyles((theme: Theme) => ({
 
 type SectionHeadingProps = {
   heading: string;
-  subheading?: string;
+  subheading?: string | React.ReactNode;
   entities?: ModelSchematicEntity[];
 };
 const SectionHeading = ({

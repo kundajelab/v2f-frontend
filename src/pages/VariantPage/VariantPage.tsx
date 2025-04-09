@@ -44,6 +44,7 @@ import {
 } from '../../__generated__/graphql';
 import EnhancerGenePredictionsTable from '../../components/EnhancerGenePredictionsTable';
 import LinkageDisequilibriumTable from '../../components/LinkageDisequilibriumTable';
+import { Link } from '@mui/material';
 
 const VARIANT_PAGE_QUERY = loader('../../queries/VariantPageQuery.gql');
 const VARIANT_HEADER_QUERY = loader('./VariantHeader.gql');
@@ -231,14 +232,14 @@ const VariantPage = () => {
           filenameStem={`${variantId}-lead-variants`}
         />
         <SectionHeading
-        heading="IGV Browser"
-        subheading="Chosen datatracks for this variant can be viewed here"
+        heading="IGV Browser for Enhancer-Gene Model Predictions"
+        subheading={<span>Select cell types to view in the Enhancer-Gene Model Predictions table above. See <Link href="/igv" target="_blank" rel="noopener noreferrer">here</Link> to explore more cell types.</span>}
         />
         <IGVBrowser locus={locus} variantId={variantId} /> 
 
         <SectionHeading
-          heading="Linkage Disequilibrium"
-          subheading="Which variants are in linkage disequilibrium with this variant?"
+          heading={`Variants in Linkage Disequilibrium with ${variantId}`}
+          subheading="Which variants in LD with the query variant overlap predicted enhancers?"
           entities={[
             {
               type: 'variant',
