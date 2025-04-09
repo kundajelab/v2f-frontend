@@ -180,7 +180,7 @@ function Search({ autoFocus = false, embedded = false }) {
                   params.InputProps.endAdornment
                 )
               }
-              placeholder="Search..."
+              placeholder="Search by variant..."
               onChange={handleChangeInputValue}
               value={inputValue}
             />
