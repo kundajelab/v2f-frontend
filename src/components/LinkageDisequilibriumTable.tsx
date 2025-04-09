@@ -67,7 +67,7 @@ const tableColumns = (
     },
     {
       id: 'egCellTypes',
-      label: 'Cell Types w/ pred. EG Link',
+      label: '# Cell types with E-G prediction',
       renderCell: (rowData: VariantLinkageDisequilibriumFragment) => {
         const cellTypeSet = new Set(rowData.egCellTypes);
         return conditionalBold(
@@ -80,7 +80,7 @@ const tableColumns = (
     },
     {
       id: 'egGenes',
-      label: 'Genes w/ pred. EG link',
+      label: '# Genes with E-G prediction',
       renderCell: (rowData: VariantLinkageDisequilibriumFragment) => {
         const geneSet = new Set(rowData.egGenes);
         return conditionalBold(

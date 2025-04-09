@@ -85,7 +85,7 @@ const tableColumns = (
   },
   {
     id: 'datatrack',
-    label: 'DataTrack',
+    label: 'Add to IGV',
     renderCell: (rowData: VariantPageEnhancerGenePredictionFragment) => {
       if (rowData.datatrack) {
         const tracks: ITrackInfo[] = [
