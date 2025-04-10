@@ -287,7 +287,7 @@ const DataTable: React.FC<DataTableProps> = ({ loading, error, data, filenameSte
         sortBy="cellType"
         order="asc"
         downloadFileStem={filenameStem}
-        pageSize={20}
+        pageSize={100}
       />
     </>
   );
