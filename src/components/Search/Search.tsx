@@ -160,7 +160,7 @@ function Search({ autoFocus = false, embedded = false }) {
                   params.InputProps.endAdornment
                 )
               }
-              placeholder="Search for a gene, variant, study, or trait..."
+              placeholder="Search for a variant to find predicted enhancers and target genes..."
               onChange={handleChangeInputValue}
               value={inputValue}
             />
