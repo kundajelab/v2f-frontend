@@ -9,27 +9,27 @@ import ITrackInfo from '../state/ITrackInfo';
 // Default tracks to be loaded into IGV
 const specialTracks: ITrackInfo[] = [
   { 
-    cellTypeID: 'special_crediblesets',
-    cellTypeName: 'CredibleSets',
+    cellTypeID: 'promoters',
+    cellTypeName: 'Promoters',
+    study: 'Special',
+    studyUrl: '',
+    trackUrl: 'https://mitra.stanford.edu/engreitz/oak/Users/rosaxma/share/mitra/2409_heartmap/variants_cs/CollapsedGeneBounds.hg38.TSS500bp.bed',
+    trackType: 'bed'
+  },
+  { 
+    cellTypeID: 'crediblesets',
+    cellTypeName: 'Credible Sets (Ma*, Conley* et al.)',
     study: 'Special',
     studyUrl: '',
     trackUrl: 'https://mitra.stanford.edu/engreitz/oak/Users/rosaxma/share/mitra/2409_heartmap/variants_cs/all_CredibleSets.bed',
     trackType: 'bed'
   },
   { 
-    cellTypeID: 'special_variants',
-    cellTypeName: 'Variants',
+    cellTypeID: 'variants',
+    cellTypeName: 'Variants (Ma*, Conley* et al.)',
     study: 'Special',
     studyUrl: '',
     trackUrl: 'https://mitra.stanford.edu/engreitz/oak/Users/rosaxma/share/mitra/2409_heartmap/variants_cs/all_Variants.bed',
-    trackType: 'bed'
-  },
-  { 
-    cellTypeID: 'special_tss',
-    cellTypeName: 'TSS',
-    study: 'Special',
-    studyUrl: '',
-    trackUrl: 'https://mitra.stanford.edu/engreitz/oak/Users/rosaxma/share/mitra/2409_heartmap/variants_cs/CollapsedGeneBounds.hg38.TSS500bp.bed',
     trackType: 'bed'
   },
 ];
