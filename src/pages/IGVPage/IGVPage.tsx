@@ -121,13 +121,25 @@ const IGVPage = () => {
 
     return (
       <BasePage>
-        <Box sx={{ width: '100%', minHeight: '100vh' }}>
-          <ExportIGVSession />
+        <Typography variant="h5">IGV Browser for Enhancer-Gene Model Predictions</Typography>
+        <Typography variant="subtitle1" sx={{ mt: 1, color: 'text.secondary' }}>
+        Add cell types using table below
+        </Typography>
+        <Box sx={{ width: '100%', minHeight: '100vh', marginTop: '2vh' }}>
+          <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+            <ExportIGVSession />
+          </div>
 
           <Box sx={{ transition: 'height 0.3s' }}>
             <IGVBrowser locus="chr1:1-248,956,422" />
           </Box>
   
+          <Typography variant="h6" sx={{ mt: 1, color: 'text.secondary' }}>
+            Select cell types:
+          </Typography>
+          <Typography variant="subtitle1" sx={{ mt: 1, color: 'text.secondary' }}>
+            Select cell types and studies and click 'Add Tracks' to view E-G predictions in the IGV browser
+          </Typography>
           <Box 
             sx={{ 
               display: 'flex', 
@@ -162,9 +174,6 @@ const IGVPage = () => {
                 <Button onClick={removeAllTracks} variant="contained" color="secondary">
                   Remove All Tracks
                 </Button>
-                <Typography variant="body2" sx={{ mt: 1, color: 'text.secondary' }}>
-                  Select cell types and click 'Add Tracks' to view E2G predictions in the IGV browser
-                </Typography>
               </Box>
               <Paper sx={{ height: 'fit-content', overflow: 'auto' }}>
                 <DataTable
