@@ -33,7 +33,7 @@ const IGVPage = () => {
 
     // Filtered data based on selected filters
     const filteredData = data?.getDataTracks.filter((track) => {
-        const matchesCellType = selectedCellTypes.length === 0 || selectedCellTypes.includes(track.cellType);
+        const matchesCellType = selectedCellTypes.length === 0 || selectedCellTypes.some(cellType => track.cellType.toLowerCase().includes(cellType.toLowerCase()));
         const matchesCellTypeId = selectedCellTypeIds.length === 0 || selectedCellTypeIds.includes(track.cellTypeId);
         const matchesStudy = selectedStudies.length === 0 || selectedStudies.includes(track.study);
         const matchesModel = selectedModels.length === 0 || (track.modelType && selectedModels.includes(track.modelType));
