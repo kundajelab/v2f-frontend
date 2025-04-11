@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Paper, Table, TableBody, TableCell, TableRow, IconButton, Typography } from '@mui/material';
+import { Paper, IconButton, Typography, Box, Stack, Divider } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 import { useAtom } from 'jotai';
@@ -73,30 +73,38 @@ const SpecialTracksTable: React.FC = () => {
 
   return (
     <Paper sx={{ padding: 2, marginTop: 2 }}>
-      <Typography variant="h6">Special Tracks</Typography>
-      <Table size="small">
-        <TableBody>
-          {specialTracks.map((track) => {
-            const isTrackAdded = Array.from(tracksSet).some(
-              (t) => t.cellTypeID === track.cellTypeID && t.study === track.study
-            );
-            
-            return (
-              <TableRow key={track.cellTypeID}>
-                <TableCell>{track.cellTypeName}</TableCell>
-                <TableCell>
-                  <IconButton
-                    onClick={() => toggleSpecialTrack(track)}
-                    color={isTrackAdded ? 'primary' : 'default'}
-                  >
-                    {isTrackAdded ? <RemoveIcon /> : <AddIcon />}
-                  </IconButton>
-                </TableCell>
-              </TableRow>
-            );
-          })}
-        </TableBody>
-      </Table>
+      <Typography variant="h6" sx={{ mb: 2 }}>Special Tracks</Typography>
+      <Stack spacing={1}>
+        {specialTracks.map((track) => {
+          const isTrackAdded = Array.from(tracksSet).some(
+            (t) => t.cellTypeID === track.cellTypeID && t.study === track.study
+          );
+          
+          return (
+            <Box 
+              key={track.cellTypeID}
+              sx={{ 
+                display: 'flex', 
+                justifyContent: 'space-between', 
+                alignItems: 'center',
+                py: 1,
+                '&:not(:last-child)': {
+                  borderBottom: '1px solid rgba(224, 224, 224, 1)'
+                }
+              }}
+            >
+              <Typography variant="body2">{track.cellTypeName}</Typography>
+              <IconButton
+                onClick={() => toggleSpecialTrack(track)}
+                color={isTrackAdded ? 'primary' : 'default'}
+                size="small"
+              >
+                {isTrackAdded ? <RemoveIcon /> : <AddIcon />}
+              </IconButton>
+            </Box>
+          );
+        })}
+      </Stack>
     </Paper>
   );
 };
