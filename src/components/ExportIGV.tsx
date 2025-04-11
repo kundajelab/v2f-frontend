@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button, Box, Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material';
 import { useAtom } from 'jotai';
 import { igvTracksSet } from '../state/igv-tracks';
@@ -7,31 +7,22 @@ import { IGVBrowserHandle } from './IGVBrowser';
 import { getFeDomain } from '../env';
 import {BGZip } from 'igv-utils';
 
-// Define the color function for track types
-const getColorForTrackType = (trackType: string): string => {
-  switch (trackType.toLowerCase()) {
-    case 'signal':
-      return '#FF0000';  // Red
-    case 'interaction':
-      return '#0000FF';  // Blue
-    case 'elements':
-      return '#00AA00';  // Green
-    case 'annotation':
-      return '#AA00AA';  // Purple
-    default:
-      return '#000000';  // Black
-  }
-};
-
 const exclusionFn = (track: any) => {
   return !["wig", "annotation", "interact"].includes(track.type) || track.format === "refgene"
 }
 
-const ExportIGVSession: React.FC<{ igvBrowserRef: React.RefObject<IGVBrowserHandle> }> = ({ igvBrowserRef }) => {
+const ExportIGVSession: React.FC<{ igvBrowserRef: React.RefObject<IGVBrowserHandle>, sessionData: string | null }> = ({ igvBrowserRef, sessionData }) => {
   const [tracksSet, setTracksSet] = useAtom(igvTracksSet);
   const [openExportDialog, setOpenExportDialog] = useState(false);
   const [openImportDialog, setOpenImportDialog] = useState(false);
   const fileInputRef = React.useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (sessionData) {
+      const session = JSON.parse(BGZip.uncompressString(sessionData));
+      importSessionFromJSON(session);
+    }
+  }, [sessionData]);
 
   const exportSession = () => {
     const session = igvBrowserRef.current?.getBrowser()?.toJSON();
@@ -60,6 +51,27 @@ const ExportIGVSession: React.FC<{ igvBrowserRef: React.RefObject<IGVBrowserHand
     return compressedSession;
   }
 
+  const importSessionFromJSON = (session: any) => {
+    const importedTracks = [];
+        for (const track of session.tracks) {
+          if (exclusionFn(track)) {
+            continue;
+          }
+          importedTracks.push({
+            cellTypeID: track.metadata?.cellTypeID || 'unknown',
+            cellTypeName: track.metadata?.cellTypeName || track.name.split(' - ')[0] || 'Unknown',
+            study: track.metadata?.study || 'Imported',
+            studyUrl: '',
+            trackUrl: track.url,
+            trackType: track.metadata?.trackType || inferTrackType(track.url),
+              model: track.metadata?.model || null,
+              color: track.color
+          });
+        }
+        console.log(importedTracks);
+        setTracksSet(importedTracks);
+  }
+
   const exportSessionAsFile = () => {
     const session = exportSession();
     const blob = new Blob([JSON.stringify(session)], { type: 'application/json' });
@@ -77,6 +89,7 @@ const ExportIGVSession: React.FC<{ igvBrowserRef: React.RefObject<IGVBrowserHand
     const baseUrl = getFeDomain();
     const compressedSession = exportCompressedSession();
     const url = new URL(baseUrl);
+    url.pathname = '/igv';
     url.searchParams.set('session', compressedSession);
 
     try {
@@ -97,24 +110,7 @@ const ExportIGVSession: React.FC<{ igvBrowserRef: React.RefObject<IGVBrowserHand
     reader.onload = (e) => {
       try {
         const session = JSON.parse(e.target?.result as string);
-        const importedTracks = [];
-        for (const track of session.tracks) {
-          if (exclusionFn(track)) {
-            continue;
-          }
-          importedTracks.push({
-            cellTypeID: track.metadata?.cellTypeID || 'unknown',
-            cellTypeName: track.metadata?.cellTypeName || track.name.split(' - ')[0] || 'Unknown',
-            study: track.metadata?.study || 'Imported',
-            studyUrl: '',
-            trackUrl: track.url,
-            trackType: track.metadata?.trackType || inferTrackType(track.url),
-              model: track.metadata?.model || null,
-              color: track.color
-          });
-        }
-        
-        setTracksSet(importedTracks);
+        importSessionFromJSON(session);
         setOpenImportDialog(false);
       } catch (error) {
         console.error('Error importing session:', error);
@@ -140,40 +136,6 @@ const ExportIGVSession: React.FC<{ igvBrowserRef: React.RefObject<IGVBrowserHand
         return 'Annotation';
       default:
         return 'Track';
-    }
-  };
-
-  const importSessionFromUrl = () => {
-    const urlString = prompt('Please enter the IGV session URL:');
-    if (!urlString) return;
-
-    try {
-      const url = new URL(urlString);
-      const files = url.searchParams.getAll('file');
-      const names = url.searchParams.getAll('name') || [];
-      
-      const importedTracks = files.map((fileUrl, index) => {
-        const trackType = inferTrackType(fileUrl);
-        const nameParts = names[index]?.split(' - ') || [];
-        const cellTypeName = nameParts[0] || 'Unknown';
-        
-        return {
-          cellTypeID: `imported_${index}`,
-          cellTypeName: cellTypeName,
-          study: 'Imported',
-          studyUrl: '',
-          trackUrl: fileUrl,
-          trackType: nameParts[1] || trackType,
-          model: null,
-          color: getColorForTrackType(trackType)
-        };
-      });
-
-      setTracksSet(importedTracks);
-      setOpenImportDialog(false);
-    } catch (error) {
-      console.error('Error importing session from URL:', error);
-      alert('Failed to import session from URL. Please ensure the URL is valid.');
     }
   };
 
@@ -207,7 +169,6 @@ const ExportIGVSession: React.FC<{ igvBrowserRef: React.RefObject<IGVBrowserHand
           Choose how you would like to import your session:
         </DialogContent>
         <DialogActions>
-          <Button onClick={importSessionFromUrl}>From URL</Button>
           <Button component="label">
             From JSON
             <input

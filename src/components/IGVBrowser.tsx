@@ -14,6 +14,7 @@ const IGVBrowser = forwardRef<IGVBrowserHandle, { locus: string, variantId?: str
   ({ locus, variantId }, ref) => {
     const containerRef = useRef(null);
     const [hasRendered, setHasRendered] = useState(false);
+    const [browserInitialized, setBrowserInitialized] = useState(false);
     const [tracksSet] = useAtom(igvTracksSet);
     const browserRef = useRef<any>(null);
     const prevTrackSet = useRef<ITrackInfo[]>(tracksSet);
@@ -57,12 +58,15 @@ const IGVBrowser = forwardRef<IGVBrowserHandle, { locus: string, variantId?: str
         browserPromise.then((browser) => {
           console.log(browser);
           browserRef.current = browser;
+          console.log('init done');
+          setBrowserInitialized(true);
         });
       }
     }, [hasRendered, locus, variantId]);
 
     useEffect(() => {
-      if (!browserRef.current) {
+      console.log('tracksSet:', tracksSet);
+      if (!browserInitialized || !browserRef.current) {
         return;
       }
 
@@ -120,7 +124,7 @@ const IGVBrowser = forwardRef<IGVBrowserHandle, { locus: string, variantId?: str
       }
 
       prevTrackSet.current = tracksSet;
-    }, [tracksSet]);
+    }, [tracksSet, browserInitialized]);
 
     return (
       <div ref={containerRef}></div>
