@@ -11,7 +11,7 @@ const IGVBrowser = ({ locus, variantId }: { locus: string, variantId?: string })
   const [hasRendered, setHasRendered] = useState(false);
   const [tracksSet] = useAtom(igvTracksSet);
   const browserRef = useRef<any>(null);
-  const prevTrackSet = useRef(new Set<ITrackInfo>(tracksSet));
+  const prevTrackSet = useRef<ITrackInfo[]>(tracksSet);
 
 
   useEffect(() => {
@@ -57,18 +57,20 @@ const IGVBrowser = ({ locus, variantId }: { locus: string, variantId?: string })
       return;
     }
 
-    const newTracks = new Set(tracksSet);
+    const newTracks = [...tracksSet];
     const oldTracks = prevTrackSet.current;
 
     // Add new tracks
-    for (const track of newTracks) {
-      if (!oldTracks.has(track)) {
+    for (const [index, track] of newTracks.entries()) {
+      console.log(track);
+      if (!oldTracks.some(t => t.trackUrl === track.trackUrl)) {
         // Load the track based on its trackType
         const trackConfig = {
           name: `${createTrackName(track)} - ${track.trackType}`,
           url: track.trackUrl,
           height: 100,
           color: track.color,
+          order: index,
         };
 
         // Add color based on track type
@@ -81,9 +83,11 @@ const IGVBrowser = ({ locus, variantId }: { locus: string, variantId?: string })
             break;
           case 'E2G Predictions':
             trackConfig.color = '#FF0000';
+            trackConfig.height = 75;
             break;
           case 'Elements':
             trackConfig.color = 'rgb(83, 83, 83)';
+            trackConfig.height = 50;
             break;
           default:
             trackConfig.color = '#888888';
@@ -95,7 +99,7 @@ const IGVBrowser = ({ locus, variantId }: { locus: string, variantId?: string })
 
     // Remove old tracks
     for (const track of oldTracks) {
-      if (!newTracks.has(track)) {
+      if (!newTracks.some(t => t.trackUrl === track.trackUrl)) {
         const trackToRemove = browserRef.current.trackViews.find(
           (trackView: any) => trackView.track.url === track.trackUrl
         );
@@ -106,7 +110,7 @@ const IGVBrowser = ({ locus, variantId }: { locus: string, variantId?: string })
       }
     }
 
-    prevTrackSet.current = new Set(tracksSet);
+    prevTrackSet.current = tracksSet;
   }, [tracksSet]);
 
   return (

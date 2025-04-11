@@ -3,8 +3,6 @@ import { OtTable } from '../ot-ui-components';
 import { IconButton, Button, Table, TableBody, TableCell, TableRow, Collapse, Tooltip } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
-import OpenInNewIcon from '@mui/icons-material/OpenInNew';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { useAtom } from 'jotai';
 import { igvTracksSet } from '../state/igv-tracks';
 import { DataTrack } from '../__generated__/graphql';
@@ -19,69 +17,16 @@ type DataTableProps = {
 
 const DataTable: React.FC<DataTableProps> = ({ loading, error, data, filenameStem }) => {
   const [tracksSet, setTracksSet] = useAtom(igvTracksSet);
-  const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set());
-
-  // Toggle expanded state for each row
-  const toggleExpand = (rowId: string) => {
-    setExpandedRows((prev) => {
-      const newExpandedRows = new Set(prev);
-      newExpandedRows.has(rowId) ? newExpandedRows.delete(rowId) : newExpandedRows.add(rowId);
-      return newExpandedRows;
-    });
-  };
-
-  // Add a single track
-  const addTrack = (track: ITrackInfo) => {
-    setTracksSet((prevTrackSet) => new Set(prevTrackSet).add(track));
-  };
-
-  // Remove a single track
-  const removeTrack = (track: ITrackInfo) => {
-    setTracksSet((prevTrackSet) => {
-      const newTrackSet = new Set(prevTrackSet);
-      newTrackSet.forEach((t) => {
-        if (t.trackUrl === track.trackUrl) {
-          newTrackSet.delete(t);
-        }
-      });
-      return newTrackSet;
-    });
-  };
 
   // Add all tracks for the specific cellTypeId/study combination
   const addAllTracksForRow = (study: string, cellTypeId: string) => {
     setTracksSet((prevTrackSet) => {
-      const newTrackSet = new Set(prevTrackSet);
+      const newTrackSet: ITrackInfo[] = [...prevTrackSet];
       data.forEach((track) => {
         if (track.study === study && track.cellTypeId === cellTypeId) {
           // Create a track for each available URL
-          if (track.dnaseSignalUrl) {
-            const trackInfo: ITrackInfo = {
-              cellTypeID: track.cellTypeId,
-              cellTypeName: track.cellType,
-              study: track.study,
-              studyUrl: track.paperUrl || '',
-              trackUrl: track.dnaseSignalUrl,
-              trackType: 'DNase Signal',
-              model: track.modelType,
-            };
-            newTrackSet.add(trackInfo);
-          }
-          
-          if (track.atacSignalUrl) {
-            const trackInfo: ITrackInfo = {
-              cellTypeID: track.cellTypeId,
-              cellTypeName: track.cellType,
-              study: track.study,
-              studyUrl: track.paperUrl || '',
-              trackUrl: track.atacSignalUrl,
-              trackType: 'ATAC Signal',
-              model: track.modelType,
-            };
-            newTrackSet.add(trackInfo);
-          }
-          
-          if (track.e2gPredictionsUrl) {
+
+          if (track.e2gPredictionsUrl && !newTrackSet.some(t => t.trackUrl === track.e2gPredictionsUrl)) {
             const trackInfo: ITrackInfo = {
               cellTypeID: track.cellTypeId,
               cellTypeName: track.cellType,
@@ -91,10 +36,37 @@ const DataTable: React.FC<DataTableProps> = ({ loading, error, data, filenameSte
               trackType: 'E2G Predictions',
               model: track.modelType,
             };
-            newTrackSet.add(trackInfo);
+            newTrackSet.push(trackInfo);
           }
 
-          if (track.elementsUrl) {
+          if (track.dnaseSignalUrl && !newTrackSet.some(t => t.trackUrl === track.dnaseSignalUrl)) {
+            const trackInfo: ITrackInfo = {
+              cellTypeID: track.cellTypeId,
+              cellTypeName: track.cellType,
+              study: track.study,
+              studyUrl: track.paperUrl || '',
+              trackUrl: track.dnaseSignalUrl,
+              trackType: 'DNase Signal',
+              model: track.modelType,
+            };
+            newTrackSet.push(trackInfo);
+          }
+          
+          if (track.atacSignalUrl && !newTrackSet.some(t => t.trackUrl === track.atacSignalUrl)) {
+            const trackInfo: ITrackInfo = {
+              cellTypeID: track.cellTypeId,
+              cellTypeName: track.cellType,
+              study: track.study,
+              studyUrl: track.paperUrl || '',
+              trackUrl: track.atacSignalUrl,
+              trackType: 'ATAC Signal',
+              model: track.modelType,
+            };
+            newTrackSet.push(trackInfo);
+          }
+          
+
+          if (track.elementsUrl && !newTrackSet.some(t => t.trackUrl === track.elementsUrl)) {
             const trackInfo: ITrackInfo = {
               cellTypeID: track.cellTypeId,
               cellTypeName: track.cellType,
@@ -104,7 +76,7 @@ const DataTable: React.FC<DataTableProps> = ({ loading, error, data, filenameSte
               trackType: 'Elements',
               model: track.modelType,
             };
-            newTrackSet.add(trackInfo);
+            newTrackSet.push(trackInfo);
           }
         }
       });
@@ -114,13 +86,7 @@ const DataTable: React.FC<DataTableProps> = ({ loading, error, data, filenameSte
 
   const removeAllTracksForRow = (study: string, cellTypeId: string) => {
     setTracksSet((prevTrackSet) => {
-      const newTrackSet = new Set(prevTrackSet);
-      newTrackSet.forEach((t) => {
-        if (t.study === study && t.cellTypeID === cellTypeId) {
-          newTrackSet.delete(t);
-        }
-      });
-      return newTrackSet;
+      return prevTrackSet.filter((t) => !(t.study === study && t.cellTypeID === cellTypeId));
     });
   };
   
