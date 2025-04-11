@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Box, Paper, Button, Typography } from '@mui/material';
-import IGVBrowser from '../../components/IGVBrowser';
+import IGVBrowser, { IGVBrowserHandle } from '../../components/IGVBrowser';
 import { useQuery } from '@apollo/client';
 import { DataTracksTableDocument, DataTracksTableQuery } from '../../__generated__/graphql';
 import DataTable from '../../components/DataTable';
@@ -22,6 +22,7 @@ import ITrackInfo from '../../state/ITrackInfo';
 const IGVPage = () => {
     const [tracksSet, setTracksSet] = useAtom(igvTracksSet);
     const { data, loading, error } = useQuery<DataTracksTableQuery>(DataTracksTableDocument);
+    const igvBrowserRef = useRef<IGVBrowserHandle>(null);
 
     // State for the selected filters
     const [selectedCellTypes, setSelectedCellTypes] = useState<string[]>([]);
@@ -132,11 +133,11 @@ const IGVPage = () => {
         </Typography>
         <Box sx={{ width: '100%', minHeight: '100vh', marginTop: '2vh' }}>
           <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-            <ExportIGVSession />
+            <ExportIGVSession igvBrowserRef={igvBrowserRef} />
           </div>
 
           <Box sx={{ transition: 'height 0.3s' }}>
-            <IGVBrowser locus="chr1:1-248,956,422" />
+            <IGVBrowser ref={igvBrowserRef} locus="chr1:1-248,956,422" />
           </Box>
   
           <Typography variant="h6" sx={{ mt: 1, color: 'text.secondary' }}>

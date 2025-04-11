@@ -3,56 +3,66 @@ import { Button, Box, Dialog, DialogTitle, DialogContent, DialogActions } from '
 import { useAtom } from 'jotai';
 import { igvTracksSet } from '../state/igv-tracks';
 import ITrackInfo from "../state/ITrackInfo";
+import { IGVBrowserHandle } from './IGVBrowser';
+import { getFeDomain } from '../env';
+import {BGZip } from 'igv-utils';
 
-const ExportIGVSession: React.FC = () => {
+// Define the color function for track types
+const getColorForTrackType = (trackType: string): string => {
+  switch (trackType.toLowerCase()) {
+    case 'signal':
+      return '#FF0000';  // Red
+    case 'interaction':
+      return '#0000FF';  // Blue
+    case 'elements':
+      return '#00AA00';  // Green
+    case 'annotation':
+      return '#AA00AA';  // Purple
+    default:
+      return '#000000';  // Black
+  }
+};
+
+const exclusionFn = (track: any) => {
+  return !["wig", "annotation", "interact"].includes(track.type) || track.format === "refgene"
+}
+
+const ExportIGVSession: React.FC<{ igvBrowserRef: React.RefObject<IGVBrowserHandle> }> = ({ igvBrowserRef }) => {
   const [tracksSet, setTracksSet] = useAtom(igvTracksSet);
   const [openExportDialog, setOpenExportDialog] = useState(false);
   const [openImportDialog, setOpenImportDialog] = useState(false);
   const fileInputRef = React.useRef<HTMLInputElement>(null);
 
-  const createSessionObject = () => {
-    const tracks = Array.from(tracksSet).map((track: ITrackInfo) => ({
-      name: `${track.cellTypeName} - ${track.trackType} (${track.study})`,
-      url: track.trackUrl,
-      color: track.color || getColorForTrackType(track.trackType),
-      height: 100,
-      metadata: {
-        cellTypeID: track.cellTypeID,
-        cellTypeName: track.cellTypeName,
-        study: track.study,
-        trackType: track.trackType,
-        model: track.model
+  const exportSession = () => {
+    const session = igvBrowserRef.current?.getBrowser()?.toJSON();
+    let i = 1;
+    for (const track of session.tracks) {
+      if (exclusionFn(track)) {
+        continue;
       }
-    }));
-
-    return {
-      genome: 'hg38',
-      locus: 'chr1:1-1000',
-      tracks,
-    };
-  };
-
-  const getColorForTrackType = (trackType: string): string => {
-    switch (trackType) {
-      case 'DNase Signal':
-        return '#FF0000';
-      case 'ATAC Signal':
-        return '#00FF00';
-      case 'E2G Predictions':
-        return '#0000FF';
-      case 'Variant Predictions':
-        return '#FF00FF';
-      case 'Elements':
-        return '#00FFFF';
-      default:
-        return '#888888';
+      track.order = i;
+      const correspondingTrack = tracksSet.find(t => t.trackUrl === track.url);
+      track.metadata = {
+          cellTypeID: correspondingTrack?.cellTypeID || 'unknown',
+          cellTypeName: correspondingTrack?.cellTypeName || 'Unknown',
+          study: correspondingTrack?.study || 'Imported',
+          trackType: correspondingTrack?.trackType || inferTrackType(track.url),
+          model: correspondingTrack?.model || null
+      }
+      i++;
     }
-  };
+    return session;
+  }
+
+  const exportCompressedSession = () => {
+    const session = exportSession();
+    const compressedSession = BGZip.compressString(JSON.stringify(session));
+    return compressedSession;
+  }
 
   const exportSessionAsFile = () => {
-    const session = createSessionObject();
-    const sessionJson = JSON.stringify(session, null, 2);
-    const blob = new Blob([sessionJson], { type: 'application/json' });
+    const session = exportSession();
+    const blob = new Blob([JSON.stringify(session)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
 
     const link = document.createElement('a');
@@ -64,19 +74,10 @@ const ExportIGVSession: React.FC = () => {
   };
 
   const createShareableLink = async () => {
-    const baseUrl = 'https://igv.org/app/';
-    const genome = 'hg38';
-    const tracks = Array.from(tracksSet);
-
+    const baseUrl = getFeDomain();
+    const compressedSession = exportCompressedSession();
     const url = new URL(baseUrl);
-    url.searchParams.set('genome', genome);
-
-    tracks.forEach((track) => {
-      if (track.trackUrl) {
-        url.searchParams.append('file', track.trackUrl);
-        url.searchParams.append('name', `${track.cellTypeName} - ${track.trackType}`);
-      }
-    });
+    url.searchParams.set('session', compressedSession);
 
     try {
       await navigator.clipboard.writeText(url.toString());
@@ -96,18 +97,24 @@ const ExportIGVSession: React.FC = () => {
     reader.onload = (e) => {
       try {
         const session = JSON.parse(e.target?.result as string);
-        const importedTracks = session.tracks.map((track: any) => ({
-          cellTypeID: track.metadata?.cellTypeID || 'unknown',
-          cellTypeName: track.metadata?.cellTypeName || track.name.split(' - ')[0] || 'Unknown',
-          study: track.metadata?.study || 'Imported',
-          studyUrl: '',
-          trackUrl: track.url,
-          trackType: track.metadata?.trackType || inferTrackType(track.url),
-          model: track.metadata?.model || null,
-          color: track.color
-        }));
+        const importedTracks = [];
+        for (const track of session.tracks) {
+          if (exclusionFn(track)) {
+            continue;
+          }
+          importedTracks.push({
+            cellTypeID: track.metadata?.cellTypeID || 'unknown',
+            cellTypeName: track.metadata?.cellTypeName || track.name.split(' - ')[0] || 'Unknown',
+            study: track.metadata?.study || 'Imported',
+            studyUrl: '',
+            trackUrl: track.url,
+            trackType: track.metadata?.trackType || inferTrackType(track.url),
+              model: track.metadata?.model || null,
+              color: track.color
+          });
+        }
         
-        setTracksSet(new Set(importedTracks));
+        setTracksSet(importedTracks);
         setOpenImportDialog(false);
       } catch (error) {
         console.error('Error importing session:', error);
@@ -162,7 +169,7 @@ const ExportIGVSession: React.FC = () => {
         };
       });
 
-      setTracksSet(new Set(importedTracks));
+      setTracksSet(importedTracks);
       setOpenImportDialog(false);
     } catch (error) {
       console.error('Error importing session from URL:', error);
