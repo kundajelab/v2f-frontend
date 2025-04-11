@@ -8720,6 +8720,10 @@ ignore@^5.2.0:
   resolved "https://registry.npmjs.org/ignore/-/ignore-5.2.4.tgz"
   integrity sha512-MAb38BcSbH0eHNBxn7ql2NH/kX33OkB3lZ1BNdh7ENeRChHTYsTvWrMubiIAMNS2llXEEgZ1MUOBtXChP3kaFQ==
 
+"igv-utils@github:igvteam/igv-utils#v1.5.10":
+  version "1.5.10"
+  resolved "git+ssh://git@github.com/igvteam/igv-utils.git#a9726935178fc488e74bdc3c5c1059613d805415"
+
 igv@^3.2.5:
   version "3.2.5"
   resolved "https://registry.npmjs.org/igv/-/igv-3.2.5.tgz"
