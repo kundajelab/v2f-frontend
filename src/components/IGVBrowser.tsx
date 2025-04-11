@@ -56,16 +56,13 @@ const IGVBrowser = forwardRef<IGVBrowserHandle, { locus: string, variantId?: str
 
         const browserPromise: Promise<any> = igv.createBrowser(containerRef.current, browserOptions);
         browserPromise.then((browser) => {
-          console.log(browser);
           browserRef.current = browser;
-          console.log('init done');
           setBrowserInitialized(true);
         });
       }
     }, [hasRendered, locus, variantId]);
 
     useEffect(() => {
-      console.log('tracksSet:', tracksSet);
       if (!browserInitialized || !browserRef.current) {
         return;
       }

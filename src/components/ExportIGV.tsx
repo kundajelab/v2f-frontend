@@ -2,9 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Button, Box, Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material';
 import { useAtom } from 'jotai';
 import { igvTracksSet } from '../state/igv-tracks';
-import ITrackInfo from "../state/ITrackInfo";
 import { IGVBrowserHandle } from './IGVBrowser';
-import { getFeDomain } from '../env';
 import {BGZip } from 'igv-utils';
 
 const exclusionFn = (track: any) => {
@@ -68,7 +66,6 @@ const ExportIGVSession: React.FC<{ igvBrowserRef: React.RefObject<IGVBrowserHand
               color: track.color
           });
         }
-        console.log(importedTracks);
         setTracksSet(importedTracks);
   }
 
@@ -86,7 +83,7 @@ const ExportIGVSession: React.FC<{ igvBrowserRef: React.RefObject<IGVBrowserHand
   };
 
   const createShareableLink = async () => {
-    const baseUrl = getFeDomain();
+    const baseUrl = window.location.origin;
     const compressedSession = exportCompressedSession();
     const url = new URL(baseUrl);
     url.pathname = '/igv';
