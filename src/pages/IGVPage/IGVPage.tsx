@@ -17,6 +17,7 @@ import {
     DialogContentText,
     DialogTitle,
 } from '@mui/material';
+import ITrackInfo from '../../state/ITrackInfo';
 
 const IGVPage = () => {
     const [tracksSet, setTracksSet] = useAtom(igvTracksSet);
@@ -29,7 +30,7 @@ const IGVPage = () => {
     const [selectedModels, setSelectedModels] = useState<string[]>([]);
 
     // Optionally adjust the content margin if needed
-    const contentMarginTop = tracksSet.size > 0 ? '2vh' : '0';
+    const contentMarginTop = tracksSet.length > 0 ? '2vh' : '0';
 
     // Filtered data based on selected filters
     const filteredData = data?.getDataTracks.filter((track) => {
@@ -43,11 +44,25 @@ const IGVPage = () => {
     // Add all tracks function
     const addAllTracks = () => {
         setTracksSet((prevTrackSet) => {
-            const newTrackSet = new Set(prevTrackSet);
+            const newTrackSet: ITrackInfo[] = [...prevTrackSet];
             filteredData?.forEach((track) => {
                 // Add each track type individually
-                if (track.dnaseSignalUrl) {
-                    newTrackSet.add({
+
+
+                if (track.e2gPredictionsUrl && !newTrackSet.some(t => t.trackUrl === track.e2gPredictionsUrl)) {
+                  newTrackSet.push({
+                      cellTypeID: track.cellTypeId,
+                      cellTypeName: track.cellType,
+                      study: track.study,
+                      studyUrl: track.paperUrl || '',
+                      trackUrl: track.e2gPredictionsUrl,
+                      trackType: 'E2G Predictions',
+                      model: track.modelType,
+                  });
+              }
+
+                if (track.dnaseSignalUrl && !newTrackSet.some(t => t.trackUrl === track.dnaseSignalUrl)) {
+                    newTrackSet.push({
                         cellTypeID: track.cellTypeId,
                         cellTypeName: track.cellType,
                         study: track.study,
@@ -57,8 +72,8 @@ const IGVPage = () => {
                         model: track.modelType,
                     });
                 }
-                if (track.atacSignalUrl) {
-                    newTrackSet.add({
+                if (track.atacSignalUrl && !newTrackSet.some(t => t.trackUrl === track.atacSignalUrl)) {
+                    newTrackSet.push({
                         cellTypeID: track.cellTypeId,
                         cellTypeName: track.cellType,
                         study: track.study,
@@ -68,19 +83,9 @@ const IGVPage = () => {
                         model: track.modelType,
                     });
                 }
-                if (track.e2gPredictionsUrl) {
-                    newTrackSet.add({
-                        cellTypeID: track.cellTypeId,
-                        cellTypeName: track.cellType,
-                        study: track.study,
-                        studyUrl: track.paperUrl || '',
-                        trackUrl: track.e2gPredictionsUrl,
-                        trackType: 'E2G Predictions',
-                        model: track.modelType,
-                    });
-                }
-                if (track.elementsUrl) {
-                    newTrackSet.add({
+
+                if (track.elementsUrl && !newTrackSet.some(t => t.trackUrl === track.elementsUrl)) {
+                    newTrackSet.push({
                         cellTypeID: track.cellTypeId,
                         cellTypeName: track.cellType,
                         study: track.study,
@@ -96,7 +101,7 @@ const IGVPage = () => {
     };
 
     const removeAllTracks = () => {
-        setTracksSet(new Set());
+        setTracksSet([]);
     };
 
     const [openConfirmDialog, setOpenConfirmDialog] = useState(false);
@@ -116,7 +121,7 @@ const IGVPage = () => {
 
     // Clear the tracks set when the component first mounts
     useEffect(() => {
-        setTracksSet(new Set()); // This will clear the set
+        setTracksSet([]); // This will clear the set
     }, [setTracksSet]);
 
     return (

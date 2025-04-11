@@ -18,7 +18,7 @@ type TableColumn<T> = {
 };
 
 const tableColumns = (
-  _variantId: string, igvTracks: Set<ITrackInfo>, addTrack: (track: ITrackInfo) => void, removeTrack: (track: ITrackInfo) => void
+  _variantId: string, igvTracks: ITrackInfo[], addTrack: (track: ITrackInfo) => void, removeTrack: (track: ITrackInfo) => void
 ): TableColumn<VariantPageEnhancerGenePredictionFragment>[] => [
   {
     id: 'cellType',
@@ -129,7 +129,7 @@ const tableColumns = (
         ].filter((track) => track.trackUrl !== '');
 
 
-        const isTrackAdded = Array.from(igvTracks).some(
+        const isTrackAdded = igvTracks.some(
           (track) => track.trackUrl === tracks[0].trackUrl
         );
 
@@ -171,16 +171,16 @@ const EnhancerGenePredictionsTable = ({
   const [tracksSet, setTracksSet] = useAtom(igvTracksSet);
 
   useEffect(() => {
-    setTracksSet(new Set()); // This will clear the set on component mount
+    setTracksSet([]); // This will clear the set on component mount
   }, [setTracksSet]);
 
   const addTrack = (trackInfo: ITrackInfo) => {
-    setTracksSet((prevTrackSet) => new Set(prevTrackSet).add(trackInfo));
+    setTracksSet((prevTrackSet) => Array.from(new Set(prevTrackSet).add(trackInfo)));
   };
 
   const removeTrack = (trackInfo: ITrackInfo) => {
     setTracksSet((prevTrackSet) => {
-      return new Set(Array.from(prevTrackSet).filter((track) => track.trackUrl !== trackInfo.trackUrl));
+      return prevTrackSet.filter((track) => track.trackUrl !== trackInfo.trackUrl);
     });
   };
 

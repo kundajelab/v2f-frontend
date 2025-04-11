@@ -42,25 +42,19 @@ const SpecialTracksTable: React.FC = () => {
     setTracksSet((prevTrackSet) => {
       const newTrackSet = new Set(prevTrackSet);
       specialTracks.forEach((track) => newTrackSet.add(track));
-      return newTrackSet;
+      return Array.from(newTrackSet);
     });
   }, [setTracksSet]);
 
   // Add a track
   const addTrack = (track: ITrackInfo) => {
-    setTracksSet((prevTrackSet) => new Set(prevTrackSet).add(track));
+    setTracksSet((prevTrackSet) => Array.from(new Set(prevTrackSet).add(track)));
   };
 
   // Remove a track
   const removeTrack = (track: ITrackInfo) => {
     setTracksSet((prevTrackSet) => {
-      const newTrackSet = new Set(prevTrackSet);
-      newTrackSet.forEach((t) => {
-        if (t.cellTypeID === track.cellTypeID && t.study === track.study) {
-          newTrackSet.delete(t);
-        }
-      });
-      return newTrackSet;
+      return prevTrackSet.filter((t) => !(t.cellTypeID === track.cellTypeID && t.study === track.study));
     });
   };
 
