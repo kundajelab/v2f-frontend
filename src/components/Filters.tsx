@@ -37,19 +37,10 @@ const Filters: React.FC<FiltersProps> = ({
         multiple
         options={uniqueCellTypes}
         value={selectedCellTypes}
+        freeSolo
         onChange={(_, newValue) => setSelectedCellTypes(newValue)}
         renderInput={(params) => (
-          <TextField {...params} label="Filter by Cell Type" variant="outlined" />
-        )}
-      />
-
-      <Autocomplete
-        multiple
-        options={uniqueCellTypeIds}
-        value={selectedCellTypeIds}
-        onChange={(_, newValue) => setSelectedCellTypeIds(newValue)}
-        renderInput={(params) => (
-          <TextField {...params} label="Filter by Cell Type ID" variant="outlined" />
+          <TextField {...params} label="Search by Cell Type" variant="outlined" />
         )}
       />
 

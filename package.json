@@ -34,6 +34,7 @@
     "graphql": "^15.5.1",
     "graphql-tag": "^2.10.1",
     "igv": "^3.2.5",
+    "igv-utils": "github:igvteam/igv-utils#v1.5.10",
     "jotai": "^2.9.3",
     "lodash": "^4.17.21",
     "logojs-react": "^2.1.1",

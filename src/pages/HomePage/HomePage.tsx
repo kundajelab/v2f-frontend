@@ -1,6 +1,6 @@
 import { useRef } from 'react';
 import { Helmet } from 'react-helmet';
-import { Grid, Theme, Typography } from '@mui/material';
+import { Box, Button, Divider, Grid, Theme, Typography } from '@mui/material';
 
 import makeStyles from '@mui/styles/makeStyles';
 
@@ -15,18 +15,28 @@ import HomeBox from './HomeBox';
 import { mainMenuItems } from '../../constants';
 
 const EXAMPLES = [
-  { label: 'PCSK9', url: '/gene/ENSG00000169174', type: 'gene' },
   {
     label: '1_1351747_G_A',
     url: '/variant/1_1351747_G_A',
     type: 'variant-id',
   },
   { label: 'rs4129267', url: '/variant/1_154453788_C_T', type: 'variant-rsid' },
+  
+];
+
+const BROWSER_EXAMPLES = [
   {
-    label: 'LDL cholesterol (Willer CJ et al. 2013)',
-    url: '/study/GCST002222',
-    type: 'study',
+    label: 'ENCODE-rE2G in X# cell types and tissues from ENCODE (Gschwind* et al. 2025)',
+    url: '/igv',
   },
+  {
+    label: 'ENCODE-rE2G in X# cell types and tissues from ENCODE (Gschwind* et al. 2025)',
+    url: '/igv',
+  },
+  {
+    label: 'scE2G in X# cell types from the developing heart (Ma*, Conley* et al. 2025)',
+    url: '/igv',
+  }
 ];
 
 const useStyles = makeStyles((theme: Theme) => {
@@ -107,23 +117,49 @@ const HomePage = () => {
                 </Typography>
               ))}
             </Grid>
+            <Divider style={{ marginTop: '25px', marginBottom: '25px' }}>
+              <strong>OR</strong>
+            </Divider>
             <Typography
               style={{
                 marginTop: '25px',
               }}
               align="center"
             >
-              Note: genomic coordinates are based on GRCh38
+              Browse enhancer-gene predictions in <Link to="/igv">IGV</Link>:
             </Typography>
-
+            <Grid
+              container
+              className={classes.examples}
+              justifyContent="space-around"
+            >
+              {BROWSER_EXAMPLES.map((d, i) => (
+                <Typography
+                  key={i}
+                  style={{ textAlign: 'center' }}
+                  className={classes.exampleLink}
+                >
+                  <Link to={d.url}>{d.label}</Link>
+                </Typography>
+              ))}
+            </Grid>
+            <Box style={{border: '1px solid #e0e0e0', borderRadius: '10px', padding: '20px', marginTop: '25px'}}>
             <Typography
-              className={classes.linkHeader}
-              variant="subtitle2"
               align="center"
             >
-              Last updated:
+              This browser extends <Link to="https://opentargets.org/genetics">OpenTargets Genetics</Link> to include predictions about enhancer-gene regulatory interactions
             </Typography>
-            <Version />
+              
+            <Typography
+              style={{
+                marginTop: '25px',
+              }}
+              align="center"
+            >
+                Note: genomic coordinates are based on GRCh38
+              </Typography>
+            </Box>
+            
           </HomeBox>
         </Grid>
       </main>
