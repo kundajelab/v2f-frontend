@@ -6,7 +6,11 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
+  TextField,
+  Typography,
+  IconButton,
 } from '@mui/material';
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import { useAtom } from 'jotai';
 import { igvTracksSet } from '../state/igv-tracks';
 import { IGVBrowserHandle } from './IGVBrowser';
@@ -26,7 +30,10 @@ const ExportIGVSession: React.FC<{
   const [tracksSet, setTracksSet] = useAtom(igvTracksSet);
   const [openExportDialog, setOpenExportDialog] = useState(false);
   const [openImportDialog, setOpenImportDialog] = useState(false);
+  const [openLinkDialog, setOpenLinkDialog] = useState(false);
+  const [shareableLink, setShareableLink] = useState('');
   const fileInputRef = React.useRef<HTMLInputElement>(null);
+  const linkInputRef = React.useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (sessionData) {
@@ -109,13 +116,72 @@ const ExportIGVSession: React.FC<{
     url.pathname = '/igv';
     url.searchParams.set('session', compressedSession);
 
+    const linkText = url.toString();
+    setShareableLink(linkText);
+
     try {
-      await navigator.clipboard.writeText(url.toString());
-      alert('Shareable IGV link copied to clipboard!');
-      setOpenExportDialog(false);
+      // Check if clipboard API is available
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        await navigator.clipboard.writeText(linkText);
+        alert('Shareable IGV link copied to clipboard!');
+        setOpenExportDialog(false);
+      } else {
+        // Fallback: Create a temporary textarea element to copy text
+        const textArea = document.createElement('textarea');
+        textArea.value = linkText;
+        // Make the textarea out of viewport
+        textArea.style.position = 'fixed';
+        textArea.style.left = '-999999px';
+        textArea.style.top = '-999999px';
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+
+        const successful = document.execCommand('copy');
+        document.body.removeChild(textArea);
+
+        if (successful) {
+          alert('Shareable IGV link copied to clipboard!');
+          setOpenExportDialog(false);
+        } else {
+          // If execCommand also fails, show the link dialog
+          setOpenExportDialog(false);
+          setOpenLinkDialog(true);
+        }
+      }
     } catch (err) {
       console.error('Failed to copy link:', err);
-      alert('Failed to copy link. Please manually select and copy.');
+      // Show the link dialog
+      setOpenExportDialog(false);
+      setOpenLinkDialog(true);
+    }
+  };
+
+  const attemptCopyFromDialog = () => {
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard
+          .writeText(shareableLink)
+          .then(() => {
+            alert('Link copied to clipboard!');
+          })
+          .catch(() => {
+            // If clipboard API fails, try execCommand
+            if (linkInputRef.current) {
+              linkInputRef.current.select();
+              document.execCommand('copy');
+              alert('Link copied to clipboard!');
+            }
+          });
+      } else if (linkInputRef.current) {
+        linkInputRef.current.select();
+        const successful = document.execCommand('copy');
+        if (successful) {
+          alert('Link copied to clipboard!');
+        }
+      }
+    } catch (err) {
+      console.error('Failed to copy:', err);
     }
   };
 
@@ -209,6 +275,41 @@ const ExportIGVSession: React.FC<{
               ref={fileInputRef}
             />
           </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Link Dialog */}
+      <Dialog
+        open={openLinkDialog}
+        onClose={() => setOpenLinkDialog(false)}
+        maxWidth="md"
+        fullWidth
+      >
+        <DialogTitle>Shareable IGV Link</DialogTitle>
+        <DialogContent>
+          <Typography variant="body2" sx={{ mb: 2 }}>
+            Copy this link to share your IGV session:
+          </Typography>
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <TextField
+              fullWidth
+              variant="outlined"
+              value={shareableLink}
+              inputRef={linkInputRef}
+              InputProps={{
+                readOnly: true,
+                endAdornment: (
+                  <IconButton onClick={attemptCopyFromDialog} edge="end">
+                    <ContentCopyIcon />
+                  </IconButton>
+                ),
+              }}
+              onClick={(e) => (e.target as HTMLInputElement).select()}
+            />
+          </Box>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOpenLinkDialog(false)}>Close</Button>
         </DialogActions>
       </Dialog>
     </>
