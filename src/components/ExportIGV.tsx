@@ -26,7 +26,8 @@ const exclusionFn = (track: any) => {
 const ExportIGVSession: React.FC<{
   igvBrowserRef: React.RefObject<IGVBrowserHandle>;
   sessionData: string | null;
-}> = ({ igvBrowserRef, sessionData }) => {
+  hideImport?: boolean;
+}> = ({ igvBrowserRef, sessionData, hideImport = false }) => {
   const [tracksSet, setTracksSet] = useAtom(igvTracksSet);
   const [openExportDialog, setOpenExportDialog] = useState(false);
   const [openImportDialog, setOpenImportDialog] = useState(false);
@@ -92,6 +93,11 @@ const ExportIGVSession: React.FC<{
       });
     }
     setTracksSet(importedTracks);
+
+    // Restore ROIs if they exist in the session
+    if (session.roi && igvBrowserRef.current) {
+      igvBrowserRef.current.setROI(session.roi);
+    }
   };
 
   const exportSessionAsFile = () => {
@@ -227,7 +233,7 @@ const ExportIGVSession: React.FC<{
 
   return (
     <>
-      <Box sx={{ mb: 2 }}>
+      <Box sx={{ mb: 2, display: 'flex', justifyContent: 'flex-end' }}>
         <Button
           variant="contained"
           onClick={() => setOpenExportDialog(true)}
@@ -235,9 +241,11 @@ const ExportIGVSession: React.FC<{
         >
           Export Session
         </Button>
-        <Button variant="contained" onClick={() => setOpenImportDialog(true)}>
-          Import Session
-        </Button>
+        {!hideImport && (
+          <Button variant="contained" onClick={() => setOpenImportDialog(true)}>
+            Import Session
+          </Button>
+        )}
       </Box>
 
       {/* Export Dialog */}
@@ -256,27 +264,29 @@ const ExportIGVSession: React.FC<{
       </Dialog>
 
       {/* Import Dialog */}
-      <Dialog
-        open={openImportDialog}
-        onClose={() => setOpenImportDialog(false)}
-      >
-        <DialogTitle>Import Session</DialogTitle>
-        <DialogContent>
-          Choose how you would like to import your session:
-        </DialogContent>
-        <DialogActions>
-          <Button component="label">
-            From JSON
-            <input
-              type="file"
-              hidden
-              accept=".json"
-              onChange={handleImportSession}
-              ref={fileInputRef}
-            />
-          </Button>
-        </DialogActions>
-      </Dialog>
+      {!hideImport && (
+        <Dialog
+          open={openImportDialog}
+          onClose={() => setOpenImportDialog(false)}
+        >
+          <DialogTitle>Import Session</DialogTitle>
+          <DialogContent>
+            Choose how you would like to import your session:
+          </DialogContent>
+          <DialogActions>
+            <Button component="label">
+              From JSON
+              <input
+                type="file"
+                hidden
+                accept=".json"
+                onChange={handleImportSession}
+                ref={fileInputRef}
+              />
+            </Button>
+          </DialogActions>
+        </Dialog>
+      )}
 
       {/* Link Dialog */}
       <Dialog
