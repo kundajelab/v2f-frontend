@@ -14,7 +14,7 @@ import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/
  */
 const documents = {
     "query GeneHeaderQuery($geneId: String!) {\n  geneInfo(geneId: $geneId) {\n    id\n    symbol\n    chromosome\n    start\n    end\n    bioType\n    description\n  }\n}": types.GeneHeaderQueryDocument,
-    "query DataTracksTable {\n  getDataTracks {\n    id\n    cellTypeId\n    cellType\n    study\n    studyId\n    paperUrl\n    dnaseSignalUrl\n    atacSignalUrl\n    e2gPredictionsUrl\n    variantPredsUrl\n    elementsUrl\n    modelType\n  }\n}": types.DataTracksTableDocument,
+    "query DataTracksTable {\n  getDataTracks {\n    id\n    cellTypeId\n    cellType\n    study\n    studyId\n    dataset\n    datasetUrl\n    paperUrl\n    dnaseSignalUrl\n    atacSignalUrl\n    e2gPredictionsUrl\n    variantPredsUrl\n    elementsUrl\n    modelType\n  }\n}": types.DataTracksTableDocument,
     "query StudyLocusHeaderQuery($studyId: String!, $variantId: String!) {\n  studyInfo(studyId: $studyId) {\n    studyId\n    traitReported\n    pubAuthor\n    pubDate\n    pubJournal\n    pmid\n    nInitial\n    nReplication\n    nCases\n    hasSumstats\n  }\n  variantInfo(variantId: $variantId) {\n    rsId\n    id\n  }\n}": types.StudyLocusHeaderQueryDocument,
     "query StudyHeaderQuery($studyId: String!) {\n  studyInfo(studyId: $studyId) {\n    studyId\n    traitReported\n    pubAuthor\n    pubDate\n    pubJournal\n    pmid\n    nInitial\n    nReplication\n    nCases\n    hasSumstats\n  }\n}": types.StudyHeaderQueryDocument,
     "query VariantHeader($variantId: String!) {\n  variantInfo(variantId: $variantId) {\n    rsId\n    id\n  }\n}": types.VariantHeaderDocument,
@@ -54,7 +54,7 @@ export function gql(source: "query GeneHeaderQuery($geneId: String!) {\n  geneIn
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function gql(source: "query DataTracksTable {\n  getDataTracks {\n    id\n    cellTypeId\n    cellType\n    study\n    studyId\n    paperUrl\n    dnaseSignalUrl\n    atacSignalUrl\n    e2gPredictionsUrl\n    variantPredsUrl\n    elementsUrl\n    modelType\n  }\n}"): (typeof documents)["query DataTracksTable {\n  getDataTracks {\n    id\n    cellTypeId\n    cellType\n    study\n    studyId\n    paperUrl\n    dnaseSignalUrl\n    atacSignalUrl\n    e2gPredictionsUrl\n    variantPredsUrl\n    elementsUrl\n    modelType\n  }\n}"];
+export function gql(source: "query DataTracksTable {\n  getDataTracks {\n    id\n    cellTypeId\n    cellType\n    study\n    studyId\n    dataset\n    datasetUrl\n    paperUrl\n    dnaseSignalUrl\n    atacSignalUrl\n    e2gPredictionsUrl\n    variantPredsUrl\n    elementsUrl\n    modelType\n  }\n}"): (typeof documents)["query DataTracksTable {\n  getDataTracks {\n    id\n    cellTypeId\n    cellType\n    study\n    studyId\n    dataset\n    datasetUrl\n    paperUrl\n    dnaseSignalUrl\n    atacSignalUrl\n    e2gPredictionsUrl\n    variantPredsUrl\n    elementsUrl\n    modelType\n  }\n}"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

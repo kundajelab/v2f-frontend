@@ -72,7 +72,6 @@ const IGVBrowser = forwardRef<IGVBrowserHandle, { locus: string, variantId?: str
 
       // Add new tracks
       for (const [index, track] of newTracks.entries()) {
-        console.log(track);
         if (!oldTracks.some(t => t.trackUrl === track.trackUrl)) {
           // Load the track based on its trackType
           const trackConfig = {

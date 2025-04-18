@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { OtTable } from '../ot-ui-components';
+import { Link, OtTable } from '../ot-ui-components';
 import { IconButton, Button, Table, TableBody, TableCell, TableRow, Collapse, Tooltip } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
@@ -125,6 +125,23 @@ const DataTable: React.FC<DataTableProps> = ({ loading, error, data, filenameSte
       id: 'model',
       label: 'Model',
       renderCell: (rowData: DataTrack) => rowData.modelType || 'N/A',
+    },
+    {
+      id: 'dataset',
+      label: 'Dataset',
+      renderCell: (rowData: DataTrack) => {
+        let url = rowData.datasetUrl;
+        if (!url && rowData.dataset?.startsWith('ENCSR')) {
+          url = `https://www.encodeproject.org/experiments/${rowData.dataset}`;
+        }
+        return url ? (
+          <Link to={url} external>
+            {rowData.dataset || 'N/A'}
+          </Link>
+        ) : (
+          rowData.dataset || 'N/A'
+        );
+      },
     },
     /*
     {

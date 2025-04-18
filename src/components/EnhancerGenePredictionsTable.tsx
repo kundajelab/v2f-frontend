@@ -138,7 +138,6 @@ const tableColumns = (
         };
 
         const removeTracks = () => {
-          console.log('trying')
           tracks.forEach((track) => removeTrack(track));
         };
 
