@@ -5,6 +5,8 @@ query DataTracksTable {
        cellType
        study
        studyId
+       dataset
+       datasetUrl
        paperUrl
        dnaseSignalUrl
        atacSignalUrl
