@@ -2,7 +2,7 @@ import { Helmet } from 'react-helmet';
 import { loader } from 'graphql.macro';
 import queryString, { ParsedQuery } from 'query-string';
 import { useQuery } from '@apollo/client';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useRef } from 'react';
 
 import { SectionHeading, Typography } from '../../ot-ui-components';
 import { PlotContainer } from '../../ot-ui-components';
@@ -13,7 +13,8 @@ import AssociatedIndexVariantsTable from '../../components/AssociatedIndexVarian
 import AssociatedGenes from '../../components/AssociatedGenes';
 import ScrollToTop from '../../components/ScrollToTop';
 import PheWASSection from '../../components/PheWASSection';
-import IGVBrowser from '../../components/IGVBrowser';
+import IGVBrowser, { IGVBrowserHandle } from '../../components/IGVBrowser';
+import ExportIGVSession from '../../components/ExportIGV';
 
 import NotFoundPage from '../NotFoundPage';
 import Header from './Header';
@@ -59,6 +60,7 @@ const VariantPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { variantId = '' } = useParams<{ variantId: string }>();
+  const igvBrowserRef = useRef<IGVBrowserHandle>(null);
 
   // Memoize the parsed query parameters
   const parsedQueryProps = useMemo(() => {
@@ -262,10 +264,16 @@ const VariantPage = () => {
             </span>
           }
         />
+        <ExportIGVSession
+          igvBrowserRef={igvBrowserRef}
+          sessionData={null}
+          hideImport={true}
+        />
         <IGVBrowser
           key={`igv-browser-${variantId}`}
           locus={locus}
           variantId={variantId}
+          ref={igvBrowserRef}
         />
 
         <SectionHeading
