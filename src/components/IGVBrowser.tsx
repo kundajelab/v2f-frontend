@@ -14,6 +14,7 @@ import ITrackInfo from '../state/ITrackInfo';
 
 export interface IGVBrowserHandle {
   getBrowser: () => any;
+  setROI: (roi: any[]) => void;
 }
 
 const IGVBrowser = forwardRef<
@@ -26,11 +27,47 @@ const IGVBrowser = forwardRef<
   const [tracksSet] = useAtom(igvTracksSet);
   const browserRef = useRef<any>(null);
   const prevTrackSet = useRef<ITrackInfo[]>(tracksSet);
+  const pendingROIRef = useRef<any[] | null>(null);
+
+  // Function to apply ROI data to the browser
+  const applyROI = (roi: any[]) => {
+    if (!browserRef.current || !browserInitialized) return false;
+
+    // Remove existing ROIs
+    const existingROIs = browserRef.current.roi;
+    if (existingROIs) {
+      browserRef.current.removeROIs(existingROIs);
+    }
+
+    // Add new ROIs
+    if (roi && roi.length > 0) {
+      browserRef.current.loadROI(roi);
+    }
+
+    return true;
+  };
 
   // Expose the browser instance to parent components
   useImperativeHandle(ref, () => ({
     getBrowser: () => browserRef.current,
+    setROI: (roi: any[]) => {
+      // Try to apply ROI immediately
+      const applied = applyROI(roi);
+
+      // If not applied (browser not ready), queue it
+      if (!applied) {
+        pendingROIRef.current = roi;
+      }
+    },
   }));
+
+  // Effect to apply pending ROI once browser is initialized
+  useEffect(() => {
+    if (browserInitialized && browserRef.current && pendingROIRef.current) {
+      applyROI(pendingROIRef.current);
+      pendingROIRef.current = null;
+    }
+  }, [browserInitialized]);
 
   useEffect(() => {
     if (containerRef.current && !hasRendered && locus) {

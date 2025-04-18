@@ -93,6 +93,11 @@ const ExportIGVSession: React.FC<{
       });
     }
     setTracksSet(importedTracks);
+
+    // Restore ROIs if they exist in the session
+    if (session.roi && igvBrowserRef.current) {
+      igvBrowserRef.current.setROI(session.roi);
+    }
   };
 
   const exportSessionAsFile = () => {
