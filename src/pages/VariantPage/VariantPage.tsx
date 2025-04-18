@@ -80,12 +80,15 @@ const VariantPage = () => {
   }, [location.search]); // Dependency: location.search
 
   // Memoize the stringify function helper
-  const _stringifyQueryProps = useCallback((newQueryParams: ParsedQuery) => {
-    navigate({
-      ...location,
-      search: queryString.stringify(newQueryParams),
-    });
-  }, [navigate, location]); // Dependencies: navigate, location
+  const _stringifyQueryProps = useCallback(
+    (newQueryParams: ParsedQuery) => {
+      navigate({
+        ...location,
+        search: queryString.stringify(newQueryParams),
+      });
+    },
+    [navigate, location]
+  ); // Dependencies: navigate, location
 
   // Queries
   const queryVariables = useMemo(() => ({ variantId }), [variantId]);
@@ -121,16 +124,29 @@ const VariantPage = () => {
   });
 
   // Derived State
-  const isGeneVariant = useMemo(() => variantHasAssociatedGenes(pageData), [pageData]);
-  const isTagVariant = useMemo(() => variantHasAssociatedIndexVariants(pageData), [pageData]);
-  const isIndexVariant = useMemo(() => variantHasAssociatedTagVariants(pageData), [pageData]);
+  const isGeneVariant = useMemo(
+    () => variantHasAssociatedGenes(pageData),
+    [pageData]
+  );
+  const isTagVariant = useMemo(
+    () => variantHasAssociatedIndexVariants(pageData),
+    [pageData]
+  );
+  const isIndexVariant = useMemo(
+    () => variantHasAssociatedTagVariants(pageData),
+    [pageData]
+  );
 
   const associatedIndexVariants = useMemo(() => {
-    return isTagVariant ? variantTransformAssociatedIndexVariants(pageData!) : [];
+    return isTagVariant
+      ? variantTransformAssociatedIndexVariants(pageData!)
+      : [];
   }, [isTagVariant, pageData]);
 
   const associatedTagVariants = useMemo(() => {
-    return isIndexVariant ? variantTransformAssociatedTagVariants(pageData!) : [];
+    return isIndexVariant
+      ? variantTransformAssociatedTagVariants(pageData!)
+      : [];
   }, [isIndexVariant, pageData]);
 
   const genesForVariantSchema = useMemo(() => {
@@ -150,38 +166,40 @@ const VariantPage = () => {
   // Methods
 
   // Memoize the handlers
-  const handlePhewasTraitFilter = useCallback((
-    newPhewasTraitFilterValue?: PhewasOption[]
-  ) => {
-    const { phewasTraitFilter, ...rest } = parsedQueryProps; // Use memoized parsed props
-    const newQueryParams = {
-      ...rest,
-    };
-    if (newPhewasTraitFilterValue && newPhewasTraitFilterValue.length > 0) {
-      newQueryParams.phewasTraitFilter = newPhewasTraitFilterValue.map(
-        (d) => d.value
-      );
-    }
-    _stringifyQueryProps(newQueryParams);
-  }, [parsedQueryProps, _stringifyQueryProps]); // Dependencies: memoized parsed props, memoized stringify
+  const handlePhewasTraitFilter = useCallback(
+    (newPhewasTraitFilterValue?: PhewasOption[]) => {
+      const { phewasTraitFilter, ...rest } = parsedQueryProps; // Use memoized parsed props
+      const newQueryParams = {
+        ...rest,
+      };
+      if (newPhewasTraitFilterValue && newPhewasTraitFilterValue.length > 0) {
+        newQueryParams.phewasTraitFilter = newPhewasTraitFilterValue.map(
+          (d) => d.value
+        );
+      }
+      _stringifyQueryProps(newQueryParams);
+    },
+    [parsedQueryProps, _stringifyQueryProps]
+  ); // Dependencies: memoized parsed props, memoized stringify
 
-  const handlePhewasCategoryFilter = useCallback((
-    newPhewasCategoryFilterValue?: PhewasOption[]
-  ) => {
-    const { phewasCategoryFilter, ...rest } = parsedQueryProps; // Use memoized parsed props
-    const newQueryParams = {
-      ...rest,
-    };
-    if (
-      newPhewasCategoryFilterValue &&
-      newPhewasCategoryFilterValue.length > 0
-    ) {
-      newQueryParams.phewasCategoryFilter = newPhewasCategoryFilterValue.map(
-        (d) => d.value
-      );
-    }
-    _stringifyQueryProps(newQueryParams);
-  }, [parsedQueryProps, _stringifyQueryProps]); // Dependencies: memoized parsed props, memoized stringify
+  const handlePhewasCategoryFilter = useCallback(
+    (newPhewasCategoryFilterValue?: PhewasOption[]) => {
+      const { phewasCategoryFilter, ...rest } = parsedQueryProps; // Use memoized parsed props
+      const newQueryParams = {
+        ...rest,
+      };
+      if (
+        newPhewasCategoryFilterValue &&
+        newPhewasCategoryFilterValue.length > 0
+      ) {
+        newQueryParams.phewasCategoryFilter = newPhewasCategoryFilterValue.map(
+          (d) => d.value
+        );
+      }
+      _stringifyQueryProps(newQueryParams);
+    },
+    [parsedQueryProps, _stringifyQueryProps]
+  ); // Dependencies: memoized parsed props, memoized stringify
 
   const {
     phewasTraitFilter: phewasTraitFilterUrl,
@@ -192,7 +210,7 @@ const VariantPage = () => {
   const locus = useMemo(() => {
     const [chromosome, position] = variantId.split('_');
     const intPosition = parseInt(position);
-    return `${chromosome}:${intPosition-5000}-${intPosition+5000}`;
+    return `${chromosome}:${intPosition - 5000}-${intPosition + 5000}`;
   }, [variantId]);
 
   // Render
@@ -232,10 +250,23 @@ const VariantPage = () => {
           filenameStem={`${variantId}-lead-variants`}
         />
         <SectionHeading
-        heading="IGV Browser for Enhancer-Gene Model Predictions"
-        subheading={<span>Select cell types to view in the Enhancer-Gene Model Predictions table above. See <Link href="/igv" target="_blank" rel="noopener noreferrer">here</Link> to explore more cell types.</span>}
+          heading="IGV Browser for Enhancer-Gene Model Predictions"
+          subheading={
+            <span>
+              Select cell types to view in the Enhancer-Gene Model Predictions
+              table above. See{' '}
+              <Link href="/igv" target="_blank" rel="noopener noreferrer">
+                here
+              </Link>{' '}
+              to explore more cell types.
+            </span>
+          }
         />
-        <IGVBrowser locus={locus} variantId={variantId} /> 
+        <IGVBrowser
+          key={`igv-browser-${variantId}`}
+          locus={locus}
+          variantId={variantId}
+        />
 
         <SectionHeading
           heading={`Variants in Linkage Disequilibrium with ${variantId}`}
@@ -255,7 +286,8 @@ const VariantPage = () => {
           LD information is sourced from 1000 Genomes Phase 3 queried from
           Ensembl using the CEU (Utah residents with Northern and Western
           European ancestry) population. If this is the first time the variant
-          is being queried, it may take a minute to load. Only LDs with r² ≥ 0.8 are displayed.
+          is being queried, it may take a minute to load. Only LDs with r² ≥ 0.8
+          are displayed.
         </Typography>
         <LinkageDisequilibriumTable
           loading={ldLoading}
@@ -264,28 +296,6 @@ const VariantPage = () => {
           filenameStem={`${variantId}-lds`}
           variantId={variantId}
         ></LinkageDisequilibriumTable>
-
-        {/* <SectionHeading
-          heading="BPNet Model Predictions"
-          subheading="(subheading)"
-          entities={[
-            {
-              type: 'variant',
-              fixed: true,
-            },
-            {
-              type: 'gene',
-              fixed: false,
-            },
-          ]}
-        />
-        <BpnetPredictionsTable
-          loading={pageLoading}
-          error={error}
-          data={bpnetPredictions}
-          variantId={variantId}
-          filenameStem={`${variantId}-lead-variants`}
-        /> */}
 
         <SectionHeading
           heading="Assigned genes (OpenTargets)"
