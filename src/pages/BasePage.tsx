@@ -13,15 +13,15 @@ const BasePage = ({ children }: BasePageProps) => (
   <Page
     header={
       <NavBar
-        name="Variant2Function"
+        name="Enhancer2Gene"
         items={mainMenuItems}
         search={<Search embedded />}
       />
     }
   >
     <Helmet
-      defaultTitle="V2F"
-      titleTemplate="%s | V2F"
+      defaultTitle="E2G"
+      titleTemplate="%s | E2G"
     />
     {children}
   </Page>
