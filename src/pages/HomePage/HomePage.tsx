@@ -84,7 +84,7 @@ const HomePage = () => {
   return (
     <>
       <Helmet>
-        <title>Variant2Function</title>
+        <title>Enhancer2Gene</title>
       </Helmet>
       <main ref={searchSectionRef}>
         <Grid
@@ -95,7 +95,7 @@ const HomePage = () => {
         >
           <Splash />
           <NavBar
-            name="Variant2Function"
+            name="Enhancer2Gene"
             items={mainMenuItems}
             search={null}
             homepage

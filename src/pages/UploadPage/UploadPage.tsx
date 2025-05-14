@@ -10,7 +10,7 @@ function UploadPage() {
         Uploading Data
       </Typography>
       <Typography style={{ marginBottom: '8px' }}>
-        To upload new data to the V2F portal, please contact Riya Sinha
+        To upload new data to the E2G portal, please contact Riya Sinha
         (riyasinh@stanford.edu).
       </Typography>
       <Typography variant="h6" style={{ marginBottom: '8px' }}>
