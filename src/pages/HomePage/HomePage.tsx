@@ -30,7 +30,7 @@ const BROWSER_EXAMPLES = [
     url: '/igv',
   },
   {
-    label: 'ENCODE-rE2G in X# cell types and tissues from ENCODE (Gschwind* et al. 2025)',
+    label: 'scE2G in X# cell types from cell lines, blood, and pancreas (Sheth*, Qiu* et al. 2025)',
     url: '/igv',
   },
   {
