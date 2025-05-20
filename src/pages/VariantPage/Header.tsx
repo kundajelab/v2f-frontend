@@ -38,14 +38,7 @@ const VariantHeader = ({ loading, data }: VariantHeaderProps) => {
         </>
       }
     >
-      {!loading && (
-        <LocusLink
-          chromosome={chromosome}
-          position={position}
-          selectedIndexVariants={[id]}
-          selectedTagVariants={[id]}
-        />
-      )}
+   
     </BaseHeader>
   );
 };
