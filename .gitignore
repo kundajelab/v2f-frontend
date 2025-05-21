@@ -32,3 +32,4 @@ mock-data/raw
 mock-data/processed
 
 .env
+ssl/

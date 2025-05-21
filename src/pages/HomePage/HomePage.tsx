@@ -26,16 +26,20 @@ const EXAMPLES = [
 
 const BROWSER_EXAMPLES = [
   {
-    label: 'ENCODE-rE2G in X# cell types and tissues from ENCODE (Gschwind* et al. 2025)',
-    url: '/igv',
+    label: 'ENCODE-rE2G in 1458 cell types and tissues from ENCODE (Gschwind* et al. 2025)',
+    url: 'https://www.biorxiv.org/content/10.1101/2023.11.09.563812v1',
   },
   {
-    label: 'scE2G in X# cell types from cell lines, blood, and pancreas (Sheth*, Qiu* et al. 2025)',
-    url: '/igv',
+    label: 'scE2G in 46 cell types from cell lines, blood, and pancreas (Sheth*, Qiu* et al. 2025)',
+    url: 'https://www.biorxiv.org/content/10.1101/2024.11.23.624931v1',
   },
   {
-    label: 'scE2G in X# cell types from the developing heart (Ma*, Conley* et al. 2025)',
-    url: '/igv',
+    label: 'scE2G in 90 cell types from the developing heart (Ma*, Conley* et al. 2025)',
+    url: 'https://pubmed.ncbi.nlm.nih.gov/39606363/',
+  },
+  {
+    label: 'scE2G in 10 cell types from the coronary artery (Amrute et al. 2024)',
+    url: 'https://www.medrxiv.org/content/10.1101/2024.11.13.24317257v1'
   }
 ];
 
