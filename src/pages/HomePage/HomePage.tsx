@@ -143,7 +143,7 @@ const HomePage = () => {
                   style={{ textAlign: 'center' }}
                   className={classes.exampleLink}
                 >
-                  <Link to={d.url}>{d.label}</Link>
+                  <Link to={d.url} external>{d.label}</Link>
                 </Typography>
               ))}
             </Grid>
