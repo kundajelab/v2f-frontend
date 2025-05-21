@@ -6,3 +6,4 @@ COPY .htpasswd /etc/apache2/.htpasswd
 
 COPY ./build /usr/share/nginx/html
 
+COPY ./ssl /etc/nginx/ssl
