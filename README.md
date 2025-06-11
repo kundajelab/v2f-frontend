@@ -1,4 +1,6 @@
-# Variant2Function Frontend App
+# Variant2Function Frontend App (ARCHIVED)
+
+**PLEASE NOTE THIS REPO IS NO LONGER ACTIVE. PLEASE SEE THE [E2G](https://github.com/kundajelab/e2g-frontend) REPOSITORY, WHICH USES THE UPDATED OPENTARGETS PLATFORM FRONTEND. THIS REPO IS BASED ON THE DEPRECATED OPENTARGETS GENETICS PLATFORM.**
 
 This repo contains the web application code for [Variant2Function](http://v2f-portal.stanford.edu).
 
